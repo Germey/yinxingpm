@@ -1,0 +1,64 @@
+<?php
+  $fills = D("LingxiFormFills")->order('id desc')->getsByUserId($user['id']);
+  $form_ids = Utility::GetColumn($fills, 'form_id');
+
+  if($form_ids) {
+    $ff['id'] = array('in', $form_ids);
+    $forms = Utility::AssColumn(D("LingxiForms")->where($ff)->select());    
+  }
+// var_dump($fills, $forms);
+?>
+
+<h5 class="clear bg colortip">来自灵析表单数据</h5>
+
+<div style="padding-left: 20px;">
+  <if condition="$fills">
+    <table class="table">
+      <thead><tr><th style="width:24px;"></th><th>表单名称</th><th>提交时间</th><th></th></tr></thead>
+      <foreach name="fills" item="one">
+        <tr class="filllist" id="fill_{$one['id']}" value="{$one['id']}">
+          <td>#{$key+1}</td>
+          <td>{$forms[$one['form_id']]['title']}</td>
+          <td nowrap class="time">{$one['create_time']}</td>
+          <td class="right1">
+            <span id="down_tip_{$one['id']}">+</span>
+            <span id="up_tip_{$one['id']}" style="display:none">-</i>
+          </td>
+        </tr>
+        <tr id="fill_detail_{$one['id']}" style="display: none;"><td></td><td colspan="3">
+          <table class="table table-dashed">
+            <?php 
+                $detail = unserialize($one['detail']);
+                $fields = unserialize($forms[$one['form_id']]['fields']);
+             ?>
+             <foreach name="detail"  item="one_item">
+              <tr>
+                <td nowrap><b>{$fields[$key]['name']}</b></td>
+                <td>{:nl2br($one_item)}</td>
+              </tr>
+             </foreach>
+          </table>
+        </td>
+        </tr>
+      </foreach>
+    </table>
+  <else />
+    <div class="text-center text-muted" style="margin:10px 0">还没有同步过来任何表单</div>
+  </if>
+</div>
+
+<script type="text/javascript">
+    $('.filllist').on('hover', function(event) {
+        $(this).css('cursor', 'pointer');
+    });
+
+    $('.filllist').on('click', function(event) {
+        var fid  =  $(this).attr('value');
+        $('.filllist').removeClass('active');
+        $(this).addClass('active');
+
+        $("#down_tip_"+fid).toggle();
+        $("#up_tip_"+fid).toggle();
+        $("#fill_detail_"+fid).toggle();
+    });
+</script>

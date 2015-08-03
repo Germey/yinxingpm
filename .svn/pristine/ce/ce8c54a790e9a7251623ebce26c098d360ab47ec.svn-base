@@ -1,0 +1,12 @@
+  <foreach name="questions" item="answer">
+    <div style="margin-bottom: 20px">
+      <p style="background: #f4f4f4;padding:4px 0;font-weight: bold;">
+        <span class="label label-info">问</span>
+        {$key}
+      </p>
+      <p>
+        <span class="label label-important pull-left">答</span>
+        <div style="padding-left: 25px;">{:nl2br(trim($answer))}</div>
+      </p>
+    </div>
+  </foreach>

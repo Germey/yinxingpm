@@ -1,0 +1,42 @@
+<?php
+  // 这块信息就不让管理员可以编辑了，目前有2个group的
+  $group_item_options = array('finance' => array(
+                                    'type'=>array('name'=>'费用类型', 'type'=>'select', 'options'=>array('','差旅费','设施设备费','会议费','杂费','宣传费','劳务费')),
+                                    'fee' => array('name'=>'预算金额'),
+                                    'detail' => array('name'=>'具体说明'),
+                                ),
+                              'plan' => array(
+                                    'time' => array('name'=>'计划时间段'),
+                                    'detail' => array('name'=>'计划活动'),
+                                ),
+                              'recommender' => array( 
+                                    'name'=>array('name'=>'姓名', ),
+                                    'contact'=>array('name'=>'联系方式', ),
+                                    'saywhat' => array('name'=>'推荐语') )
+                            );
+?>
+
+<div id="project_apply_detail">
+  <h5 class="clear bg colortip" style="cursor: pointer;" onclick="toggle_content_block('project_detail_content');" title="点击展开/合并">
+    2. 项目详情
+    <i id="open_icon_detail_content" class="icon-fullscreen"></i>
+  </h5>
+  <div id="project_detail_content" {$project['pm_display_toggle']['project_detail_content']?'style="display:none;padding-left:20px"':'padding-left:20px'}>
+    <ul id="detail_tab" class="nav nav-tabs">
+      <foreach name="detail_items" item="one">
+        <li class="{$key=='background'?'active':''}"><a href="#detail_{$key}" data-toggle="tab">{$one}</a></li>
+      </foreach>
+    </ul>
+    <div id="detail_tab_content" class="tab-content" style="padding: 0 10px;">
+      <foreach name="detail_items" item="one">
+        <div class="tab-pane fade {$key=='background'?'in active':''}" id="detail_{$key}">
+          <if condition="in_array($key, array_keys($group_item_options))">
+            {:display_group($project[$key], $group_item_options[$key])}
+          <else />
+              <p style="line-height:26px">{:nl2br($project[$key])}</p>
+          </if>
+        </div>
+      </foreach>
+    </div>
+  </div>
+</div>

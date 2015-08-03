@@ -1,0 +1,38 @@
+<layout name="../Common/Public/dialog_with_confirm"/>
+<form action="__URL__/submit_actual_grant_record"  method="post" class="form-horizontal" enctype="multipart/form-data">
+    <input type="hidden" name="project_id" value="{$project['id']}" />
+    <table class="table" id="table_grants">
+        <thead><tr><th>日期</th><th>金额（元）</th><th>发票编号</th><th>备注</th></tr></thead>
+        <foreach name="records" item="one">
+            <tr>
+                <td><input name="grant_time_{$key}" type="text" style="width:80px" value="{$one['grant_time']}" /></td>
+                <td><input name="grant_amount_{$key}" type="text" style="width:80px" class="money" value="{$one['amount']}" /></td>
+                <td><input name="grant_invoice_{$key}" type="text" class="span1" value="{$one['invoice']}" placeholder=""/></td>
+                <td><input name="grant_note_{$key}" type="text" class="span4" value="{$one['note']}" /></td>
+            </tr>
+        </foreach>
+    </table>
+    <input type="hidden" id="grant_count" value="{$key+1}" />
+    
+    <p style="margin-bottom:20px"><a href="javascript:void(0);" onclick="new_grant()">新加拨款记录</a> &nbsp; <span class="muted">若要删除记录，将金额一栏填为空即可</span></p>
+
+    <p>同时修改项目状态到：<select name="status_to" class="span2"><option value="0"> - 不改变状态</option>{:Utility::Option($status_tos)}</select></p>
+</form>
+
+<?php
+    $current_day = date('Y-m-d');
+?>
+<script type="text/javascript">
+
+  function new_grant() {
+      var current_count = $('#grant_count').val();
+      $('#grant_count').val(parseInt(current_count)+1);
+      var str1 = '<input name="grant_time_'+current_count+'" type="text" style="width:80px" value="{$current_day}" />';
+      var str2 = '<input name="grant_amount_'+current_count+'" type="text" value="" style="width:80px" class="money" />';
+      var str3 = '<input name="grant_invoice_'+current_count+'" type="text" value="" class="span1" placeholder="无发票留空"/>';
+      var str4 = '<input name="grant_note_'+current_count+'" type="text" value="" class="span4"/>';
+      $('#table_grants').append('<tr><td>'+str1+'</td><td>'+str2+'</td><td>'+str3+'</td><td>'+str4+'</td></tr>');
+
+      window.x_init_hook_currencyformat();
+  }
+</script>

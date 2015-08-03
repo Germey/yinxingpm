@@ -1,0 +1,35 @@
+<layout name="Public/frontend_template"/>
+<div id="content" class="wide">
+    <h4>
+        任务列表设置
+        <a href="__URL__/render_task_edit?type={$type}" class="btn pull-right ajaxlink"><i class="icon-pencil"></i> 新建</a>
+    </h4>
+    <ul id="myTab" class="nav nav-tabs">
+        <foreach name="object_types" item="one">
+            <li {$key==$type?"class='active'":""} >
+              <a href="/setting/tasks?type={$key}">{$one}</a>
+            </li>
+        </foreach>
+    </ul>
+
+    <div id="myTabContent" class="tab-content">
+        <table class="table table-bordered">
+            <tr>
+                <th>任务名称</th>
+                <th>显示权重</th>
+                <th></th>
+            </tr>
+            <foreach name="tasks" item="one">
+                <tr>
+                    <td>{$one['title']}</td>
+                    <td>{$one.sequence}</td>
+                    <td>
+                        <a href="__URL__/render_task_edit?id={$one.id}" class="ajaxlink">编辑</a>
+                        <a href="__URL__/ajax_delete_task?id={$one.id}" ask="确定删除吗？" class="ajaxlink">删除</a>
+                    </td>
+                </tr>
+            </foreach>
+        </table>
+        <p class="muted"><b>备注：</b>权重越大，显示越靠前</p>
+      </div>
+</div>

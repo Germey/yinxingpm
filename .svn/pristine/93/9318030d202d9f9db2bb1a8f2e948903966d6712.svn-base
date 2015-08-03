@@ -1,0 +1,34 @@
+<!--TODO-权限-->
+<table class="table table-striped">
+  <thead><tr><th>时间 / 记录人</th><th nowrap>监测人员</th><th>监测记录</th></tr></thead>
+  <foreach name="monitors" item="one">
+    <tr>
+      <td nowrap>
+        <p title="{$one['meeting_time']}">{:substr($one['meeting_time'],0,10)}</p>
+        <p>{:M('Users')->getFieldById($one['create_user_id'],'realname')}</p>
+      </td>
+      <td>
+        <p>{$one['participant_users']}</p>
+        <p><b>{$one['meeting_keyword']}</b></p>
+      </td>
+      <td>{:nl2br($one['meeting_content'])}</td>
+    </tr>
+  </foreach>
+</table>
+
+<if condition="can_audit($login_user)">
+  <form method="post" action="/project/submit_meeting" enctype="multipart/form-data" class="validator form-horizontal" style="background:#F4F4F4; padding:10px 20px">
+    <input type="hidden" name="project_id" value="{$project['id']}"/>
+    <input type="hidden" name="meeting_type" value="monitor"/>
+    <p><b>新建监测记录</b></p>
+    <p>记录人：{$login_user['realname']} &nbsp;&nbsp; 
+      <input type="text" name="meeting_time" class="span3" value="{:date('Y-m-d H:i:s')}" /><span class="muted">&nbsp;若修改请保持该日期格式</span>
+    </p>
+    <p>监测人：<input type="text" class="span4" name="participant_users"/></p>
+    <!-- <p>关键字：<input type="text" class="span4" name="meeting_keyword" placeholder="关键字，方便浏览检索"/></p> -->
+    <p><textarea name="meeting_content" id="meeting_content2" class="editor"></textarea></p>
+    <p>
+      <input type="submit" class="btn btn-small btn-danger" value="提交" />
+    </p>
+ </form>
+</if>

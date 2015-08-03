@@ -1,0 +1,19 @@
+<layout name="Public/frontend_template"/>
+
+<div id="content" class="wide project-detail">
+
+  <include file="detail_share_head" />
+  
+  <include file="detail_recommend_core" />
+
+  <include file="detail_share_foot" />
+
+</div>
+
+<script type="text/javascript">
+
+  $('#change_status_note').editable({ });
+  $('#change_extra_link').editable({ });
+
+</script>
+

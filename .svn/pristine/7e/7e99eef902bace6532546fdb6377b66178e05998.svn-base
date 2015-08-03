@@ -1,0 +1,20 @@
+<layout name="../Common/Public/dialog_with_confirm"/>
+<form action="__URL__/task_submit"  method="post"  class="form-horizontal">
+  <input type="hidden" value="{$task['id']}" name="id">
+  <table class="table table-noborder">
+    <tr>
+      <td><b>类型</b></td>
+      <td><select name="type">{:Utility::Option($object_types, $task['type']?$task['type']:$type)}</select></td>
+    </tr>
+    <tr>
+      <td><b>任务名称</b></td>
+      <td><input type="text" id="title" name="title" value="{$task.title}" class="span7"></td>
+    </tr>
+      <td><b>显示权重</b></td>
+      <td>
+        <input type="number" id="sequence" value="{$task.sequence}" name="sequence" class="span1">
+        &nbsp;<span class="muted">越大显示越靠前</span>
+      </td>
+    </tr>
+  </table>
+</form>

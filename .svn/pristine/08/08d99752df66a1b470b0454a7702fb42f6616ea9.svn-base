@@ -1,0 +1,20 @@
+<div class="clear"></div>
+<div id="modaldialog"></div>
+</div>  
+<div class="footer" >
+    <div class="container">
+        <small>技术支持：<a href="http://www.justering.com" target="_blank">佳信德润</a></small>
+    </div>
+</div>
+<include file="Common:Public:common_modal" />
+<include file="Common:Public:html_footer" />
+
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('.mytooltip').tooltip();
+        $(".datepicker").datetimepicker({language: 'zh-CN',startView: 2,minView: 2,format: "yyyy-mm-dd",autoclose: true,todayBtn: true});
+        $(".colortip").colorTip({color:'black'});
+    });
+
+</script>

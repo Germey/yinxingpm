@@ -1,0 +1,13 @@
+<!-- Parameters Needed: $title -->
+<div id="ajax-dialog" class="bootbox modal fade in" {$modal_style}>
+    <div class="modal-header">
+        <a  class="close" onclick="return X.boxClose();">×</a>
+        <h4>{$title}</h4>
+    </div>
+    <div class="modal-body">
+        {__CONTENT__}
+    </div>
+    <div class="modal-footer">
+        <a href="#" onclick="return X.boxClose();" class="btn btn-small">{$Think.lang.close}</a>
+    </div>
+</div>

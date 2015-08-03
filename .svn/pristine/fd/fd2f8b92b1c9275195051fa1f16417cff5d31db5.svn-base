@@ -1,0 +1,50 @@
+<?php
+  $project_schools = D("Schools")->getSchoolProjectInfo($project['id']);
+
+  // $school
+  $tmp_schools = D("Schools")->field('id,name,province,city')->select();
+  foreach ($tmp_schools as $key => $value) {
+    $tmp_school_array[$value['id']] = $value['province'] . ' ' . $value['city'] . ' '. $value['name'];
+  }
+  $school_json_string = json_encode_for_xedit($tmp_school_array);
+?>
+
+<h5 class="clear bg colortip">3. 相关学校
+  <p class="pull-right">
+    <a href="#schoolinfo" id="addschool" name="addschool" style="color:#b94a48" data-type="select2" data-pk="{$project['id']}" data-url="/project/ajax_add_school" data-title="增加关联学校">增加关联学校</a>
+  </p>
+</h5>
+<div style="padding-left: 20px;">
+  <table class="table table-bordered">
+    <tr>
+      <th>学校</th>
+      <th>校长/联系方式</th>
+      <th>备注</th>
+    </tr>
+    <foreach name="project_schools" item="one">
+    <tr>
+      <td>
+        <a target="_blank" href="/school/detail/{$key}">{$one['school']['province']} {$one['school']['city']} {$one['school']['name']}</a>        
+      </td>
+      <td>
+        {$one['school']['leader_name']} {$one['school']['leader_contact']}</span>
+      </td>
+      <td>
+        <a href="#schoolinfo" class="editmapnote" data-type="textarea" data-pk="{$one['id']}" data-url="/project/ajax_edit_mapping_note" data-title="编辑备注">{$one['note']?$one['note']:'添加备注'}</a>
+      </td>
+    </tr>
+    </foreach>
+  </table>
+</div>
+
+<script type="text/javascript">
+  $('#addschool').editable({
+      source: {$school_json_string},
+      success: function(data, config) {
+        window.location.reload();
+      }
+  });
+
+  $('.editmapnote').editable({});
+
+</script>

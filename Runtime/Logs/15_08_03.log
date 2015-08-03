@@ -1,0 +1,338 @@
+[ 2015-08-03T13:38:58+08:00 ] 0.0.0.0 /yinxing_pm/
+INFO: [ app_begin ] --START--
+INFO: Run ReadHtmlCache Behavior [ RunTime:0.001135s ]
+INFO: Run CheckLang Behavior [ RunTime:0.033979s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.035481s ]
+
+[ 2015-08-03T13:38:59+08:00 ] 0.0.0.0 /yinxing_pm/login?ref=/yinxing_pm/
+INFO: [ route_check ] --START--
+INFO: Run CheckRoute Behavior [ RunTime:0.032020s ]
+INFO: [ route_check ] --END-- [ RunTime:0.032195s ]
+INFO: [ app_begin ] --START--
+INFO: Run ReadHtmlCache Behavior [ RunTime:0.001062s ]
+INFO: Run CheckLang Behavior [ RunTime:0.002476s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.003763s ]
+SQL: SHOW COLUMNS FROM `options` [ RunTime:0.007188s ]
+SQL: SELECT * FROM `options` WHERE autoload="Y"  [ RunTime:0.000833s ]
+INFO: [ view_template ] --START--
+INFO: Run LocationTemplate Behavior [ RunTime:0.003318s ]
+INFO: [ view_template ] --END-- [ RunTime:0.003671s ]
+INFO: [ view_parse ] --START--
+NOTIC: [8] Undefined variable: pagetitle D:\wamp\www\yinxing_pm\Runtime\Cache\Frontend\3d48d7f7f924a586fbaacdaee1da998b.php 第 5 行.
+SQL: SELECT `option_value` FROM `options` WHERE option_name = 'webroot_pm' LIMIT 1   [ RunTime:0.000586s ]
+INFO: Run ParseTemplate Behavior [ RunTime:0.157477s ]
+INFO: [ view_parse ] --END-- [ RunTime:0.157757s ]
+INFO: [ view_filter ] --START--
+INFO: Run ContentReplace Behavior [ RunTime:0.001586s ]
+INFO: Run TokenBuild Behavior [ RunTime:0.001736s ]
+INFO: Run WriteHtmlCache Behavior [ RunTime:0.002076s ]
+INFO: Run ShowRuntime Behavior [ RunTime:0.002623s ]
+INFO: [ view_filter ] --END-- [ RunTime:0.009006s ]
+INFO: [ view_end ] --START--
+INFO: Run ShowPageTrace Behavior [ RunTime:0.002006s ]
+INFO: [ view_end ] --END-- [ RunTime:0.002262s ]
+
+[ 2015-08-03T13:39:34+08:00 ] 0.0.0.0 /yinxing_pm/login?ref=/yinxing_pm/
+INFO: [ route_check ] --START--
+INFO: Run CheckRoute Behavior [ RunTime:0.003725s ]
+INFO: [ route_check ] --END-- [ RunTime:0.004019s ]
+INFO: [ app_begin ] --START--
+INFO: Run ReadHtmlCache Behavior [ RunTime:0.001671s ]
+INFO: Run CheckLang Behavior [ RunTime:0.003506s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.005550s ]
+SQL: SHOW COLUMNS FROM `options` [ RunTime:0.024356s ]
+SQL: SELECT * FROM `options` WHERE autoload="Y"  [ RunTime:0.000378s ]
+INFO: [ view_template ] --START--
+INFO: Run LocationTemplate Behavior [ RunTime:0.001862s ]
+INFO: [ view_template ] --END-- [ RunTime:0.002083s ]
+INFO: [ view_parse ] --START--
+NOTIC: [8] Undefined variable: pagetitle D:\wamp\www\yinxing_pm\Runtime\Cache\Frontend\3d48d7f7f924a586fbaacdaee1da998b.php 第 5 行.
+SQL: SELECT `option_value` FROM `options` WHERE option_name = 'webroot_pm' LIMIT 1   [ RunTime:0.000528s ]
+INFO: Run ParseTemplate Behavior [ RunTime:0.017204s ]
+INFO: [ view_parse ] --END-- [ RunTime:0.017410s ]
+INFO: [ view_filter ] --START--
+INFO: Run ContentReplace Behavior [ RunTime:0.000912s ]
+INFO: Run TokenBuild Behavior [ RunTime:0.000873s ]
+INFO: Run WriteHtmlCache Behavior [ RunTime:0.000513s ]
+INFO: Run ShowRuntime Behavior [ RunTime:0.000789s ]
+INFO: [ view_filter ] --END-- [ RunTime:0.003496s ]
+INFO: [ view_end ] --START--
+INFO: Run ShowPageTrace Behavior [ RunTime:0.000910s ]
+INFO: [ view_end ] --END-- [ RunTime:0.001054s ]
+
+[ 2015-08-03T13:54:02+08:00 ] ERR: (ThinkException) 无法加载模块:Favicon
+[ 2015-08-03T13:54:03+08:00 ] 127.0.0.1 /
+INFO: [ app_begin ] --START--
+INFO: Run ReadHtmlCache Behavior [ RunTime:0.001450s ]
+INFO: Run CheckLang Behavior [ RunTime:0.002902s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.004727s ]
+
+[ 2015-08-03T13:54:03+08:00 ] 127.0.0.1 /login?ref=/
+INFO: [ route_check ] --START--
+INFO: Run CheckRoute Behavior [ RunTime:0.000989s ]
+INFO: [ route_check ] --END-- [ RunTime:0.001148s ]
+INFO: [ app_begin ] --START--
+INFO: Run ReadHtmlCache Behavior [ RunTime:0.000661s ]
+INFO: Run CheckLang Behavior [ RunTime:0.002923s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.003877s ]
+SQL: SHOW COLUMNS FROM `options` [ RunTime:0.006595s ]
+SQL: SELECT * FROM `options` WHERE autoload="Y"  [ RunTime:0.000417s ]
+INFO: [ view_template ] --START--
+INFO: Run LocationTemplate Behavior [ RunTime:0.001186s ]
+INFO: [ view_template ] --END-- [ RunTime:0.001337s ]
+INFO: [ view_parse ] --START--
+NOTIC: [8] Undefined variable: pagetitle D:\wamp\www\yinxing_pm\Runtime\Cache\Frontend\3d48d7f7f924a586fbaacdaee1da998b.php 第 5 行.
+SQL: SELECT `option_value` FROM `options` WHERE option_name = 'webroot_pm' LIMIT 1   [ RunTime:0.000387s ]
+INFO: Run ParseTemplate Behavior [ RunTime:0.012679s ]
+INFO: [ view_parse ] --END-- [ RunTime:0.012866s ]
+INFO: [ view_filter ] --START--
+INFO: Run ContentReplace Behavior [ RunTime:0.000617s ]
+INFO: Run TokenBuild Behavior [ RunTime:0.000543s ]
+INFO: Run WriteHtmlCache Behavior [ RunTime:0.000362s ]
+INFO: Run ShowRuntime Behavior [ RunTime:0.000633s ]
+INFO: [ view_filter ] --END-- [ RunTime:0.002532s ]
+INFO: [ view_end ] --START--
+INFO: Run ShowPageTrace Behavior [ RunTime:0.000793s ]
+INFO: [ view_end ] --END-- [ RunTime:0.000935s ]
+
+[ 2015-08-03T13:54:05+08:00 ] 127.0.0.1 /Common/captcha
+INFO: [ route_check ] --START--
+INFO: Run CheckRoute Behavior [ RunTime:0.002055s ]
+INFO: [ route_check ] --END-- [ RunTime:0.002475s ]
+INFO: [ app_begin ] --START--
+INFO: Run ReadHtmlCache Behavior [ RunTime:0.001399s ]
+INFO: Run CheckLang Behavior [ RunTime:0.002402s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.004214s ]
+
+[ 2015-08-03T13:54:40+08:00 ] 127.0.0.1 /Login/index
+INFO: [ route_check ] --START--
+INFO: Run CheckRoute Behavior [ RunTime:0.004070s ]
+INFO: [ route_check ] --END-- [ RunTime:0.004555s ]
+INFO: [ app_begin ] --START--
+INFO: Run ReadHtmlCache Behavior [ RunTime:0.000903s ]
+INFO: Run CheckLang Behavior [ RunTime:0.003722s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.004975s ]
+SQL: SHOW COLUMNS FROM `options` [ RunTime:0.147541s ]
+SQL: SELECT * FROM `options` WHERE autoload="Y"  [ RunTime:0.000486s ]
+NOTIC: [2048] Non-static method PhpCaptcha::Validate() should not be called statically D:\wamp\www\yinxing_pm\Lib\Autoload\Utility.class.php 第 519 行.
+SQL: SHOW COLUMNS FROM `users` [ RunTime:0.078126s ]
+SQL: SELECT * FROM `users` WHERE ( `username` = 'admin' ) AND ( `password` = 'e7fe8b88db51d86ef2f5e169144b9c1b' ) LIMIT 1   [ RunTime:0.001062s ]
+SQL: SELECT u.* from users u, user_group_mapping ugm, user_group_team_mapping ugtm, teams t
+               WHERE
+                u.id = ugm.user_id AND
+                ugm.user_group_id = ugtm.user_group_id AND
+                ugtm.team_id = t.id AND
+                u.username = 'admin' AND
+                u.password = 'e7fe8b88db51d86ef2f5e169144b9c1b'
+         limit 1 [ RunTime:0.005675s ]
+NOTIC: [8] Undefined index: auto_login D:\wamp\www\yinxing_pm\Lib\Action\Frontend\LoginAction.class.php 第 24 行.
+SQL: select ugm.user_group_id,ugtm.team_id from user_group_mapping ugm,user_group_team_mapping ugtm  WHERE ugm.user_group_id = ugtm.user_group_id and ugm.user_id = 1 [ RunTime:0.000701s ]
+SQL: SHOW COLUMNS FROM `teams` [ RunTime:0.021811s ]
+SQL: SELECT * FROM `teams` WHERE ( `id` = 1 ) LIMIT 1   [ RunTime:0.000481s ]
+SQL: SHOW COLUMNS FROM `user_groups` [ RunTime:0.015500s ]
+SQL: SELECT * FROM `user_groups` WHERE ( `id` = 1 ) LIMIT 1   [ RunTime:0.000496s ]
+SQL: SHOW COLUMNS FROM `user_group_team_mapping` [ RunTime:0.012031s ]
+SQL: SELECT `user_group_id` FROM `user_group_team_mapping` WHERE team_id = 1  [ RunTime:0.000687s ]
+NOTIC: [8] Undefined offset: 1 D:\wamp\www\yinxing_pm\Lib\Autoload\Utility.class.php 第 146 行.
+SQL: SHOW COLUMNS FROM `user_groups` [ RunTime:0.308723s ]
+SQL: SELECT * FROM `user_groups` WHERE ( `id` = 1 ) LIMIT 1   [ RunTime:0.000973s ]
+SQL: SHOW COLUMNS FROM `users` [ RunTime:0.146537s ]
+SQL: SELECT * FROM `users` LIMIT 1   [ RunTime:0.000624s ]
+
+[ 2015-08-03T13:54:40+08:00 ] 127.0.0.1 /
+INFO: [ app_begin ] --START--
+INFO: Run ReadHtmlCache Behavior [ RunTime:0.000680s ]
+INFO: Run CheckLang Behavior [ RunTime:0.001674s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.002589s ]
+SQL: SHOW COLUMNS FROM `options` [ RunTime:0.217367s ]
+SQL: SELECT * FROM `options` WHERE autoload="Y"  [ RunTime:0.000522s ]
+SQL: SELECT `option_value` FROM `options` WHERE option_name = 'contact_last_sync_time' LIMIT 1   [ RunTime:0.000306s ]
+
+[ 2015-08-03T13:54:41+08:00 ] 127.0.0.1 /user/recommend
+INFO: [ route_check ] --START--
+INFO: Run CheckRoute Behavior [ RunTime:0.001215s ]
+INFO: [ route_check ] --END-- [ RunTime:0.001455s ]
+INFO: [ app_begin ] --START--
+INFO: Run ReadHtmlCache Behavior [ RunTime:0.000749s ]
+INFO: Run CheckLang Behavior [ RunTime:0.002937s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.003971s ]
+SQL: SHOW COLUMNS FROM `options` [ RunTime:0.005276s ]
+SQL: SELECT * FROM `options` WHERE autoload="Y"  [ RunTime:0.000633s ]
+SQL: SHOW COLUMNS FROM `custom_columns` [ RunTime:0.005240s ]
+NOTIC: [2] Missing argument 1 for CustomColumnsModel::getUserInfoModuleColumns(), called in D:\wamp\www\yinxing_pm\Lib\Action\Frontend\UserAction.class.php on line 11 and defined D:\wamp\www\yinxing_pm\Lib\Model\CustomColumnsModel.class.php 第 64 行.
+SQL: SHOW COLUMNS FROM `custom_list_views` [ RunTime:0.004464s ]
+SQL: SHOW COLUMNS FROM `user_recommends` [ RunTime:0.005015s ]
+SQL: SELECT `status`,count(*) count FROM `user_recommends` WHERE ( `status` > 1 ) GROUP BY status  [ RunTime:0.000555s ]
+SQL: SHOW COLUMNS FROM `user_statuses` [ RunTime:0.004924s ]
+SQL: SELECT `id`,`name` FROM `user_statuses` WHERE ( `id` > 1 )  [ RunTime:0.000405s ]
+NOTIC: [8] Undefined offset: 20 D:\wamp\www\yinxing_pm\Lib\Action\Frontend\UserAction.class.php 第 22 行.
+NOTIC: [8] Undefined offset: 40 D:\wamp\www\yinxing_pm\Lib\Action\Frontend\UserAction.class.php 第 22 行.
+NOTIC: [8] Undefined offset: 50 D:\wamp\www\yinxing_pm\Lib\Action\Frontend\UserAction.class.php 第 22 行.
+NOTIC: [8] Undefined offset: 70 D:\wamp\www\yinxing_pm\Lib\Action\Frontend\UserAction.class.php 第 22 行.
+NOTIC: [8] Undefined offset: 80 D:\wamp\www\yinxing_pm\Lib\Action\Frontend\UserAction.class.php 第 22 行.
+NOTIC: [8] Undefined offset: 90 D:\wamp\www\yinxing_pm\Lib\Action\Frontend\UserAction.class.php 第 22 行.
+NOTIC: [8] Undefined offset: 100 D:\wamp\www\yinxing_pm\Lib\Action\Frontend\UserAction.class.php 第 22 行.
+NOTIC: [8] Undefined offset: 250 D:\wamp\www\yinxing_pm\Lib\Action\Frontend\UserAction.class.php 第 22 行.
+SQL: SELECT COUNT(*) AS tp_count FROM `user_recommends` WHERE ( `status` > 1 ) LIMIT 1   [ RunTime:0.000279s ]
+NOTIC: [8] Undefined index: SCRIPT_URI D:\wamp\www\yinxing_pm\Lib\Autoload\Pager.class.php 第 41 行.
+NOTIC: [8] Undefined index: page D:\wamp\www\yinxing_pm\Lib\Autoload\Pager.class.php 第 26 行.
+SQL: SELECT * FROM `user_recommends` WHERE ( `status` > 1 ) ORDER BY update_time desc LIMIT 0,20   [ RunTime:0.001387s ]
+NOTIC: [2] Missing argument 2 for UserRecommendsModel::_after_find(), called in D:\wamp\www\yinxing_pm\Lib\Model\UserRecommendsModel.class.php on line 7 and defined D:\wamp\www\yinxing_pm\Lib\Model\UserRecommendsModel.class.php 第 12 行.
+SQL: SHOW COLUMNS FROM `user_statuses` [ RunTime:0.003854s ]
+SQL: SELECT `name` FROM `user_statuses` WHERE id=60 LIMIT 1   [ RunTime:0.000378s ]
+SQL: SHOW COLUMNS FROM `user_info` [ RunTime:0.006427s ]
+SQL: SELECT * FROM `user_info` WHERE ( `id` = 1012 ) LIMIT 1   [ RunTime:0.001008s ]
+NOTIC: [2] Missing argument 2 for UserRecommendsModel::_after_find(), called in D:\wamp\www\yinxing_pm\Lib\Model\UserRecommendsModel.class.php on line 7 and defined D:\wamp\www\yinxing_pm\Lib\Model\UserRecommendsModel.class.php 第 12 行.
+SQL: SELECT `name` FROM `user_statuses` WHERE id=30 LIMIT 1   [ RunTime:0.001032s ]
+SQL: SELECT * FROM `user_info` WHERE ( `id` = 1013 ) LIMIT 1   [ RunTime:0.000520s ]
+NOTIC: [2] Missing argument 2 for UserRecommendsModel::_after_find(), called in D:\wamp\www\yinxing_pm\Lib\Model\UserRecommendsModel.class.php on line 7 and defined D:\wamp\www\yinxing_pm\Lib\Model\UserRecommendsModel.class.php 第 12 行.
+SQL: SELECT `name` FROM `user_statuses` WHERE id=99 LIMIT 1   [ RunTime:0.000481s ]
+SQL: SELECT * FROM `user_info` WHERE ( `id` = 1011 ) LIMIT 1   [ RunTime:0.000668s ]
+SQL: SELECT * FROM `user_info` WHERE ( `invite_code` = '632590' ) LIMIT 1   [ RunTime:0.001189s ]
+SQL: SELECT * FROM `user_info` WHERE ( `invite_code` = '237838' ) LIMIT 1   [ RunTime:0.000760s ]
+INFO: [ view_template ] --START--
+INFO: Run LocationTemplate Behavior [ RunTime:0.040532s ]
+INFO: [ view_template ] --END-- [ RunTime:0.040993s ]
+INFO: [ view_parse ] --START--
+NOTIC: [8] Undefined variable: pagetitle D:\wamp\www\yinxing_pm\Runtime\Cache\Frontend\23f62fe0aea9da5ffde8c0f060efd599.php 第 5 行.
+SQL: SELECT `option_value` FROM `options` WHERE option_name = 'webroot_pm' LIMIT 1   [ RunTime:0.000473s ]
+NOTIC: [8] Undefined index: logo D:\wamp\www\yinxing_pm\Runtime\Cache\Frontend\23f62fe0aea9da5ffde8c0f060efd599.php 第 79 行.
+NOTIC: [8] Undefined variable: is_todo D:\wamp\www\yinxing_pm\Runtime\Cache\Frontend\23f62fe0aea9da5ffde8c0f060efd599.php 第 84 行.
+NOTIC: [8] Undefined variable: apply_type_name D:\wamp\www\yinxing_pm\Runtime\Cache\Frontend\23f62fe0aea9da5ffde8c0f060efd599.php 第 144 行.
+NOTIC: [8] Undefined index: status D:\wamp\www\yinxing_pm\Runtime\Cache\Frontend\23f62fe0aea9da5ffde8c0f060efd599.php 第 149 行.
+NOTIC: [8] Undefined index: apply_type_id D:\wamp\www\yinxing_pm\Runtime\Cache\Frontend\23f62fe0aea9da5ffde8c0f060efd599.php 第 149 行.
+NOTIC: [8] Undefined index: status D:\wamp\www\yinxing_pm\Runtime\Cache\Frontend\23f62fe0aea9da5ffde8c0f060efd599.php 第 150 行.
+NOTIC: [8] Undefined index: apply_type_id D:\wamp\www\yinxing_pm\Runtime\Cache\Frontend\23f62fe0aea9da5ffde8c0f060efd599.php 第 150 行.
+NOTIC: [8] Undefined index: status D:\wamp\www\yinxing_pm\Runtime\Cache\Frontend\23f62fe0aea9da5ffde8c0f060efd599.php 第 152 行.
+NOTIC: [8] Undefined index: apply_type_id D:\wamp\www\yinxing_pm\Runtime\Cache\Frontend\23f62fe0aea9da5ffde8c0f060efd599.php 第 152 行.
+NOTIC: [8] Undefined index: status D:\wamp\www\yinxing_pm\Runtime\Cache\Frontend\23f62fe0aea9da5ffde8c0f060efd599.php 第 153 行.
+NOTIC: [8] Undefined index: apply_type_id D:\wamp\www\yinxing_pm\Runtime\Cache\Frontend\23f62fe0aea9da5ffde8c0f060efd599.php 第 153 行.
+NOTIC: [8] Undefined index: status D:\wamp\www\yinxing_pm\Runtime\Cache\Frontend\23f62fe0aea9da5ffde8c0f060efd599.php 第 157 行.
+NOTIC: [8] Undefined index: status D:\wamp\www\yinxing_pm\Runtime\Cache\Frontend\23f62fe0aea9da5ffde8c0f060efd599.php 第 157 行.
+NOTIC: [8] Undefined index:  D:\wamp\www\yinxing_pm\Runtime\Cache\Frontend\23f62fe0aea9da5ffde8c0f060efd599.php 第 157 行.
+NOTIC: [8] Undefined index: status D:\wamp\www\yinxing_pm\Runtime\Cache\Frontend\23f62fe0aea9da5ffde8c0f060efd599.php 第 160 行.
+NOTIC: [8] Undefined index: apply_type_id D:\wamp\www\yinxing_pm\Runtime\Cache\Frontend\23f62fe0aea9da5ffde8c0f060efd599.php 第 161 行.
+NOTIC: [8] Undefined index: name D:\wamp\www\yinxing_pm\Runtime\Cache\Frontend\23f62fe0aea9da5ffde8c0f060efd599.php 第 162 行.
+NOTIC: [8] Undefined index: hidden D:\wamp\www\yinxing_pm\Common\widget.php 第 283 行.
+NOTIC: [8] Undefined index: type D:\wamp\www\yinxing_pm\Common\widget.php 第 284 行.
+NOTIC: [8] Undefined index: name D:\wamp\www\yinxing_pm\Common\widget.php 第 287 行.
+NOTIC: [8] Undefined index: identifier D:\wamp\www\yinxing_pm\Runtime\Cache\Frontend\23f62fe0aea9da5ffde8c0f060efd599.php 第 163 行.
+NOTIC: [8] Undefined index: identifier D:\wamp\www\yinxing_pm\Common\widget.php 第 283 行.
+NOTIC: [8] Undefined index: identifier D:\wamp\www\yinxing_pm\Common\widget.php 第 284 行.
+NOTIC: [8] Undefined index: identifier D:\wamp\www\yinxing_pm\Common\widget.php 第 287 行.
+NOTIC: [8] Undefined index: identifier D:\wamp\www\yinxing_pm\Common\widget.php 第 259 行.
+NOTIC: [8] Undefined index: email D:\wamp\www\yinxing_pm\Runtime\Cache\Frontend\23f62fe0aea9da5ffde8c0f060efd599.php 第 164 行.
+NOTIC: [8] Undefined index: hidden D:\wamp\www\yinxing_pm\Common\widget.php 第 283 行.
+NOTIC: [8] Undefined index: type D:\wamp\www\yinxing_pm\Common\widget.php 第 284 行.
+NOTIC: [8] Undefined index: email D:\wamp\www\yinxing_pm\Common\widget.php 第 287 行.
+NOTIC: [8] Undefined index: mobile D:\wamp\www\yinxing_pm\Runtime\Cache\Frontend\23f62fe0aea9da5ffde8c0f060efd599.php 第 165 行.
+NOTIC: [8] Undefined index: hidden D:\wamp\www\yinxing_pm\Common\widget.php 第 283 行.
+NOTIC: [8] Undefined index: type D:\wamp\www\yinxing_pm\Common\widget.php 第 284 行.
+NOTIC: [8] Undefined index: mobile D:\wamp\www\yinxing_pm\Common\widget.php 第 287 行.
+NOTIC: [8] Undefined index: mobile D:\wamp\www\yinxing_pm\Runtime\Cache\Frontend\23f62fe0aea9da5ffde8c0f060efd599.php 第 166 行.
+NOTIC: [8] Undefined index: recommender_name D:\wamp\www\yinxing_pm\Common\widget.php 第 283 行.
+NOTIC: [8] Undefined index: recommender_name D:\wamp\www\yinxing_pm\Common\widget.php 第 284 行.
+NOTIC: [8] Undefined index: recommender_name D:\wamp\www\yinxing_pm\Common\widget.php 第 287 行.
+NOTIC: [8] Undefined index: recommender_name D:\wamp\www\yinxing_pm\Common\widget.php 第 259 行.
+NOTIC: [8] Undefined index: type D:\wamp\www\yinxing_pm\Common\widget.php 第 261 行.
+NOTIC: [8] Undefined index: order D:\wamp\www\yinxing_pm\Common\common.php 第 400 行.
+NOTIC: [8] Undefined index: type D:\wamp\www\yinxing_pm\Common\widget.php 第 261 行.
+NOTIC: [8] Undefined index: order D:\wamp\www\yinxing_pm\Common\common.php 第 400 行.
+NOTIC: [8] Undefined index: type D:\wamp\www\yinxing_pm\Common\widget.php 第 261 行.
+NOTIC: [8] Undefined index: order D:\wamp\www\yinxing_pm\Common\common.php 第 400 行.
+NOTIC: [8] Undefined index: recommender_name D:\wamp\www\yinxing_pm\Common\widget.php 第 259 行.
+NOTIC: [8] Undefined index: status_name D:\wamp\www\yinxing_pm\Common\widget.php 第 259 行.
+NOTIC: [8] Undefined index: update_time D:\wamp\www\yinxing_pm\Common\widget.php 第 259 行.
+NOTIC: [8] Undefined index: highlight_id D:\wamp\www\yinxing_pm\Runtime\Cache\Frontend\23f62fe0aea9da5ffde8c0f060efd599.php 第 175 行.
+NOTIC: [2] Missing argument 4 for column_item_value(), called in D:\wamp\www\yinxing_pm\Runtime\Cache\Frontend\23f62fe0aea9da5ffde8c0f060efd599.php on line 178 and defined D:\wamp\www\yinxing_pm\Common\widget.php 第 201 行.
+NOTIC: [8] Undefined variable: length D:\wamp\www\yinxing_pm\Common\widget.php 第 203 行.
+NOTIC: [2] Missing argument 4 for column_item_value(), called in D:\wamp\www\yinxing_pm\Runtime\Cache\Frontend\23f62fe0aea9da5ffde8c0f060efd599.php on line 178 and defined D:\wamp\www\yinxing_pm\Common\widget.php 第 201 行.
+NOTIC: [8] Undefined variable: length D:\wamp\www\yinxing_pm\Common\widget.php 第 203 行.
+NOTIC: [8] Undefined index: type D:\wamp\www\yinxing_pm\Common\widget.php 第 206 行.
+NOTIC: [8] Undefined index: link D:\wamp\www\yinxing_pm\Common\widget.php 第 216 行.
+NOTIC: [8] Undefined index: extra_type D:\wamp\www\yinxing_pm\Common\widget.php 第 242 行.
+NOTIC: [2] Missing argument 4 for column_item_value(), called in D:\wamp\www\yinxing_pm\Runtime\Cache\Frontend\23f62fe0aea9da5ffde8c0f060efd599.php on line 178 and defined D:\wamp\www\yinxing_pm\Common\widget.php 第 201 行.
+NOTIC: [8] Undefined variable: length D:\wamp\www\yinxing_pm\Common\widget.php 第 203 行.
+NOTIC: [8] Undefined index: type D:\wamp\www\yinxing_pm\Common\widget.php 第 206 行.
+NOTIC: [8] Undefined index: link D:\wamp\www\yinxing_pm\Common\widget.php 第 216 行.
+NOTIC: [8] Undefined index: extra_type D:\wamp\www\yinxing_pm\Common\widget.php 第 242 行.
+NOTIC: [2] Missing argument 4 for column_item_value(), called in D:\wamp\www\yinxing_pm\Runtime\Cache\Frontend\23f62fe0aea9da5ffde8c0f060efd599.php on line 178 and defined D:\wamp\www\yinxing_pm\Common\widget.php 第 201 行.
+NOTIC: [8] Undefined variable: length D:\wamp\www\yinxing_pm\Common\widget.php 第 203 行.
+NOTIC: [8] Undefined index: link D:\wamp\www\yinxing_pm\Common\widget.php 第 216 行.
+NOTIC: [8] Undefined index: extra_type D:\wamp\www\yinxing_pm\Common\widget.php 第 242 行.
+NOTIC: [2] Missing argument 4 for column_item_value(), called in D:\wamp\www\yinxing_pm\Runtime\Cache\Frontend\23f62fe0aea9da5ffde8c0f060efd599.php on line 178 and defined D:\wamp\www\yinxing_pm\Common\widget.php 第 201 行.
+NOTIC: [8] Undefined variable: length D:\wamp\www\yinxing_pm\Common\widget.php 第 203 行.
+NOTIC: [8] Undefined index: status_name D:\wamp\www\yinxing_pm\Common\widget.php 第 206 行.
+NOTIC: [8] Undefined index: status_name D:\wamp\www\yinxing_pm\Common\widget.php 第 216 行.
+NOTIC: [8] Undefined index: status_name D:\wamp\www\yinxing_pm\Common\widget.php 第 242 行.
+NOTIC: [2] Missing argument 4 for column_item_value(), called in D:\wamp\www\yinxing_pm\Runtime\Cache\Frontend\23f62fe0aea9da5ffde8c0f060efd599.php on line 178 and defined D:\wamp\www\yinxing_pm\Common\widget.php 第 201 行.
+NOTIC: [8] Undefined variable: length D:\wamp\www\yinxing_pm\Common\widget.php 第 203 行.
+NOTIC: [8] Undefined index: update_time D:\wamp\www\yinxing_pm\Common\widget.php 第 206 行.
+NOTIC: [8] Undefined index: update_time D:\wamp\www\yinxing_pm\Common\widget.php 第 216 行.
+NOTIC: [8] Undefined index: update_time D:\wamp\www\yinxing_pm\Common\widget.php 第 242 行.
+NOTIC: [8] Undefined index: highlight_id D:\wamp\www\yinxing_pm\Runtime\Cache\Frontend\23f62fe0aea9da5ffde8c0f060efd599.php 第 175 行.
+NOTIC: [2] Missing argument 4 for column_item_value(), called in D:\wamp\www\yinxing_pm\Runtime\Cache\Frontend\23f62fe0aea9da5ffde8c0f060efd599.php on line 178 and defined D:\wamp\www\yinxing_pm\Common\widget.php 第 201 行.
+NOTIC: [8] Undefined variable: length D:\wamp\www\yinxing_pm\Common\widget.php 第 203 行.
+NOTIC: [2] Missing argument 4 for column_item_value(), called in D:\wamp\www\yinxing_pm\Runtime\Cache\Frontend\23f62fe0aea9da5ffde8c0f060efd599.php on line 178 and defined D:\wamp\www\yinxing_pm\Common\widget.php 第 201 行.
+NOTIC: [8] Undefined variable: length D:\wamp\www\yinxing_pm\Common\widget.php 第 203 行.
+NOTIC: [8] Undefined index: type D:\wamp\www\yinxing_pm\Common\widget.php 第 206 行.
+NOTIC: [8] Undefined index: link D:\wamp\www\yinxing_pm\Common\widget.php 第 216 行.
+NOTIC: [8] Undefined index: extra_type D:\wamp\www\yinxing_pm\Common\widget.php 第 242 行.
+NOTIC: [2] Missing argument 4 for column_item_value(), called in D:\wamp\www\yinxing_pm\Runtime\Cache\Frontend\23f62fe0aea9da5ffde8c0f060efd599.php on line 178 and defined D:\wamp\www\yinxing_pm\Common\widget.php 第 201 行.
+NOTIC: [8] Undefined variable: length D:\wamp\www\yinxing_pm\Common\widget.php 第 203 行.
+NOTIC: [8] Undefined index: type D:\wamp\www\yinxing_pm\Common\widget.php 第 206 行.
+NOTIC: [8] Undefined index: link D:\wamp\www\yinxing_pm\Common\widget.php 第 216 行.
+NOTIC: [8] Undefined index: extra_type D:\wamp\www\yinxing_pm\Common\widget.php 第 242 行.
+NOTIC: [2] Missing argument 4 for column_item_value(), called in D:\wamp\www\yinxing_pm\Runtime\Cache\Frontend\23f62fe0aea9da5ffde8c0f060efd599.php on line 178 and defined D:\wamp\www\yinxing_pm\Common\widget.php 第 201 行.
+NOTIC: [8] Undefined variable: length D:\wamp\www\yinxing_pm\Common\widget.php 第 203 行.
+NOTIC: [8] Undefined index: link D:\wamp\www\yinxing_pm\Common\widget.php 第 216 行.
+NOTIC: [8] Undefined index: extra_type D:\wamp\www\yinxing_pm\Common\widget.php 第 242 行.
+NOTIC: [2] Missing argument 4 for column_item_value(), called in D:\wamp\www\yinxing_pm\Runtime\Cache\Frontend\23f62fe0aea9da5ffde8c0f060efd599.php on line 178 and defined D:\wamp\www\yinxing_pm\Common\widget.php 第 201 行.
+NOTIC: [8] Undefined variable: length D:\wamp\www\yinxing_pm\Common\widget.php 第 203 行.
+NOTIC: [8] Undefined index: status_name D:\wamp\www\yinxing_pm\Common\widget.php 第 206 行.
+NOTIC: [8] Undefined index: status_name D:\wamp\www\yinxing_pm\Common\widget.php 第 216 行.
+NOTIC: [8] Undefined index: status_name D:\wamp\www\yinxing_pm\Common\widget.php 第 242 行.
+NOTIC: [2] Missing argument 4 for column_item_value(), called in D:\wamp\www\yinxing_pm\Runtime\Cache\Frontend\23f62fe0aea9da5ffde8c0f060efd599.php on line 178 and defined D:\wamp\www\yinxing_pm\Common\widget.php 第 201 行.
+NOTIC: [8] Undefined variable: length D:\wamp\www\yinxing_pm\Common\widget.php 第 203 行.
+NOTIC: [8] Undefined index: update_time D:\wamp\www\yinxing_pm\Common\widget.php 第 206 行.
+NOTIC: [8] Undefined index: update_time D:\wamp\www\yinxing_pm\Common\widget.php 第 216 行.
+NOTIC: [8] Undefined index: update_time D:\wamp\www\yinxing_pm\Common\widget.php 第 242 行.
+NOTIC: [8] Undefined index: highlight_id D:\wamp\www\yinxing_pm\Runtime\Cache\Frontend\23f62fe0aea9da5ffde8c0f060efd599.php 第 175 行.
+NOTIC: [2] Missing argument 4 for column_item_value(), called in D:\wamp\www\yinxing_pm\Runtime\Cache\Frontend\23f62fe0aea9da5ffde8c0f060efd599.php on line 178 and defined D:\wamp\www\yinxing_pm\Common\widget.php 第 201 行.
+NOTIC: [8] Undefined variable: length D:\wamp\www\yinxing_pm\Common\widget.php 第 203 行.
+NOTIC: [2] Missing argument 4 for column_item_value(), called in D:\wamp\www\yinxing_pm\Runtime\Cache\Frontend\23f62fe0aea9da5ffde8c0f060efd599.php on line 178 and defined D:\wamp\www\yinxing_pm\Common\widget.php 第 201 行.
+NOTIC: [8] Undefined variable: length D:\wamp\www\yinxing_pm\Common\widget.php 第 203 行.
+NOTIC: [8] Undefined index: type D:\wamp\www\yinxing_pm\Common\widget.php 第 206 行.
+NOTIC: [8] Undefined index: link D:\wamp\www\yinxing_pm\Common\widget.php 第 216 行.
+NOTIC: [8] Undefined index: extra_type D:\wamp\www\yinxing_pm\Common\widget.php 第 242 行.
+NOTIC: [2] Missing argument 4 for column_item_value(), called in D:\wamp\www\yinxing_pm\Runtime\Cache\Frontend\23f62fe0aea9da5ffde8c0f060efd599.php on line 178 and defined D:\wamp\www\yinxing_pm\Common\widget.php 第 201 行.
+NOTIC: [8] Undefined variable: length D:\wamp\www\yinxing_pm\Common\widget.php 第 203 行.
+NOTIC: [8] Undefined index: type D:\wamp\www\yinxing_pm\Common\widget.php 第 206 行.
+NOTIC: [8] Undefined index: link D:\wamp\www\yinxing_pm\Common\widget.php 第 216 行.
+NOTIC: [8] Undefined index: extra_type D:\wamp\www\yinxing_pm\Common\widget.php 第 242 行.
+NOTIC: [2] Missing argument 4 for column_item_value(), called in D:\wamp\www\yinxing_pm\Runtime\Cache\Frontend\23f62fe0aea9da5ffde8c0f060efd599.php on line 178 and defined D:\wamp\www\yinxing_pm\Common\widget.php 第 201 行.
+NOTIC: [8] Undefined variable: length D:\wamp\www\yinxing_pm\Common\widget.php 第 203 行.
+NOTIC: [8] Undefined index: link D:\wamp\www\yinxing_pm\Common\widget.php 第 216 行.
+NOTIC: [8] Undefined index: extra_type D:\wamp\www\yinxing_pm\Common\widget.php 第 242 行.
+NOTIC: [2] Missing argument 4 for column_item_value(), called in D:\wamp\www\yinxing_pm\Runtime\Cache\Frontend\23f62fe0aea9da5ffde8c0f060efd599.php on line 178 and defined D:\wamp\www\yinxing_pm\Common\widget.php 第 201 行.
+NOTIC: [8] Undefined variable: length D:\wamp\www\yinxing_pm\Common\widget.php 第 203 行.
+NOTIC: [8] Undefined index: status_name D:\wamp\www\yinxing_pm\Common\widget.php 第 206 行.
+NOTIC: [8] Undefined index: status_name D:\wamp\www\yinxing_pm\Common\widget.php 第 216 行.
+NOTIC: [8] Undefined index: status_name D:\wamp\www\yinxing_pm\Common\widget.php 第 242 行.
+NOTIC: [2] Missing argument 4 for column_item_value(), called in D:\wamp\www\yinxing_pm\Runtime\Cache\Frontend\23f62fe0aea9da5ffde8c0f060efd599.php on line 178 and defined D:\wamp\www\yinxing_pm\Common\widget.php 第 201 行.
+NOTIC: [8] Undefined variable: length D:\wamp\www\yinxing_pm\Common\widget.php 第 203 行.
+NOTIC: [8] Undefined index: update_time D:\wamp\www\yinxing_pm\Common\widget.php 第 206 行.
+NOTIC: [8] Undefined index: update_time D:\wamp\www\yinxing_pm\Common\widget.php 第 216 行.
+NOTIC: [8] Undefined index: update_time D:\wamp\www\yinxing_pm\Common\widget.php 第 242 行.
+INFO: Run ParseTemplate Behavior [ RunTime:0.407756s ]
+INFO: [ view_parse ] --END-- [ RunTime:0.408019s ]
+INFO: [ view_filter ] --START--
+INFO: Run ContentReplace Behavior [ RunTime:0.002376s ]
+INFO: Run TokenBuild Behavior [ RunTime:0.001436s ]
+INFO: Run WriteHtmlCache Behavior [ RunTime:0.001702s ]
+INFO: Run ShowRuntime Behavior [ RunTime:0.001922s ]
+INFO: [ view_filter ] --END-- [ RunTime:0.008149s ]
+INFO: [ view_end ] --START--
+INFO: Run ShowPageTrace Behavior [ RunTime:0.001375s ]
+INFO: [ view_end ] --END-- [ RunTime:0.001599s ]
+

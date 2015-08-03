@@ -1,0 +1,12 @@
+<layout name="../Common/Public/dialog_with_confirm"/>
+
+<form action="__URL__/submit_project_types" method="post"  class="form-horizontal dialog_validator">
+    <foreach name="types" item="one">
+        <p>
+            <input type="hidden" name="type_id_{$key}" value="{$key}"/>
+            <input type="text" class="span2" name="type_name_{$key}" value="{$one}"/>
+        </p>
+    </foreach>
+    <p><input type="text" class="span2" name="type_name_{$key+1}" value=""/></p>
+    <p><input type="text" class="span2" name="type_name_{$key+2}" value=""/></p> 
+</form>

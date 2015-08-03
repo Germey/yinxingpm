@@ -1,0 +1,57 @@
+<if condition="can_audit($login_user)">
+  <?php
+    // $default_participant_users
+    $tos = D('Users')->getGroupUsers(21,1, 100);
+
+    foreach ($tos as $to) {
+        $default_participant_users .= ", " . $to['realname'];
+    }
+    $default_participant_users = trim($default_participant_users,', ');
+
+  ?>
+  <div style="text-align:right"><a onclick="$('#edit_part').toggle()" class="btn btn-small btn-danger"><i class="icon-plus icon-white"></i>新会议纪要</a></div>
+  <div id="edit_part" {$meeting?'':'style="display:none"'} class="clearfix">
+    <form method="post" action="/project/submit_meeting" enctype="multipart/form-data" class="validator form-horizontal" style="background:#F4F4F4; padding:10px 20px">
+      <input type="hidden" name="id" value="{$meeting['id']}"/>
+      <input type="hidden" name="project_id" value="{$project['id']}"/>
+      <input type="hidden" name="meeting_type" value="meeting"/>
+      <p><b>新建会议纪要</b></p>
+      <p>记录人：{$login_user['realname']} &nbsp;&nbsp; 
+        <input type="text" name="meeting_time" class="span3" value="{$meeting['meeting_time']?$meeting['meeting_time']:date('Y-m-d H:i:s')}" /><span class="muted">&nbsp;若修改请保持该日期格式</span>
+      </p>
+      <p>参会人员：　<input type="text" class="span10" name="participant_users" value="{$meeting['participant_users']?$meeting['participant_users']:$default_participant_users}"/></p>
+      <textarea name="meeting_content" id="meeting_content" class="editor">{$meeting['meeting_content']}</textarea>
+      <p>
+      <input type="submit" class="btn btn-small btn-danger" value="提交" />&nbsp;<span class="muted">提交后可更改</span>
+      </p>
+   </form>
+  </div>
+  <div class="clear"></div>
+</if>
+
+<!--TODO-权限-->
+<if condition="$meetings">
+<table class="table table-striped">
+  <thead><tr><th>时间 / 记录人</th><th nowrap>参会人</th><th>会议纪要</th><th>操作</th></tr></thead>
+  <foreach name="meetings" item="one">
+    <tr>
+      <td nowrap>
+        <p title="{$one['meeting_time']}">{:substr($one['meeting_time'],0,10)}</p>
+        <p>{:M('Users')->getFieldById($one['create_user_id'],'realname')}</p>
+      </td>
+      <td>
+        <p>{$one['participant_users']}</p>
+      </td>
+      <td>{:nl2br($one['meeting_content'])}</td>
+      <td>
+        <if condition="can_audit($login_user)">        
+          <p><a href="/project/detail/{$project['id']}?records_key=meetings&meeting_id={$one['id']}#somerecords">编辑</a></p>
+          <!-- <p><a href="/mail?meeting_id={$one['id']}" target="_blank">发送</a></p> -->
+        <else />
+          -
+        </if>
+      </td>
+    </tr>
+  </foreach>
+</table>
+</if>

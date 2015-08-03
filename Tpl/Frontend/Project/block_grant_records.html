@@ -1,0 +1,21 @@
+<h5 class="clear bg colortip">2. 项目拨款记录 &nbsp; {$project['grant_amount_ratio']}
+  <if condition="can_finance($login_user, $project)">
+    <div class="pull-right"><a class="btn btn-primary btn-small ajaxlink" href="/project/render_grant_records?id={$project['id']}" ><i class="icon-edit icon-white"></i>编辑拨款记录</a></div>
+  </if>
+</h5>
+
+<div style="padding-left: 15px;">
+  <table class="table">
+    <tr>
+      <td style="width:50%; border-top:none">
+        <table class="table table-bordered">
+          <tr><th></th><th>日期</th><th>金额</th><th>发票编号</th><th>备注</th></tr>
+          <foreach name="project['grant_records']['actual']" item="one">
+            <tr><td><b>#{$key+1}</b></td><td nowrap>{$one['grant_time']}</td><td><b>{:moneyit($one['amount'])}</b></td><td>{$one['invoice']}</td><td>{$one['note']}</td></tr>
+          </foreach>
+        </table>
+      </td>
+    </tr>
+  </table>  
+</div>
+<div class="clear"><br /></div>

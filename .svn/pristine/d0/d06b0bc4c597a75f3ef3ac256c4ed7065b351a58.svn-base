@@ -1,0 +1,38 @@
+<layout name="../Common/Public/dialog_with_confirm"/>
+<form action="__URL__/user_submit"  method="post"  class="form-horizontal dialog_validator">
+    <input type="hidden" name="id" value="{$user.id}">
+    <div class="control-group">
+        <label class="control-label" for="point_title">登录名&nbsp;<span class="text-error">*</span></label>
+        <div class="controls">
+          <input require="true" datatype="require|ajax" msg="登录名不可为空|该用户名已经被使用" type="text" id="name" value="{$user.username}" url="/common/validate/check_username" vname="id-{$user.id}" name="username" placeholder="">
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="point_title">真实姓名&nbsp;<span class="text-error">*</span></label>
+        <div class="controls">
+          <input type="text" id="realname" value="{$user.realname}" name="realname" placeholder="">
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="point_title">邮箱&nbsp;<span class="text-error">*</span></label>
+        <div class="controls">
+          <input type="text" id="email" value="{$user.email}" name="email" placeholder="">
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="point_title">部门&nbsp;<span class="text-error">*</span></label>
+        <div class="controls" id="markers">
+            <select name="group" id="group">
+                <foreach name="groups" item="one">
+                <option value="{$one.id}" <if condition="$group_id == $one['id']" >selected</if>>{$one.name}</option>
+                </foreach>
+            </select>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="point_title">密码</label>
+        <div class="controls">
+          <input type="password" id="password"  name="password" placeholder="留空表示不修改密码">
+        </div>
+    </div>
+</form>

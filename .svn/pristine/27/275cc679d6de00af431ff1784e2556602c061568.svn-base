@@ -1,0 +1,172 @@
+<h4 class="pull-left"  style="font-size:18px; margin-right: 10px; margin-top: 12px; color:#666;">{$apply_type_name}</h4>
+<if condition="can_edit($login_user)">
+<div class="btn-toolbar">
+    <div class="btn-group">
+        <button class="btn btn-small dropdown-toggle" data-toggle="dropdown"><i class="icon-share-alt"></i>导出 <span class="caret"></span></button>
+        <ul class="dropdown-menu">
+          <li><a href="javascript:void(0)" onclick="export_users('check', '{$_GET['status']}', '{$_GET['apply_type_id']}','')">导出选中成员基本资料</a></li>
+          <li><a href="javascript:void(0)" onclick="export_users('all', '{$_GET['status']}', '{$_GET['apply_type_id']}','')">导出全部成员基本资料</a></li>
+          <li class="divider"></li>
+          <li><a href="javascript:void(0)" onclick="export_users('check', '{$_GET['status']}', '{$_GET['apply_type_id']}','school')">导出选中成员任教信息</a></li>
+          <li><a href="javascript:void(0)" onclick="export_users('all', '{$_GET['status']}', '{$_GET['apply_type_id']}','school')">导出全部成员任教信息</a></li>
+        </ul>
+    </div>
+    <button class="btn btn-small" onclick="massdelete()"><i class="icon-trash"></i>{$Think.lang.delete}</button>
+    <button class="btn btn-link"><a target="_blank" href="/task?status={$_GET['status']}&status_name={$user_statuses[$_GET['status']]}">查看任务列表</a></button>
+</div>
+</if>
+<form method="get" action="/user/{$action_name}" class="view-filter">
+    <input type="hidden" name="status" value="{$_GET['status']}" />
+    <input type="hidden" name="apply_type_id" value="{$_GET['apply_type_id']}" />
+    {:display_filter_item('name',$_GET['name'],$all_columns)}
+    {:display_filter_item('identifier',$_GET['identifier'],$all_columns)}
+    {:display_filter_item('email',$_GET['email'],$all_columns)}
+    {:display_filter_item('mobile',$_GET['mobile'],$all_columns)}
+    {:display_filter_item('recommender_name',$_GET['mobile'],$all_columns)}
+    <button class="btn btn-small">{$Think.lang.search}</button>
+</form>
+
+<table class="table table-striped table-hover">
+<tr>
+    <th width="10"><input type="checkbox" onclick="checkall(this)"></th>
+    <foreach name="list_views" item="v">
+      <th class="nowrap">{:column_item_key($v,$all_columns, 'user/'.$action_name)}</th>
+    </foreach>
+</tr>
+<foreach name="users" item="one">
+  <tr class="projectlist <if condition="$one['id'] == $_GET['highlight_id']">success</if>" value="{$one['id']}" id='tr{$one['id']}'>
+    <td width="10"><input type="checkbox" id="{$one['id']}" value="{$one['id']}::{$one['email']}::{$one['mobile']}"></td>
+    <foreach name="list_views" item="v">
+        <?php
+            $class="";
+            if(strlen($one[$v]) < 20) {
+                $class = 'nowrap';
+            }
+        ?>
+      <td {$class}>{:column_item_value($v, $one, $list_columns)}</td>
+    </foreach>
+  </tr>
+</foreach>
+</table>
+<div class="text-right">{$pagestring}<div>
+
+<script type="text/javascript">
+    //待改进
+    $(document).ready(function() {
+        $(".icon-edit-small").hide();
+    });
+
+    $(document).ready(function() {
+        $('.icon-edit-small').parent().parent().mouseover(function(){
+            var id = $(this).parent().attr('value');
+            $("#icon-edit-holder-"+id).hide();
+            $("#icon-edit-"+id).show();
+        });
+
+        $('.icon-edit-small').parent().parent().mouseout(function(){
+            var id = $(this).parent().attr('value');
+            $("#icon-edit-"+id).hide();
+            $("#icon-edit-holder-"+id).show();
+        });
+    });
+
+    //抽离出来，给别的页面也一样用
+    function checkall(item) {  
+        var checked = $(item).attr('checked');
+        $(".projectlist input:checkbox").each(function() {
+              var vs = this.id;
+              if(checked == 'checked') {
+                    this.checked = true;
+                    $('#tr'+vs).addClass('info');
+              } else {
+                    this.checked = false;
+                    $('#tr'+vs).removeClass('info');
+              }
+        });
+    }
+
+    $(".projectlist input:checkbox").click(function(){
+        // alert(this.value);
+          var vs = this.id;
+          if(this.checked) {
+                $('#tr'+vs).addClass('info');
+          } else {
+                $('#tr'+vs).removeClass('info');
+          }            
+    });
+
+    function stat() {
+        var ids = get_checked_ids('id');
+        if(ids) {
+            return window.open('/stat/project?ids='+ids);
+        }
+    }
+
+
+    function massdelete() {
+        var e = '';
+        var count = 0;
+        $(".projectlist input:checkbox").each(function() {
+              if(this.checked) {
+                    var vs = this.id;
+                    if(vs) {
+                        count++;
+                        e += vs + ',';
+                    }
+              }
+        });
+        if(!count) return;
+        if(window.confirm("确认删除这"+count+"个项目？")) {
+            return X.get('/user/massdelete?ids='+e);
+        }
+    }
+
+    function massdelete_callback(ids_str) {
+        var ids = ids_str.split(',');
+        // console.log(ids);
+        var i = 0;
+        var id = 0;
+        for(i=0; i<ids.length;i++) {
+            id = ids[i];
+            if(id) {
+                $("#tr"+id).hide('slow', function(){ $("#tr"+id).remove(); });
+            }
+        }
+    }
+
+    function export_users(type, status, type_id, infotype) {
+        var ids = '';
+        if(type == 'all') {
+            if(!window.confirm("确认导出所有该状态的成员？")) {
+                return;
+            }
+        } else {
+            ids = get_checked_ids('id');
+            if(!ids || !window.confirm("确认导出选中的成员？")) {
+                return;
+            }  
+        }
+        return window.open('/user/export_users?status='+status+'&ids='+ids+'&apply_type_id='+type_id+'&infotype='+infotype);
+    }
+
+    function get_checked_ids(from) {
+        var ids = '';
+        $(".projectlist input:checkbox").each(function() {
+              if(this.checked) {
+                if(from=='id') {
+                    var vs = this.id;
+                    if(vs) {
+                        ids += vs + ',';
+                    }
+                } else {
+                    var vs = this.value.split('::');
+                    ids += vs[0] + ',';                    
+                }
+              }
+        });
+
+        if(!ids) return alert('至少要选中一条记录');
+        return ids;
+    }
+
+</script>

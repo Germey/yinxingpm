@@ -1,0 +1,30 @@
+<layout name="Public/frontend_template"/>
+<div id="content" class="wide">
+<h4>成员任务列表【{$_GET['status_name']?$_GET['status_name']:'全部'}】</h4>
+    <table class="table table-bordered">
+        <tr>
+            <th>成员</th>
+            <foreach name="task_list" item="one">
+                <th style="text-align: center">{$one}</th>
+            </foreach>
+        </tr>
+        <foreach name="users" item="one">
+            <tr>            
+                <td><a target="_blank" href="/user/detail/{$one['id']}">{$one['name']}</a></td>
+                <foreach name="task_list" key="tkey" item="tone">
+                    <td style="text-align: center">
+                        <if condition="$one['task'][$tkey]['done']"><img src="/styles/css/images/check.png"/></if>
+
+                        <if condition="$one['task'][$tkey]['note']">
+                            <a href="#" class="mytooltip" data-toggle="tooltip" data-placement="top" title="{$one['task'][$tkey]['note']}">
+                                <img src="/styles/css/images/note.png"/>
+                            </a>
+                        <else />
+                        </if>
+                    </td>
+                </foreach>                
+            </tr>
+        </foreach>
+      </table>
+    </div>
+</div>

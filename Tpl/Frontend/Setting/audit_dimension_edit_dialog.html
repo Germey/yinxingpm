@@ -1,0 +1,33 @@
+<layout name="../Common/Public/dialog_with_confirm"/>
+<form action="__URL__/dimension_submit"  method="post"  class="form-horizontal">
+  <input type="hidden" value="{$dimension['id']}" name="id">
+  <table class="table table-noborder">
+    <tr>
+      <td><b>类型</b></td>
+      <td><select name="apply_type_id">{:Utility::Option($apply_types, $dimension['apply_type_id']?$dimension['apply_type_id']:$type_id)}</select></td>
+    </tr>
+    <tr>
+      <td><b>评审阶段</b></td>
+      <td><select name="status">{:Utility::Option($audit_status, $dimension['status'])}</select></td>
+    </tr>
+    <tr>
+      <td><b>考核点</b></td>
+      <td><input type="text" id="key" name="key" value="{$dimension.key}" class="span7"></td>
+    </tr>
+    <tr>
+      <td><b>判断/备注</b></td>
+      <td><textarea id="note" name="note" class="span7">{$dimension.note}</textarea></td>
+    </tr>
+    <tr>
+      <td><b>问题参考</b></td>
+      <td><textarea id="reference" name="reference" class="span7">{$dimension.reference}</textarea></td>
+    </tr>
+    <tr>
+      <td><b>显示权重</b></td>
+      <td>
+        <input type="number" id="sequence" value="{$dimension.sequence}" name="sequence" class="span1">
+        &nbsp;<span class="muted">越大显示越靠前</span>
+      </td>
+    </tr>
+  </table>
+</form>

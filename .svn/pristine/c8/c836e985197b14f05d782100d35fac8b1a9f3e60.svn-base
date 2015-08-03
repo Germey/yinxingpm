@@ -1,0 +1,90 @@
+<layout name="Public/frontend_template"/>
+
+<script type="text/javascript" src="/styles/js/highcharts/js/highcharts.js"></script>
+
+<div id="content" class="wide">
+    <ul class="nav nav-tabs">
+      <li><a href="/stat/index">基本统计</a></li>      
+      <li><a href="/stat/project">项目统计</a></li>
+      <li class="active"><a href="/stat/partner">机构统计</a></li>
+    </ul>
+
+    <form action="/stat/partner" method="get" style="margin-bottom: 50px;">
+        <select class="chosen-select span2" multiple name="sgrantcounts[]" data-placeholder=" - 资助次数 - ">{:Utility::Option($grant_count_range, $sgrantcounts)}</select>
+        <select class="chosen-select span2" multiple name="syears[]" data-placeholder=" - 机构年限 -">{:Utility::Option($year_range, $syears)}</select>
+        <select class="chosen-select span2" multiple name="showtoknows[]" data-placeholder=" - 信息来源渠道 - ">{:Utility::Option($howtoknow_range, $showtoknows)}</select>
+        <select class="chosen-select span2" multiple name="sareas[]" data-placeholder=" - 所在大区 - ">{:Utility::Option($area_range, $sareas)}</select>
+        <select class="chosen-select span2" multiple name="sprovinces[]" data-placeholder=" - 所在省份 - ">{:Utility::Option($province_range, $sprovinces)}</select>
+        <input type="submit" class="btn btn-small" value="筛选" />
+        <a class="btn btn-link" href="/stat/partner">重置</a>
+    </form>
+
+    <table class="stat">
+      <?php 
+            $stat_type_name='资助次数';
+            $stat_type_data = $project_count_data;
+            $key_stat_type_key = 'project_count';
+            $stat_type_pcount_map = $project_count_pcount_map;
+            $stat_type_amount_map = $project_count_amount_map;
+            $search_key = "grant_count";
+      ?>
+      <include file="partner_stat_block" />
+
+      <?php
+            $stat_type_name='机构年限';
+            $stat_type_data = $year_data;
+            $key_stat_type_key = 'year';
+            $stat_type_pcount_map = $year_pcount_map;
+            $stat_type_amount_map = $year_amount_map;
+            $search_key = "found_year_range";
+        ?>
+      <include file="partner_stat_block" />
+
+     <?php
+            $stat_type_name='机构状态';
+            $stat_type_data = $status_data;
+            $key_stat_type_key = 'status';
+            $stat_type_pcount_map = $status_pcount_map;
+            $stat_type_amount_map = $status_amount_map;
+            $search_key = "";
+        ?>
+      <include file="partner_stat_block" />
+
+      <?php 
+            $stat_type_name='信息来源渠道分布';
+            $stat_type_data = $howtoknow_data;
+            $key_stat_type_key = 'amount';
+            $stat_type_pcount_map = $howtoknow_pcount_map;
+            $stat_type_amount_map = $howtoknow_amount_map;
+            $search_key = "";
+      ?>
+      <include file="partner_stat_block" />
+
+
+      <?php 
+            $stat_type_name='大区';
+            $stat_type_data = $area_data;
+            $key_stat_type_key = 'area';
+            $stat_type_pcount_map = $area_pcount_map;
+            $stat_type_amount_map = $area_amount_map;
+            $search_key = null;
+        ?>
+      <include file="partner_stat_block" />
+
+      <?php 
+            $stat_type_name='省份';
+            $stat_type_data = $add_data;
+            $key_stat_type_key = 'address';
+            $stat_type_pcount_map = $add_pcount_map;
+            $stat_type_amount_map = $add_amount_map;
+            $search_key = "address_province";
+        ?>
+      <include file="partner_stat_block" />
+
+    </table>
+
+</div>
+
+<script type="text/javascript">
+    $(".chosen-select").chosen();
+</script>

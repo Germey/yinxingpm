@@ -1,0 +1,54 @@
+<?php
+  $user_schools = D("Schools")->getSchoolUserInfo($user['id']);
+
+  // $school
+  $tmp_schools = D("Schools")->field('id,name,province,city')->select();
+  foreach ($tmp_schools as $key => $value) {
+    $tmp_school_array[$value['id']] = $value['province'] . ' ' . $value['city'] . ' '. $value['name'];
+  }
+  $school_json_string = json_encode_for_xedit($tmp_school_array);
+?>
+
+
+<h5 class="clear bg colortip" title="点击展开/合并" style="cursor: pointer;" onclick="toggle_content_block('_school_content');">
+  4. 任教信息<i class="icon-fullscreen"></i>
+</h5>
+<a name="schoolinfo"></a>
+
+<div id="_school_content" {$user['pm_display_toggle']['_school_content']?'style="display:none;padding-left:20px;"':'style="padding-left:20px;"'}>
+  <p style="text-align: right;">
+    <a href="#schoolinfo" id="addschool" name="addschool" style="color:#b94a48" data-type="select2" data-pk="{$user['id']}" data-url="/user/ajax_add_school" data-title="增加支教学校">
+        增加支教学校
+    </a>
+  </p>
+
+  <foreach name="user_schools" item="one">
+    <div>    
+        <a style="font-size: 15px;" target="_blank" href="/school/detail/{$key}"><span class="label label-important">{$one['school']['province']} {$one['school']['city']} {$one['school']['name']}</span></a>
+        <span title="校长 联系方式">（{$one['school']['leader_name']} {$one['school']['leader_contact']}）</span>
+        <a href="/user/render_map_teach_detail?id={$one['id']}&uid={$user['id']}" class="ajaxlink pull-right">编辑课程详情</a>
+    </div>
+    {:display_group($one['teach_detail'], $map_teach_detail_group_option)}
+    <div>
+      <b>备注：</b>
+      <a href="#schoolinfo" class="editmapnote" 
+          data-type="textarea" 
+          data-pk="{$one['id']}" 
+          data-value="{$one['note']?$one['note']:'添加备注'}" 
+          data-url="/user/ajax_edit_mapping_note" 
+          data-title="编辑备注">{$one['note']?$one['note']:'添加备注'}</a>
+    </div><br />
+  </foreach>
+</div>
+
+<script type="text/javascript">
+  $('#addschool').editable({
+      source: {$school_json_string},
+      success: function(data, config) {
+        window.location.reload();
+      }
+  });
+
+  $('.editmapnote').editable({});
+
+</script>

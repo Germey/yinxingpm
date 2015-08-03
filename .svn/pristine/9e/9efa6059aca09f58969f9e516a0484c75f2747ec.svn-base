@@ -1,0 +1,28 @@
+<layout name="Public/frontend_template"/>
+<div id="content" class="wide">
+    <h4>量化统计项设置</h4>
+    <div>
+        <form action="__URL__/add_result_codes" method="post" class="form-horizontal" enctype="multipart/form-data">
+            <input name="name" type="text" placeholder="名称" class="span5" />
+            <input name="order" type="text" placeholder="顺序" class="span2" />
+            <input type="submit" class="btn btn-small btn-danger" value="创建" />
+        </form>
+    </div>
+    <table class="table table-striped table-hover">
+        <tr>
+            <th>名称</th>
+            <th>顺序</th>
+            <th>操作</th>
+        </tr>
+        <foreach name="result_codes" item="one">
+            <tr>
+                <td>{$one.name}</td>
+                <td>{$one.sequence}</td>
+                <td>
+                    <a href="__URL__/ajax_delete_result_code?id={$one.id}" ask="确定删除吗？" class="ajaxlink">删除</a>
+                </td>
+            </tr>
+        </foreach>
+    </table>
+    {$pagestring}
+</div>

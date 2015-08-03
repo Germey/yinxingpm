@@ -1,0 +1,30 @@
+<layout name="../FrontEnd/Public/frontend_template"/>
+<div class="span8 well" style="margin-left:0">
+  <form class="navbar-form" action="/search.php" method="get">
+    <div class="input-append">
+      <input type="text" name="skey" value="{$skey}"  class="span3">
+      <button type="submit" class="btn">搜索</button>
+    </div>
+  </form>
+
+  找到相关结果共 <b>{$all_count}</b> 个
+  <div class="search_content">
+      <foreach name="pages" item="one">
+          <div class="block">
+              <div class="hd"><a target="_blank" href="{$one['link']}">{:str_replace($skey,$replace,$one['title'])}</a></div>
+              <p><small>{:str_replace($skey,$replace,D('Search')->GetMatchContent($one['content'],$skey))}</small></p>
+              <small class="i">
+                <a href="/pagelist/{$one['type']['link']}">{$one['type']['name']}</a>&nbsp;&nbsp;
+                发布时间：{:substr($one['create_time'],0,10)}&nbsp;&nbsp;
+              </small>
+          </div>
+      </foreach>
+  </div>
+</div>
+
+<div class="well sidebar-nav sidebar_right">
+    <include file="FrontEnd:Public:sidebar_mangrove_news" />
+    <include file="FrontEnd:Public:sidebar_cmcn_news" />
+    <include file="FrontEnd:Public:sidebar_project" />
+    <include file="FrontEnd:Public:sidebar_download" />
+</div>

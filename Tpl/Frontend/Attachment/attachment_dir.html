@@ -1,0 +1,13 @@
+<layout name="../Frontend/Attachment/attachment_dialog_dir"/> 
+<!-- 放在此目录下因为本来已经写好了ajax代码，想直接拿ajax代码用 -->
+<table class="table table-bordered edit_att_dir">
+    <tr><th>目录名称</th><th>操作</th></tr>
+    <foreach name='dir_data' item='one'>
+        <tr class='{$one["id"]}'>
+            <td><input type='text' value='{$one["dir_name"]}'/></td>
+            <td><a href='javascript:void(0);'>删除</a></td>
+        </tr>
+    </foreach>
+</table>
+<p class='add_dir'><a class='btn btn-small ' id='add_att_dir' href='#'>添加</a></p>
+

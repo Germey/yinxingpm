@@ -1,0 +1,20 @@
+<include file="Common:Public:html_header" />
+<div class="navbar navbar-static-top">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="/">
+        <if condition="$login_user['team']['title_logo']" >
+          <img src="{:image_path($login_user['team']['title_logo'])}" style="height:38px;">
+          <else/>
+          {$login_user['team']['name']}
+        </if>
+        </a>
+      <div class="nav-collapse collapse" >
+        <ul class="nav">{:generate_nav($selector, $login_user)}</ul>
+      </div>
+        <div class="nav-right">
+          {$Think.lang.welcome}, {$login_user['username']}<span style="font-size:11px"> &nbsp; </span><a href="/login/logout">退出</a>
+        </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,17 @@
+<include file="Common:Public:header" />
+<div class="container" style="padding-top:10px; min-height:500px">
+    <if condition="$login_user['team']['logo']">
+        <a href="/"><img alt="{$login_user['team']['name']}" id="logo" src="{:image_path($login_user['team']['logo'])}"></a>
+    <else />
+        <div style="height:5px"></div> 
+    </if>
+    
+<div id="content" class="wide">
+    <div class="error_info">
+        URL访问错误
+    </div>
+</div>
+</div>
+<include file="Common:Public:footer" />
+
+

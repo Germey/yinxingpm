@@ -1,0 +1,100 @@
+<tr>
+  <td class="out">
+    <table class="table table-striped table-hover">
+        <thead><tr><th>{$stat_type_name}</th><th>项目数</th><th>申请金额</th><th>合同金额</th><th>实际资助金额</th></tr></thead>
+        <foreach name="stat_type_data" item="one">
+          <tr>
+            <td><b>
+                <if condition="$search_key">
+                    <a target="_blank" href="/project/all/?search_from=stat&{$search_key}={:urlencode($key)}">{$key}</a>
+                <else/>
+                    {$key}
+                </if>
+            </b></td>
+            <td>{$one['pcount']}</td>
+            <td>{$one['need_budget']}万</td><td>{$one['contract_budget']}万</td><td>{$one['had_grant_amount']}万</td></tr>
+        </foreach>
+    </table>
+  </td>
+  <td class="out">
+        <ul class="nav nav-tabs">
+          <li class="active"><a href="#{$key_stat_type_key}tab1" data-toggle="tab">{$stat_type_name}-项目数</a></li>
+          <li class=""><a href="#{$key_stat_type_key}tab2" data-toggle="tab">{$stat_type_name}-合同金额</a></li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="{$key_stat_type_key}tab1">
+              <div id="project_{$key_stat_type_key}_project_pie" class="small_highchart"></div>
+          </div>
+          <div class="tab-pane" id="{$key_stat_type_key}tab2">
+              <div id="project_{$key_stat_type_key}_amount_pie" class="small_highchart"></div>
+          </div>
+        </div>
+  </td>
+<tr>
+
+<script type="text/javascript">
+
+$(function () {
+        // 项目类型
+        var project_id_str = 'project_'+'{$key_stat_type_key}'+'_project_pie';
+        $('#'+project_id_str).highcharts({
+            credits: {text: ''},
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false
+            },
+            title: { text: '{$stat_type_name} - 项目数' },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        color: '#000000',
+                        connectorColor: '#000000',
+                        formatter: function() {
+                            return '<b>'+ this.point.name +'</b><br />'+ this.y + ' (' +Math.round(this.percentage*10)/10 + '%)';
+                        }
+                    }
+                }
+            },
+            series: [{
+                type: 'pie',
+                name: '项目数',
+                data: {:array_to_pie_chart_json($stat_type_pcount_map)}
+            }]
+        });
+
+        var amount_id_str = 'project_'+'{$key_stat_type_key}'+'_amount_pie';
+        $('#'+amount_id_str).highcharts({
+            credits: {text: ''},
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false
+            },
+            title: { text: '{$stat_type_name} - 项目金额数' },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        color: '#000000',
+                        connectorColor: '#000000',
+                        formatter: function() {
+                            return '<b>'+ this.point.name +'</b><br />'+ this.y + '万 (' +Math.round(this.percentage*10)/10 + '%)';
+                        }
+                    }
+                }
+            },
+            series: [{
+                type: 'pie',
+                name: '合同额',
+                data: {:array_to_pie_chart_json($stat_type_amount_map)}
+            }]
+        });
+    });
+  
+</script>

@@ -1,0 +1,15 @@
+<layout name="../Common/Public/dialog_with_confirm"/>
+<form action="__URL__/submit_map_teach_detail"  method="post" class="form-horizontal" enctype="multipart/form-data" style="margin:0">
+    <input type="hidden" name="id" value="{$school_id}"/>
+    <input type="hidden" name="uid" value="{$user_id}"/>
+    {$edit_part}
+</form>
+
+
+<script type="text/javascript">
+function add_group_line(key) {
+    var line = $('<div>').append($('#group_new_line_'+key).clone()).html();
+    $('#group_new_table_'+key).append(line);
+}
+    
+</script>

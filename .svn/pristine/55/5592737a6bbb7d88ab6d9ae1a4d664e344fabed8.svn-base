@@ -1,0 +1,7 @@
+<include file="Common:Public:header" />
+
+<div id="content" class="wide" style="text-align: center">
+  Just 404
+</div>
+
+<include file="Common:Public:footer" />

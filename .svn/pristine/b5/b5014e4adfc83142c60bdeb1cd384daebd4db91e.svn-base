@@ -1,0 +1,41 @@
+<?php
+  $all_tasks = D("Tasks")->where('type="%s"', $task_type)->order('sequence desc')->getField('id,title');
+
+  $f['object_type'] = $task_type;
+  $f['object_id'] = $task_object_id;
+  $finished = Utility::AssColumn(D("TaskMapping")->where($f)->select(), 'task_id');
+?>
+
+<a name="tasks"></a>
+<h5 class="clear bg colortip">任务列表</h5>
+<div style="padding-left: 20px;">
+  <table class="table table-bordered">
+    <tr><th></th><th>任务</th><th>备注</th><th>最后更新</th></tr>    
+    <foreach name="all_tasks" item="tname">
+      <tr>
+        <td width="15">
+          <input type="checkbox" id="{$one['id']}" {$finished[$key]['done']?'checked':''} onclick="ijustfinish({$task_object_id}, {$key}, '{$task_type}')">
+        </td>
+        <td nowrap {$finished[$key]['done']?'style="text-decoration: line-through;color:#999"':''}>{$tname}</td>
+        <td>
+          <a href="#" class="task_note" data-type="textarea" data-pk="{$finished[$key]['id']}::{$task_object_id}::{$key}::{$task_type}" data-value="{$finished[$key]['note']}" data-url="/task/ajax_task_note" data-title="备注">{$finished[$key]['note']?$finished[$key]['note']:'备注'}</a>
+        </td>
+        <td nowrap>
+          <if condition="$finished[$key]">
+            {:D("Users")->where('id=%d',$finished[$key]['update_user_id'])->getField('realname')}@{:substr($finished[$key]['update_time'],0,10)}         
+          </if>
+        </td>
+      </tr>
+    </foreach>
+  </table>
+</div>
+
+<script type="text/javascript">
+    function ijustfinish(object_id, task_id, task_type) {
+      X.get("/task/ajax_finish_task?object_id=" + object_id +"&task_id=" + task_id+"&task_type="+task_type);
+    }
+
+    $(document).ready(function() {
+      $('.task_note').editable({ });
+    });
+</script>

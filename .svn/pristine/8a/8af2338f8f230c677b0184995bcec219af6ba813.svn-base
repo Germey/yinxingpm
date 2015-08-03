@@ -1,0 +1,30 @@
+<layout name="Public/frontend_template"/>
+<div id="content" class="wide">
+    <h4>同步灵析表单数据设置</h4>
+    <blockquote>
+        <p>1. 灵析表单中必须关联“编号”字段，编号字段会自动关联志愿者教师和未来教育家的编号</p>
+        <p>2. 请在输入框中输入以“LXE”开头的加密字符串：查看或者编辑表单时候，在URL上可以看到该加密字符串，如：LXE1LP0HqC13BbIj</p>
+    </blockquote>
+
+    <form action="__URL__/lingxiform" method="post" class="form-horizontal" enctype="multipart/form-data">
+        <table class="table table-noborder" style="width:50%">
+            <tr><th>表单名称</th><th>表单加密ID</th></tr>
+            <foreach name="forms" item="one">
+                <tr>
+                    <tr>
+                        <td><input type="text" class="span4" name="name_{$key}" value="{$one['name']}" /></td>
+                        <td><input type="text" class="span3" name="id_{$key}" value="{$one['id']}"/></td>
+                    </tr>
+                </tr>
+            </foreach>
+            <tr>
+                <?php 
+                    $key = $key?$key+1:1; 
+                ?>
+                <td><input type="text" class="span4" name="name_{$key}"/></td>
+                <td><input type="text" class="span4" name="id_{$key}"/></td>
+            </tr>
+        </table>
+        <br /><input type="submit" class="btn btn-danger" value="保存" />
+    </form>
+</div>

@@ -1,0 +1,15 @@
+<if condition="!$user['bank_account_name'] OR !$user['bank_account'] OR !$user['bank_name']">
+  <h5 class="clear bg">请填写银行账户</h5>
+  <form method="post" action="/user/submit_contract" enctype="multipart/form-data" class="validator form-horizontal" style="border: 2px dashed #DDD; padding: 10px 20px; margin-top: -7px; ">
+    <input type="hidden" name="id" value="{$user['id']}"/>
+    <table class="table table-noborder">
+      <tr>
+        <td>银行账户名：　　<input class="span3" type="text" name="bank_account_name" value="{$user['bank_account_name']}"></td>
+        <td>银行账号：　　<input class="span3" type="text" name="bank_account" value="{$user['bank_account']}"/></td>
+        <td>开户行名称：　 <input class="span3" type="text" name="bank_name" value="{$user['bank_name']}"></td>
+      </tr>
+    </table>
+    <input type="submit" class="btn btn-danger" value="{$Think.lang.save}"/>&nbsp;
+    <span class="muted">信息保存后将展示到 “1. 基本资料”中，若要修改，请返回“待派遣状态”</span>
+  </form>
+</if>

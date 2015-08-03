@@ -1,0 +1,7 @@
+<include file="Common:Public:header" />
+<div class="container" style="padding-top:10px; min-height:500px">
+    {__CONTENT__}
+</div>
+<include file="Common:Public:footer" />
+
+

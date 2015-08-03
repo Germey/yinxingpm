@@ -1,0 +1,75 @@
+<layout name="Public/frontend_template"/>
+
+<div id="content" class="wide">
+  <div class="pull-right">
+      <a href="#attachments" class="btn btn-small btn-link">{$Think.lang.attachment} ({:count($attachments)})</a>
+      <a href="#notes" class="btn btn-small btn-link">{$Think.lang.note} ({:count($notes)})</a>
+      <a href="#tasks" class="btn btn-small btn-link">任务列表</a>
+      <if condition="can_edit_project($login_user,$project)">
+        &nbsp;&nbsp;<a href="/project/edit?id={$project['id']}" class="btn btn-small btn-link">{$Think.lang.edit}</a>
+      </if>
+
+  </div>
+
+  <input type="hidden" id="project_id" value="{$project['id']}"/>
+
+  <p style="font-size: 30px;"><if condition="$project['identifier']">【{$project.identifier}】</if>
+    {$project.title}
+      <span style="font-weight:normal;font-size:12px;padding-left:10px">（当前状态：
+        <span id="current_status"><b><span id="current_status_name">{$project['status_name']}</span></b>
+          <!--Permission-->
+          <if condition="can_edit_project($login_user,$project)">
+            <a href="javascript:void(0)" title="修改项目状态" onclick="$('#current_status').hide(); $('#current_status_edit').show();"><i class="icon-edit-small"></i></a>
+          </if>
+        </span>
+        <span id="current_status_edit" style="display:none">
+          <select class="span2" type="text" onchange="save_status(this)">{:Utility::Option($project_statuses,$project['status'])}</select>
+        </span>）
+      </span>
+  </p>
+
+  <h5 class="clear bg colortip">1. 项目基本信息</h5>
+
+  <ul class="list_display">
+      {:display_columns_list($all_columns, $project)}
+  </ul>
+
+  <include file="block_grant_records" />
+
+  <include file="block_school" />
+
+  <?php 
+    $module_name = 'project'; $module_object_id = $project['id'];
+    $attachment_type = "project"; $attachment_object_id = $project['id'];
+  ?>
+
+  <!-- attachments -->
+  <a name="attachments"></a><include file="Common:Public:attachment" />
+  <if condition="$project['related_link']">
+    <div style="padding-left:20px"><a href="{$project['related_link']}" target="_blank">资源库外链</a></div>
+  </if>
+
+  <!-- Notes -->
+  <a name="notes"></a><include file="Common:Public:note" />
+
+  <?php $task_type='project';  $task_object_id=$project['id'];  ?> 
+  <include file="Common:Public:block_task" />
+
+</div>
+
+<script type="text/javascript">
+  function save_status(item) {
+    return X.get('/project/ajax_save_status?pid='+$("#project_id").val()+'&sid='+$(item).val());
+  }
+
+  function save_status_callback(name) {
+    $('#current_status_name').html(name);
+    $('#current_status').show();
+    $('#current_status_edit').hide();
+  }
+
+  function toggle_content_block(key) {
+    $('#'+key).toggle(500);
+    X.get('/project/ajax_save_content_block_toggle?block='+key+'&id='+$("#project_id").val());
+  }
+</script>

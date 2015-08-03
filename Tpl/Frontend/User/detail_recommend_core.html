@@ -1,0 +1,46 @@
+  <!-- 基本信息 -->
+  <h5 class="clear bg colortip">1. 推荐人信息</h5>
+  <div>
+    <ul class="list_display" style="margin-top:5px">
+      <foreach name="recommend_columns" item="one">
+        <?php 
+          if($key=='name') break; 
+          if($key=='recommender_address') $user[$key] = $user[$key] . '（'. $user['recommender_address_zipcode'] .'）';
+          if($key=='recommender_address_zipcode') continue;
+        ?>
+        <if condition="$one['type'] eq  'group'">
+          {:display_group($user[$key], $one['options'], $one['display_name'])}
+        <else />
+          {:display_column_li($one['display_name'], nl2br($user[$key]), $one['display_colspan'])}
+        </if>
+      </foreach>
+    </ul>
+  </div>
+
+  <h5 class="clear bg colortip">2. 推荐理由（被推荐人信息）</h5>
+  <div>
+    <ul class="list_display" style="margin-top:5px">
+      <foreach name="recommend_columns" item="one">
+        <?php if(strpos($key,'recommender')===0) continue; ?>
+        {:display_column_li($one['display_name'], nl2br($user[$key]), $one['display_colspan'])}
+      </foreach>
+    </ul>
+    <div class="clear"></div>
+    <?php
+      $questions = D("UserQuestionAnswers")->getQuestionAnswers($user['recommend_user_id'], 1);
+    ?>
+    <div style="padding:0 30px">    
+      <foreach name="questions" item="answer">
+        <div style="margin-bottom: 20px">
+          <p style="background: #f4f4f4;padding:4px 0;font-weight: bold;">
+            <span class="label label-info">问</span>
+            {$key}
+          </p>
+          <p>
+            <span class="label label-important pull-left">答</span>
+            <div style="padding-left: 25px;">{:nl2br(trim($answer))}</div>
+          </p>
+        </div>
+      </foreach>
+    </div>
+  </div>

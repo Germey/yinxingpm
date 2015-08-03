@@ -1,0 +1,57 @@
+<layout name="Public/frontend_template"/>
+
+<div id="content" class="wide">
+  <h4>{$project?'编辑项目':'创建项目'}</h4>
+  <form method="post" action="/project/submit" enctype="multipart/form-data" class="validator form-horizontal">
+    <input type="hidden" name="id" value="{$project['id']}" />
+    <ul class="list_display">
+      {:display_edit_columns_list($all_columns, $project)}
+    </ul>
+    
+    <div class="act">
+      <input type="submit" class="btn btn-danger" value="{$Think.lang.save}"/>
+      <a class="btn btn-link" href="{$Think.server.http_referer}">{$Think.lang.cancel}</a>
+    </div>
+  </form>
+</div>
+<script type="text/javascript">
+
+  // 项目编号重复的话，提醒一下
+  $(document).ready(function() {
+    var identifier = $("#identifier");
+    if(identifier){
+      identifier.after("<span id='name_dup_hint' style='padding-left:5px'></span>");
+      identifier.bind('blur', function(){
+        var old_identifier = '{$project.identifier}';
+
+        if(identifier.val() == old_identifier) {
+            $("#name_dup_hint").html("");
+            return;
+        }
+        if(identifier.val() != ''){
+          $.ajax({
+            url: "/project/check_dup_ajax?identifier=" + identifier.val(),
+            success: function(html) {
+              if(html == 'true'){
+                $("#name_dup_hint").html("编号重复，<a onclick='view_dup_project_info(\"" + identifier.val() + "\", \"identifier\")' href='javascript:void(0);'>查看详细信息</a>");
+                return;
+              }else{
+                $("#name_dup_hint").html("");
+                return ;
+              }
+            }
+          });
+        }else{
+          $("#name_dup_hint").html("");
+          return ;
+        }
+      })
+    }
+  });
+
+
+  function view_dup_project_info(identifier) {
+      window.open('/project?identifier='+identifier);
+  }
+
+</script>

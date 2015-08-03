@@ -1,0 +1,49 @@
+<layout name="Public/frontend_template"/>
+<div id="content" class="wide">
+  <div class="pull-right">
+      <a href="/school/edit?id={$school['id']}" class="btn btn-small btn-link"><i class="icon icon-pencil"></i> 编辑</a>
+  </div>
+
+  <p style="font-size:32px;">{$school.name}</p>
+  <ul class="list_display">
+      {:display_columns_list($all_columns, $school)}
+  </ul>
+  
+  <h5 class="clear bg colortip colorTipContainer black">3. 志愿者老师信息</h5>
+  <div style="padding-left: 20px">    
+    <?php $idx =1; ?>
+    <foreach name="users" item="one">
+      <div>
+        <span class="label label-important">
+          <a target="_blank" href="/user/detail/{$one['user_id']}">
+            #{$idx++} {$one['user']['name']}
+          </a>&nbsp;
+        </span>&nbsp;
+        {$one['user']['gender']}&nbsp;
+        {$one['user']['mobile']}
+      </div>
+      {:display_group($one['teach_detail'], $map_teach_detail_group_option)}
+    </foreach>
+  </div>
+
+  <h5 class="clear bg colortip colorTipContainer black">4. 相关项目</h5>
+  <div style="padding-left: 20px;">
+    <table class="table table-bordered">
+      <tr>
+        <th>项目名称</th>
+        <th>资助方</th>
+        <th>备注</th>
+      </tr>
+      <foreach name="projects" item="one">
+        <tr>
+          <td><a target="_blank" href="/project/detail/{$one['project_id']}">{$one['project']['title']}</a></td>
+          <td>{$one['project']['donor']}</td>
+          <td>{:nl2br($one['note'])}</td>
+        </tr>
+      </foreach>
+    </table>
+  </div>
+
+</div>
+
+

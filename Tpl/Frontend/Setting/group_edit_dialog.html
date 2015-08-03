@@ -1,0 +1,23 @@
+<layout name="../Common/Public/dialog_with_confirm"/>
+<form action="__URL__/group_submit"  method="post"  class="form-horizontal">
+    <input type="hidden" value="{$group.id}" name="id">
+    <div class="control-group">
+        <label class="control-label" for="point_title">{$Think.lang.group_name}</label>
+        <div class="controls">
+          <input type="text" id="name" value="{$group.name}" name="name" placeholder="{$Think.lang.group_name}">
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="point_title">{$Think.lang.role_type}</label>
+        <div class="controls" id="markers">
+            <select name="role" id="role">
+                <option value="admin" <if condition="$group.role == 'admin'">selected</if>>{$Think.lang.admin}</option>
+                <option value="role_project" <if condition="$group.role == 'role_project'">selected</if>>{$Think.lang.role_project}</option>
+                <option value="role_finance" <if condition="$group.role == 'role_finance'">selected</if>>{$Think.lang.role_finance}</option>
+                <option value="role_expert" <if condition="$group.role == 'role_expert'">selected</if>>{$Think.lang.role_expert}</option>
+                <option value="role_audit" <if condition="$group.role == 'role_audit'">selected</if>>{$Think.lang.role_audit}</option>
+                <option value="role_read" <if condition="$group.role == 'role_read'">selected</if>>{$Think.lang.role_read}</option>
+            </select>
+        </div>
+    </div>
+</form>

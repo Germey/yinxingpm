@@ -1,0 +1,75 @@
+<layout name="Public/frontend_template"/>
+<div id="content" class="wide">
+    <h4>访问记录</h4>
+    <form method="get" action="/visit"  class="view-filter">
+        <foreach name="list_views" item="v">
+            {:display_filter_item($v,$_GET[$v],$all_columns)}
+        </foreach>
+        <button class="btn btn-small">{$Think.lang.search}</button>
+        <a class="btn btn-small" href="/visit"><i class="icon-repeat"></i></a>
+
+        <if condition="$login_user['role']=='admin'"> 
+          <a class="btn btn-small pull-right" id="delete_btn" href="javascript:void(0)" onclick="delete_record()">{$Think.lang.delete_select_record}</a>
+        </if>
+    </form>
+
+    <table class="table table-striped table-hover">
+        <tr>
+            <th width="10"><input type="checkbox" onclick="checkall(this)"></th>
+            <foreach name="list_views" item="v">
+              <th class="nowrap">{:column_item_key($v,$all_columns)}</th>
+            </foreach>
+            <th>时间</th>
+        </tr>
+        <foreach name="visits" item="one">
+          <tr class="resultlist" id="tr{$one['id']}" <if condition="$one['id'] == $_GET['highlight_id']">class="success"</if> >
+            <td width="10"><input type="checkbox" value="{$one['id']}"></td>
+            <foreach name="list_views" item="v">
+              <td>{:column_item_value($v, $one, $all_columns)}</td>
+            </foreach>
+            <td>{:date('Y-m-d H:i:s',$one['timestamp'])}</td>
+          </tr>
+        </foreach>
+        <tr><td colspan=12>{$pagestring}</td><tr>
+      </table>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    function checkall(item) {  
+        var checked = $(item).attr('checked');
+        $(".resultlist input:checkbox").each(function() {
+              var vs = this.value.split('::');
+              if(checked == 'checked') {
+                    this.checked = true;
+                    $('#tr'+vs[0]).addClass('info');
+              } else {
+                    this.checked = false;
+                    $('#tr'+vs[0]).removeClass('info');
+              }
+        });
+    }
+
+    function delete_record() {
+        var ids = get_checked_ids();
+        if(!ids) return;
+        if(window.confirm("确认删除记录？")) {
+            return X.get('/visit/massdelete?ids='+ids);
+        }
+
+    }
+
+    function get_checked_ids() {
+        var ids = '';
+        $(".resultlist input:checkbox").each(function() {
+              if(this.checked) {
+                    ids += parseInt(this.value) + ',';
+              }
+        });
+
+        if(!ids) return alert('至少要选中一个选项');
+        return ids;
+    }
+
+</script>

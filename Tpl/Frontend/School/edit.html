@@ -1,0 +1,19 @@
+<layout name="Public/frontend_template"/>
+
+<div id="content" class="wide">
+  <h4>{$school['id']?'编辑':'新建'}学校信息</h4>
+  <form method="post" action="/school/submit" enctype="multipart/form-data" class="validator form-horizontal">
+    <input type="hidden" name="id" value="{$school['id']}" />
+    <ul class="list_display">
+      {:display_edit_columns_list($all_columns, $school)}
+    </ul>
+    <div class="act">
+      <input type="submit" class="btn btn-danger" value="{$Think.lang.save}"/>
+      <a class="btn btn-link" href="{$Think.server.http_referer}">{$Think.lang.cancel}</a>
+    </div>
+  </form>
+</div>
+
+<script type="text/javascript">
+
+</script>

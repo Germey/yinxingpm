@@ -1,0 +1,26 @@
+<?php
+    if($user['status'] == 70 && can_edit($this->login_user)) {
+        $show_contract_form = 1;
+    }
+    if(!$user['identifier']) {
+        $user['identifier'] = D('UserInfo')->autoGenerateIdentifier($user['apply_type_id']);
+    }
+?>
+
+<if condition="$show_contract_form eq 1">
+  <h5 class="clear bg">请填写签约信息</h5>
+  <form method="post" action="/user/submit_contract" enctype="multipart/form-data" class="validator form-horizontal" style="border: 2px dashed #DDD; padding: 10px 20px; margin-top: -7px; ">
+    <input type="hidden" name="id" value="{$user['id']}"/>
+    <table class="table table-noborder">
+      <tr>
+        <td>志愿者编号：　　<input class="span2" type="text" name="identifier" value="{$user['identifier']}"></td>
+        <td>签订日期：　　<input type="text" class="datetime" data-datepicker-format="yyyy-mm-dd" data-datepicker-nodefault="-" name="contract_time" value="{:date('Y-m-d')}" />
+        <td>合同编号/备注：<input type="text" name="contract_note" value="{$user['contract_note']}"/></td>
+        </td>
+      </tr>
+    </table>
+    <label class="checkbox"><input type="checkbox" checked="checked" name="status" value="80">修改志愿者状态到“待派遣”</label>
+    <input type="submit" class="btn btn-danger" value="{$Think.lang.save}"/>&nbsp;
+    <span class="muted">信息保存后将展示到 “1. 基本资料”中，若要修改，请返回“待签约状态”</span>
+  </form>
+</if>

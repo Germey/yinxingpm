@@ -1,0 +1,26 @@
+<include file="Common:Public:header" />
+<div class="container" style="padding-top:10px; min-height:500px">
+
+    <div id="fix-alert">
+        <if condition="Session::get('success')">
+          <div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">×</button>{:strip_tags(Session::get("success", true))}</div>
+        </if>
+        <if condition="Session::get('error')">
+          <div class="alert alert-error"  style="text-align: center"><button type="button" class="close" data-dismiss="alert">×</button>{:strip_tags(Session::get("error", true))}</div>
+        </if>
+    </div>
+
+    <script type="text/javascript">
+        setTimeout("$('#fix-alert').slideUp('slow', function(){ $('#fix-alert').hide(); })", 2000);
+    </script>
+
+    <if condition="$login_user['team']['logo']">
+        <a href="/"><img alt="{$login_user['team']['name']}" id="logo" src="{:image_path($login_user['team']['logo'])}"></a>
+    <else />
+        <div style="height:5px"></div> 
+    </if>
+    {__CONTENT__}
+</div>
+<include file="Common:Public:footer" />
+
+

@@ -1,0 +1,10 @@
+<layout name="../Common/Public/dialog_without_confirm"/>
+
+<table>
+<foreach name="data" item="one">
+    <tr>
+        <td style="vertical-align: top">{$key}</td>
+        <td>{$one}</td>
+    </tr>
+</foreach>
+</table>

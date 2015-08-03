@@ -1,0 +1,369 @@
+<div class="clear"></div>
+
+<script type="text/javascript" src="/styles/js/jquery.uploadify/jquery.uploadify.v2.1.4.min.js"></script>
+<script type="text/javascript" src="/styles/js/jquery.uploadify/swfobject.js"></script>
+<link rel="stylesheet" href="/styles/js/jquery.uploadify/uploadify.css" type="text/css" media="screen" charset="utf-8" />
+
+<input type="hidden" id="xxxs" value="{$module_name}">
+<input type="hidden" id="object_id" value="{$module_object_id}">
+<input type="hidden" id="module_name" value="{$module_name}">
+<input type="hidden" id="login_user_name" value="{$login_user['realname']}">
+
+<h5 class="clear bg">{$Think.lang.attachment}<a href='javascript(0);' name='attachments'></a></h5>
+<div class="attachment">
+  <div>
+      <input type="file" id="upload-image"/>
+      <span class="muted">选择文件后可以在文件后面的输入框中输入备注，确认文件无误后点击“<b>确认保存</b>”按钮即可保存附件</span>
+      
+      <if condition="can_edit($login_user)">
+        <div class="edit_dir"><a class="btn btn-small btn-primary ajaxlink" href="/attachment/render_grant_record?id={$attachment_object_id}&type={$attachment_type}"><i class="icon-edit icon-white" ></i>编辑目录</a></a></div>
+      </if>
+      <p id="custom-queue"></p>
+      <p class="clear" id="save_attachment_btn" style="display:none"><a href="javascript:void(0)" onclick="save_attachment()" class="btn btn-small btn-danger">确认保存</a></p>
+  </div>
+  <table id='show_attachments' class="table table-striped table-hover">
+    <tr id="attachment_list">
+      <th class='attachment_first'>{$Think.lang.filename}</th>
+      <th>{$Think.lang.size}</th>
+      <th>{$Think.lang.create_time}</th>
+      <th>{$Think.lang.note}</th>
+      <th>{$Think.lang.action}</th>
+    </tr>
+    <foreach name='nodir' item='one'>
+        <tr>
+            <td>{$one['title']}</td>
+            <td>{:formatBytes($one['size'])}</td>
+            <td>{$one['create_time']}</td>
+            <td>{$one['content']}</td>
+            <td nowrap>
+              <small>
+                <a href="/attachment/download?id={$one['id']}&module={$module_name}">{$Think.lang.download}</a>
+                <if condition="file_enable_preview($one['path'])">&nbsp;
+                  <a href="/uploads{$one['path']}" target="_blank" title="可以预览pdf或者图片文件">{$Think.lang.preview}</a>
+                </if>
+                <if condition="can_edit($login_user)">
+                  &nbsp;<a href='javascript:void(0)' onclick="delete_attachment('{$one['id']}',this)">{$Think.lang.delete}</a>
+                </if>
+                 <b class='{$one["id"]}'>
+                    <a href='javascript:void(0);' class="click_change_dir">更换目录</a>
+                    <div class='change_dir'>
+                        <select id='dirname' name='dirname'>
+                            <foreach name='dir_data' item='one'>
+                                <option value='{$one["id"]}'>{$one["dir_name"]}</option>
+                            </foreach>
+                        </select>
+                        <a herf='javascript:void(0);' class='btn btn-danger btn-small update_dir' style='text-indent: 0px;'>确定</a>
+                    </div>
+                 </b>
+              </small>
+            </td>
+        </tr>
+    </foreach>
+    <foreach name='diretories' key='keys' item='value'>
+       <tr class='dir{$value["id"]}'>
+          <!-- <td class='dir_header' colspan='6'><if condition='$value["child"]'><i class='icon-folder-close'></i><b>{$value['dirname']}<else/><b style='padding-left:17px;'>{$value['dirname']}</b></if></b></td> -->
+
+          <td class='dir_header' colspan='6'><i class='icon-folder-close'></i><b>{$value['dirname']}&nbsp;({:count($value["child"])})</b></td>
+       </tr>
+       <foreach name='value["child"]' item='v'>
+          <tr class='dir{$value["id"]}' style='display:none;'>
+              <td>{$v['title']}</td>
+              <td nowrap>{:formatBytes($v['size'])}</td>
+              <td nowrap>{:substr($v['create_time'],0,16)}</td>
+              <td>{$v['content']}</td>
+              <td nowrap>
+                <small>
+                  <a href="/attachment/download?id={$v['id']}&module={$module_name}">{$Think.lang.download}</a>
+                  <if condition="file_enable_preview($v['path'])">&nbsp;
+                    <a href="/uploads{$v['path']}" target="_blank" title="可以预览pdf或者图片文件">{$Think.lang.preview}</a>
+                  </if>
+                  <if condition="can_edit($login_user)">
+                    &nbsp;<a href='javascript:void(0)' onclick="delete_attachment('{$v['id']}',this)">{$Think.lang.delete}</a>
+                  </if>
+                  <b class='{$v["id"]}'>
+                    &nbsp;<a href='javascript:void(0);' class="click_change_dir">换目录</a>
+                    <div class='change_dir'>
+                        <select id='dirname' name='dirname'>
+                            <foreach name='dir_data' item='one'>
+                                <if condition='$value["id"] neq $one["id"]'><option value='{$one["id"]}'>{$one["dir_name"]}</option></if>
+                            </foreach>
+                        </select>
+                        <a herf='javascript:void(0);' class='btn btn-danger btn-small update_dir' style='text-indent: 0px;'>确定</a>
+                    </div>
+                 </b>                
+                </small>
+              </td>
+          </tr>
+       </foreach>
+    </foreach>
+
+  </table>
+</div>
+
+<script type="text/javascript">
+
+  var attachments = new Map();
+
+// upload-btn
+  $(document).ready(function() {
+      $('#upload-image').uploadify({
+          'uploader' : '/styles/js/jquery.uploadify/uploadify.swf',
+          'buttonImg': '/styles/js/jquery.uploadify/select.png',
+          'script' : '/styles/js/jquery.uploadify/uploadify.php',
+          'cancelImg' : '/styles/js/jquery.uploadify/cancel.png',
+          'width': 170,
+          'folder' : '/attachment',
+          'auto' : true,
+          'queueID' : 'custom-queue',
+          'multi' : true,
+          'simUploadLimit' : 1,
+          'removeCompleted' : false,
+          'onComplete' : function(event, ID, fileObj, response, data) {
+              var file = new Array(response, fileObj.name, fileObj.size);
+              //check if same file size
+              attachments.put(ID, file);
+              var str = '<textarea class="attachment-note" id="note'+ID+'" placeholder="附件备注"></textarea><select name="dir_name" id="dir_name'+ID+'"><option value="">无</option><foreach name="diretories" key="keys" item="value"><option value="'+"{$value['id']}"+'">'+"{$value['dirname']}"+'</option></foreach></select>';
+              var filename = file[file.length-2];
+              var textId = 'note'+ID;
+              var type='__ACTION__'.split('/')[1].toLowerCase();
+              $("#upload-image"+ID).after(str);
+              $("#save_attachment_btn").show();
+              X.post('/attachment/check_attachment_exist?'+'id='+{$Think.get.id}+'&title='+filename+'&type='+type+'&textId='+textId);
+          },
+          'onCancel' : function(event, ID, fileObj, data) {
+              attachments.remove(ID);
+              $("#note"+ID).remove();
+              $("#dir_name"+ID).remove();
+
+          }
+      });
+  });
+function dir_duplicate_alert_callback(title,textId){
+  $('#'+textId).prev().find('.percentage').html(' - Completed <span style="color:red">　　　　(文件已存在)</span>');
+}
+
+  function save_attachment() {
+    
+    if(!attachments.size()) return;
+    var vs = attachments.values();
+    var keys = attachments.keys();
+    var path, filename, size, note, dirname;
+    var single;
+    for(var i=0; i<vs.length; i++) {
+      single = vs[i];
+      path = single[0];
+      filename = single[1];
+      size = single[2];
+      note = $('#note'+ keys[i]).val();
+      dirname = $('#dir_name' + keys[i]).val();
+      X.get('/attachment/ajax_save?module='+ $("#module_name").val() +'&object_id='+parseInt($("#object_id").val()) 
+            + '&path=' + encodeURIComponent(path) + '&title=' + encodeURIComponent(filename)
+            + '&size=' + encodeURIComponent(size) + '&content=' + encodeURIComponent(note) + '&mapid=' + keys[i] + '&dir_id='+encodeURIComponent(dirname), true);
+    }
+  }
+
+/************************每个附件上传成功后的回调函数**********************************/
+
+  function save_attatchment_callback(id, mapid, dir_id) {
+    // alert(dir_id);
+    var item = attachments.get(mapid);
+    var html = '<tr class="dir'+dir_id+'" id="attachment'+ id +'">';
+    html += '<td style="background:#DFF0D8; text-indent:20px;">'+ item[1] + '</td>';
+    html += '<td style="background:#DFF0D8; text-indent:20px;">'+ item[2] + 'B</td>';
+    html += '<td style="background:#DFF0D8; text-indent:20px;">'+ '刚刚' + '</td>';
+    html += '<td style="background:#DFF0D8; text-indent:20px;">'+ $('#note'+ mapid).val() + '</td>';
+    html += '<td style="background:#DFF0D8; text-indent:20px;"><small>'+ '<a href="/attachment/download?id=' + id +'&module='+ $("#module_name").val() +'">{$Think.lang.download}</a>';
+    html += '&nbsp;<a href="javascript:void(0)" onclick="delete_attachment('+id+')">{$Think.lang.delete}</a></small></td>';
+    html += '<td style="background:#DFF0D8; text-indent:20px;"></td>';
+    html += '</tr>';
+    for(var i=1,l=aT.length;i<l;i++){
+      
+        aTr=oShow_atta.getElementsByTagName('tr');
+        for(var a=1;a<aTr.length;a++){
+            aTr[a].style.display='table-row';
+        }
+        if(aT[i].children[0].className != '' && aT[i].children[0].children[0].tagName == 'I'){
+              aT[i].children[0].children[0].className='icon-folder-open';
+
+        }
+        aT[i].click=!aT[i].click;
+    }
+
+    if(dir_id){
+      var last_tr = $("#show_attachments").find(".dir" + dir_id + "");
+      var last_tr = last_tr.get(last_tr.length -1);
+      $(last_tr).after(html);
+    }else{
+      $("#attachment_list").after(html);
+    }
+    //取消掉图片框
+    $('#upload-image').uploadifyCancel(mapid);
+
+  }
+
+  function delete_attachment(id,This) {
+    if(confirm('确定删除该附件？')) {
+      $("#attachment"+id).addClass('error');
+      X.get('/attachment/ajax_delete?module='+ $("#module_name").val() +'&id='+parseInt(id)+'&object_id='+parseInt($("#object_id").val()));
+      var oShow_atta=document.getElementById('show_attachments');
+      oShow_atta.getElementsByTagName('tbody')[0].removeChild(This.parentNode.parentNode.parentNode);
+    }
+  }
+
+  function delete_attachment_callback(id) {
+    $("#attachment"+id).hide('slow', function(){
+      $("#attachment"+id).remove();
+    });
+  }
+/*******************切换目录开始*****************************/
+
+$('#show_attachments .click_change_dir').each(function(index,element){
+    $(element)[0].t=true;
+    $(element).click(function(){
+      $('#show_attachments .change_dir').hide();
+      if($(element)[0].t){
+        for(var i=0;i<$('#show_attachments .click_change_dir').length;i++){
+          $('#show_attachments .click_change_dir')[i].t=true;
+        }
+        $(element).parent().find(".change_dir").show();
+        $(element)[0].t=false;
+      }else{
+        $(element).parent().find(".change_dir").hide();
+        $(element)[0].t=true;
+      }
+  })
+});
+
+/******************切换目录结束*******************************/
+
+
+/************************目录打开与闭合*******************************/
+
+    var oShow_atta=document.getElementById('show_attachments');
+    var aT=aTr=oShow_atta.getElementsByTagName('tr');
+    for(var i=1,l=aTr.length;i<l;i++){
+      aTr[i].onclick=function(){
+        aTr=oShow_atta.getElementsByTagName('tr');
+        for(var a=1;a<aTr.length;a++){
+          var T=this.children[0].children[0];
+          if(aTr[a].className == this.className && T != undefined && T.className == 'icon-folder-open' && aTr[a] != this){
+            aTr[a].style.display='none';
+          }else if(aTr[a].className == this.className && T != undefined && T.className == 'icon-folder-close'){
+            aTr[a].style.display='table-row';
+          }
+        }
+        if(this.children[0].className != '' && T != undefined && T.className == 'icon-folder-open' && T.tagName == 'I'){
+              this.children[0].children[0].className='icon-folder-close';
+        }else if(T != undefined && T.tagName == 'I'){
+              this.children[0].children[0].className='icon-folder-open';
+        }
+      }
+    }
+
+/*********************已上传的附件更换目录***********************/
+function window_refresh(){
+    window.location.reload();
+} 
+var type='__ACTION__'.split('/')[1].toLowerCase();
+var url_update_dir='{:U("attachment/ajax_update_dir")}'
+var aSelect=oShow_atta.getElementsByTagName('select');
+var aBottom=getClass(oShow_atta,'update_dir');
+var pid=parseInt((window.location+'').split('/').pop());
+for(var i=0;i<aBottom.length;i++){
+  aBottom[i].index=i;
+  aBottom[i].onclick=function(){
+    var id=$(this).parent().parent().attr('class');
+    var iData='?dir_id='+aSelect[this.index].value+'&object_id='+pid+'&type='+type+'&id='+id;
+    X.post(url_update_dir+iData);
+  }
+}
+/*********************************目录创建与删除*****************************************/
+    var url_delete_dir="{:U('attachment/ajax_delete_dir')}";
+    var url_save_dir="{:U('attachment/save_dir')}"
+    function getClass(oParent,sClass){
+        if(document.getElementsByClassName){
+            return oParent.getElementsByClassName(sClass);
+        }
+        var oElement=oParent.getElementsByTagName('*');
+        var aArr=[];
+        var re=RegExp('\\b'+sClass+'\\b');
+        for(var i=0;i<oElement.length;i++)
+        {
+            if(re.test(oElement[i].className))
+            {
+                aArr.push(oElement[i]);
+            }
+        }
+        return aArr;
+    };
+
+    function lstChild(obj){
+        var last=null;
+        for(var i=obj.childNodes.length-1;i>0;i--)
+        {
+            if(obj.childNodes[i].nodeType==1)
+            {
+                return obj.childNodes[i];
+            }
+        }
+    };
+
+    function attachment_delete_dir(oBody){
+        var oA=oBody.getElementsByTagName('a');
+        var oInput=oBody.getElementsByTagName('input');
+        var sInputValue='';
+        for(var i=0,l=oInput.length;i<l;i++){
+            oInput[i].onfocus=function(){
+                sInputValue=this.value;
+                this.value='';
+            }
+            oInput[i].onblur=function(){
+                var pid=parseInt((window.location+'').split('/').pop());
+                var This=this.parentNode.parentNode;
+                var sValue=this.value;
+                var _this=this;
+                if(this.value == ''){
+                    this.value=sInputValue;
+                }
+                if(this.value != sInputValue){
+                    var dir_name=this.value;
+                    var type='__ACTION__'.split('/')[1].toLowerCase();
+                    var id = $(this).parent().parent().attr('class');
+                    var data='?dir_name='+dir_name+'&object_id='+pid+'&type='+type+'&id='+id;
+                    X.post(url_save_dir+data);
+                }
+            }
+        }
+        for(var i=0,l=oA.length;i<l;i++){
+            oA[i].onclick=function(){
+                var T=this.parentNode.parentNode;
+                if(parseInt(T.children[1].innerHTML) != 0){
+                    alert('该目录下有文件，请先删除文件后再操作');
+                    return false;
+                }
+                oBody.removeChild(T);
+                X.post(url_delete_dir+'?id='+$(this).parent().parent().attr('class'));
+            }
+        }
+    }
+
+    function attachment_initialize(){
+        var oContent=document.getElementById('ajax-dialog');
+        var oAdd=document.getElementById('add_att_dir');
+        var oTable=getClass(oContent,'edit_att_dir')[0];
+        var oBody=oTable.getElementsByTagName('tbody')[0];
+        attachment_delete_dir(oBody);
+        oAdd.onclick=function(){
+            oBody=oTable.getElementsByTagName('tbody')[0];
+            iIndex=oBody.children.length>1?parseInt(lstChild(oBody).children[0].innerHTML):'';
+            iIndex=isNaN(iIndex)?0:iIndex;
+
+            var oTr=document.createElement('tr');
+            oTr.innerHTML='<td><input type="text" value="请输入目录名"/></td><td><a href="javascript:void(0);">删除</a></td></tr>';
+            oBody.appendChild(oTr);
+            attachment_delete_dir(oBody);
+            return false;
+        }
+
+    }
+</script>

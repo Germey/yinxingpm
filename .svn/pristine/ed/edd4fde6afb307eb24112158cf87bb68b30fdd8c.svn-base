@@ -1,0 +1,178 @@
+<?php
+
+class SchoolsModel extends BaseModel {
+
+    public function get_map_detail_group_info() {
+        return array(
+                'grade'=>array('name'=>'任教班级', 'class'=>'span1', ),
+                'many' => array('name'=>'班级人数','class'=>'span1'),
+                'what' => array('name'=>'任教科目','class'=>'span1'),
+                'when' => array('name'=>'参与年份','class'=>'span1'),
+                'hour' => array('name'=>'课时','class'=>'span1'),
+                'leader' => array('name'=>'班主任','class'=>'span1'),
+                'otherwork' => array('name'=>'其他工作','class'=>'span2'),
+            );
+    }
+
+    // public function 
+    private function _buildFilter($filter) {
+
+        //school_metas
+        $maybe_school_ids = array();
+        if($filter['tag']) {
+            $cond = array();
+            // $cond[''] = $filter['user_group_id'];
+            
+            //支持空格查询多个
+            $name_like_array = explode(' ', preg_replace('/\s\s+/', ' ',trim($filter['tag'][1],'%')));
+            foreach ($name_like_array as $v) {
+                $like_cond[] = '%'.$v.'%';
+            }
+            $cond['name'] = array('like', $like_cond, 'or');
+            $tids = D('SchoolTags')->where($cond)->getField('id', true);
+            $filter['tagid'] = implode(',', $tids);
+        }
+
+        if($filter['tagid']) {
+            //SchoolTagsModel 中定义-作为查询与条件
+            $and_tag_ids = array_unique(explode('-', $filter['tagid']));
+            foreach ($and_tag_ids as $tid) {
+                $rs = D('SchoolTagMapping')->where('school_tag_id in('.$tid.')')->getField('school_id', true);
+                if($maybe_school_ids) {
+                    $maybe_school_ids = array_intersect($rs, $maybe_school_ids);
+                } else {
+                    $maybe_school_ids = $rs;
+                }
+            }
+            unset($filter['tagid']);
+        }
+
+        if(count($maybe_school_ids)) {
+            $filter['schools.id'] = array('in', array_unique($maybe_school_ids));
+        }
+
+        return $filter;
+    }
+
+    public function getSchoolsCount($filter) {
+        $filter = $this->_buildFilter($filter);
+        $count = M("Schools")->where($filter)->count();
+
+        return $count;
+    }
+
+    public function getSchools($filter, $page=0, $size=0, $order = null, $rich = false) {
+
+        $filter = $this->_buildFilter($filter);
+        
+        $schoolModel = D("Schools");
+        if(!$order) {
+            $order = 'id desc';
+        }
+
+        $schools = $schoolModel->where($filter)->order($order);
+        if($page && $size) {
+            $schools->page($page, $size);
+        }
+        $data = $schools->select();
+
+        return $this->getRichInfo($data, $rich);
+    }
+
+    //兼容中文
+    public function generate_order_str($order_by, $desc){
+        return "convert(" . $order_by . " USING gbk) COLLATE gbk_chinese_ci " . $desc;
+    }
+
+    public function getRichInfo($schools) {
+        return $schools;
+    }
+
+    public function deleteSchool($school_id) {
+        $id = intval($school_id);
+        if(!$id) return;
+
+        M("SchoolNotes")->where(array("school_id" => $id))->delete();
+        M("SchoolAttachments")->where(array("school_id" => $id))->delete();
+
+        M('Schools')->delete($id);
+        return;
+    }
+
+
+    public function getSchoolUserCount($ids) {
+        $id_str = implode(',', $ids);
+        $sql = "select school_id, count(*) count from school_user_mapping where school_id in ($id_str) group by school_id";
+        $raw = $this->query($sql, true);
+        foreach ($raw as $v) {
+            $res[$v['school_id']] = $v['count'];
+        }
+        return $res;
+    }
+
+    public function getSchoolProjectCount($ids) {
+        $id_str = implode(',', $ids);
+        $sql = "select school_id, count(*) count from school_project_mapping where school_id in ($id_str) group by school_id";
+        $raw = $this->query($sql, true);
+        foreach ($raw as $v) {
+            $res[$v['school_id']] = $v['count'];
+        }
+        return $res;
+    }
+
+    public function getSchoolUserInfo($user_id) 
+    {
+        $map = Utility::AssColumn(D("SchoolUserMapping")->order('id desc')->getsByUserId(intval($user_id)),'school_id');
+        if(!$map) return null;
+
+        $f['id'] = array('in', array_keys($map));
+        $schools = D("Schools")->where($f)->select();
+        foreach ($schools as $k => $v) {
+            $map[$v['id']]['school'] = $v;
+        }
+        return $map;
+    }
+
+    public function getSchoolProjectInfo($project_id)
+    {
+        $map = Utility::AssColumn(D("SchoolProjectMapping")->order('id desc')->getsByProjectId(intval($project_id)),'school_id');
+
+        $f['id'] = array('in', array_keys($map));
+        $schools = D("Schools")->where($f)->select();
+        foreach ($schools as $k => $v) {
+            $map[$v['id']]['school'] = $v;
+        }
+        return $map;
+    }
+
+
+    public function getSchoolUserInfoBySchoolId($school_id)
+    {
+        $map = Utility::AssColumn(D("SchoolUserMapping")->order('id desc')->getsBySchoolId(intval($school_id)),'user_id');
+
+        $f['id'] = array('in', array_keys($map));
+        $users = D("UserInfo")->where($f)->select();
+        foreach ($users as $k => $v) {
+            $map[$v['id']]['user'] = $v;
+        }
+        return $map;
+    }
+
+
+    public function getSchoolProjectsBySchoolId($school_id)
+    {
+        $map = D("SchoolProjectMapping")->order('id desc')->getsBySchoolId(intval($school_id));
+
+        $f['id'] = array('in', Utility::GetColumn($map, 'project_id'));
+        $projects = Utility::AssColumn(D("Projects")->where($f)->select());
+
+        foreach ($map as $k => $v) {
+            $map[$k]['project'] = $projects[$v['project_id']];
+        }
+
+        return $map;
+    }
+
+}
+
+?>

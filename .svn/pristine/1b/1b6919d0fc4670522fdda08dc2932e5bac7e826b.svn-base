@@ -1,0 +1,43 @@
+<layout name="Public/frontend_template"/>
+<div id="content" class="wide">
+    <h4>
+        考核标准
+        <a href="__URL__/audit_dimension_edit?type_id={$type_id}" class="btn pull-right ajaxlink"><i class="icon-pencil"></i> 新建</a>
+    </h4>
+    <ul id="myTab" class="nav nav-tabs">
+        <foreach name="apply_types" item="one">
+            <li {$key==$type_id?"class='active'":""} >
+              <a href="/setting/audit_dimensions?type_id={$key}">{$one}</a>
+            </li>
+        </foreach>
+    </ul>
+
+    <div id="myTabContent" class="tab-content">
+        <foreach name="audit_status" item="name">
+            <span class="label label-important">{:str_replace('待','',$name)}</span>
+            <table class="table table-bordered">
+                <tr>
+                    <th>考核点</th>
+                    <th>判断/备注</th>
+                    <th>问题参考</th>
+                    <th>显示权重</th>
+                    <th>操作</th>
+                </tr>
+                <foreach name="dimensions[$key]" item="one">
+                    <tr>
+                        <td>{$one.key}</td>
+                        <td>{:nl2br($one['note'])}</td>
+                        <td>{:nl2br($one['reference'])}</td>
+                        <td>{$one.sequence}</td>
+                        <td>
+                            <a href="__URL__/audit_dimension_edit?id={$one.id}" class="ajaxlink">编辑</a>
+                            <a href="__URL__/ajax_delete_audit_dimension?id={$one.id}" ask="确定删除吗？" class="ajaxlink">删除</a>
+                        </td>
+                    </tr>
+                </foreach>
+            </table>
+            <br />
+        </foreach>
+      </div>
+
+</div>

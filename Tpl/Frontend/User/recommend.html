@@ -1,0 +1,13 @@
+<layout name="Public/frontend_template"/>
+<div id="content" class="wide">
+    <div class="tabbable tabs-left">
+      <ul class="nav nav-tabs">    
+        <foreach name="sub_types" item="one">
+            <li class="<if condition='$key eq $status'>active</if>"><a href="/user/recommend?status={$key}">{$one}</a></li>
+        </foreach>
+      </ul>
+      <div class="tab-content">
+        <include file="list" />
+      </div>
+    </div>
+</div>

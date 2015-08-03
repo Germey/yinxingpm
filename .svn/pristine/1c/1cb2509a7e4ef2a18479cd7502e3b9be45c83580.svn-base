@@ -1,0 +1,26 @@
+  <!-- 审核信息 -->
+  <include file="block_audits" />
+
+  <?php 
+    $module_name = 'user'; $module_object_id = $user['id'];
+    $attachment_type = "user"; $attachment_object_id = $user['id'];
+  ?>
+
+  <!-- Notes -->
+  <a name="notes"></a><include file="Common:Public:note" />
+
+  <!-- attachments -->
+  <a name="attachments"></a>
+  <include file="Common:Public:attachment" />
+
+  <div style="padding-left: 20px;">
+    <p>资源库外链：
+      <a href="#" id="change_extra_link" data-type="text" data-pk="{$user['id']}" data-url="/user/ajax_save_extra_link" data-title="资源库外链">{$user['extra_file_link']?$user['extra_file_link']:'点击编辑链接(http://)'}</a> <span class="muted">（可以直接输入网盘中该会员的资料链接）</span>
+      <if condition="$user['extra_file_link']">
+        &nbsp;&nbsp;&nbsp;<a href="{$user['extra_file_link']}" target="_blank">新窗口打开</a>
+      </if>  
+    </p>
+    <if condition="$user['extra_file_link']">
+      <iframe src="{$user['extra_file_link']}" width="100%" height="500px"></iframe>
+    </if>  
+  </div>

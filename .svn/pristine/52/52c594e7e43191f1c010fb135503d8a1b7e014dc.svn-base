@@ -1,0 +1,81 @@
+<layout name="Public/frontend_template"/>
+
+<div id="content" class="wide project-detail">
+
+  <include file="detail_share_head" />
+
+  <!-- 基本信息 -->
+  <h5 class="clear bg colortip" title="点开展开/合并" style="cursor: pointer;" onclick="toggle_content_block('_summary_content');">
+    1. 个人简历信息<i class="icon-fullscreen"></i>
+  </h5>
+  <div id="_summary_content" {$user['pm_display_toggle']['_summary_content']?'style="display:none"':''}>
+    <ul class="list_display" style="margin-top:5px">
+      <foreach name="all_columns" item="one">
+        <?php 
+          if(in_array($key, array('name')) || $one['hidden']) {
+            continue;
+          }
+          if(in_array($key, array('address'))) {
+            $userinfo[$key] = $userinfo[$key] . '（' . $userinfo[$key.'_zipcode'] . '）';
+          }
+        ?>
+        <if condition="$one['type'] eq  'group'">
+          {:display_group($userinfo[$key], $one['options'], $one['display_name'])}
+        <else />
+          <?php 
+            $show = 1;
+            if($one['status_range']) {
+              $status_range = explode(',',$one['status_range']);
+              if($userinfo['status']<$status_range[0] || $userinfo['status']>$status_range[1]) {
+                $show = 0;
+              }
+            }
+          ?>
+          <if condition="$show">
+            {:display_column_li($one['display_name'], nl2br($userinfo[$key]), $one['display_colspan'])}
+          </if>          
+        </if>
+      </foreach>
+    </ul>
+  </div>
+
+
+  <!-- 问答题 -->
+  <?php
+    $question_map = array(2=>'2. 申请理由陈述', 3=>'3. 个人成长计划');
+  ?>
+  <foreach name="question_map" item="display">
+    <?php 
+      $questions = D("UserQuestionAnswers")->getQuestionAnswers($userinfo['id'], $key); 
+      $block_key = '_detail_content_'.$key;
+    ?>
+    <h5 class="clear bg colortip" style="cursor: pointer;" onclick="toggle_content_block('{$block_key}');" title="点击展开/合并">
+      {$display} <i id="open_icon{$block_key}" class="icon-fullscreen"></i>
+    </h5>
+    <div id="{$block_key}" style="{$user['pm_display_toggle'][$block_key]?'display:none;padding-left:20px':'padding-left:20px'}">
+      <include file="block_question_answer" />
+    </div>
+  </foreach>
+
+  <h5 class="clear bg colortip" title="点开展开/合并" style="cursor: pointer;" onclick="toggle_content_block('_recommend_content');">
+    4. 推荐人信息 - {$user['recommender_name']}<i class="icon-fullscreen"></i>
+  </h5>
+  <div id="_recommend_content" {$user['pm_display_toggle']['_recommend_content']?'style="display:none"':''}>
+    <div class="embed_recommend">
+      <include file="detail_recommend_core" />
+    </div>
+  </div>
+
+
+  <include file="detail_share_foot" />
+</div>
+
+<script type="text/javascript">
+
+  function toggle_content_block(key) {
+    $('#'+key).toggle(500);
+    X.get('/user/ajax_save_content_block_toggle?block='+key+'&id='+$("#recommend_id").val());
+  }
+
+</script>
+

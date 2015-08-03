@@ -1,0 +1,86 @@
+<div class="clear"></div>
+<input type="hidden" id="module_name" value="{$module_name}">
+<input type="hidden" id="object_id" value="{$module_object_id}">
+<input type="hidden" id="login_user_name" value="{$login_user['realname']}">
+
+<h5 class="clear bg">
+  <if condition="$note_title">
+    {$note_title}
+  <else />
+    {$Think.lang.note} 
+  </if>
+</h5>
+<div style="padding-left:20px;">
+  <if condition="can_edit($login_user)">
+    <div>
+      <input onclick="$('#note_more').show(); $('#note_content').show()" id="note_title" type="text" class="span6" placeholder="{$Think.lang.add_note_title}"/>
+      <a id="note_more_tip" style="display:none" class="btn btn-link btn-small" href="javascript:void(0)" onclick="$('#note_content').toggle()">{$Think.lang.more_content}</a>
+    </div>
+    <p id="note_more" style="display:none">
+      <textarea id="note_content" class="span8" style="height:65px;display:none;" placeholder="{$Think.lang.more_note_content}"></textarea>
+      <a href="javascript:void(0)"  onclick="save_note()" class="btn btn-small btn-danger">{$Think.lang.save}</a>
+      <a href="javascript:void(0)"  onclick="cancel_note()" class="btn btn-link btn-small">{$Think.lang.cancel}</a>
+    </p>
+  </if>
+  <div id="notes_block" style="max-height: 800px; overflow-y:scroll">
+    <foreach name="notes" item="one">
+      <blockquote id="noteblock{$one['id']}">
+        <p><strong>{$one['title']}</strong></p>
+        <p>{:nl2br($one['content'])}</p>
+        <small class="muted">
+          <i>{$one['update_user']['realname']} &nbsp; {$one['update_time']}</i>
+          <if condition="($one['create_user_id']==$login_user['id']) OR ( $login_user['role']=='admin' )">
+            &nbsp;<a href="javascript:void(0)" onclick="delete_note({$one['id']})" class="delete" >{$Think.lang.delete}</a>
+          </if>
+        </small>
+      </blockquote>
+    </foreach>
+  </div>
+</div>
+
+
+<script type="text/javascript">
+  function save_note() {
+    var title = $.trim($("#note_title").val());
+    if(!title) return $("#note_title").focus();
+
+    var content = $.trim($("#note_content").val());
+
+    X.get('/note/ajax_save?module='+ $("#module_name").val() +'&object_id='+parseInt($("#object_id").val()) + '&title=' + encodeURIComponent(title) + '&content=' + encodeURIComponent(content));
+  }
+
+  function save_note_callback(id) {
+    var id = parseInt(id);
+    if(!id) {
+      return alert('Failed!');
+    }
+
+    var str = '<blockquote id="noteblock' + id + '">';
+    str += '<p><strong>'+ $.trim($("#note_title").val()) +'</strong></p>';
+    str += '<p>'+ $.trim($("#note_content").val()) +'</p>';
+    str += '<small class="muted">';
+    str += '<i>'+ $('#login_user_name').val() +'</i>';
+    str += '&nbsp;<a href="javascript:void(0)" onclick="delete_note('+ id +')" class="delete">删除</a>';
+    str += '</small></blockquote>';
+
+    $('#notes_block').prepend(str);
+    cancel_note();
+  }
+
+  function cancel_note() {
+    $('#note_more').hide(); 
+    $('#note_more_tip').hide(); 
+    $('#note_title').attr('value','');
+    $('#note_content').attr('value','');
+  }
+
+  function delete_note(id) {
+    if(confirm('确定删除该备注？')) {
+      X.get('/note/ajax_delete?module='+ $("#module_name").val() +'&id='+parseInt(id)+'&object_id='+parseInt($("#object_id").val()));
+    }
+  }
+
+  function delete_note_callback(id) {
+    $("#noteblock"+id).hide('slow', function(){ $("#noteblock"+id).remove(); });
+  }
+</script>

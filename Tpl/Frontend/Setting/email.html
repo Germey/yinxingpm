@@ -1,0 +1,68 @@
+<layout name="Public/frontend_template"/>
+<div id="content" class="wide">
+    <h4>邮箱相关设置</h4>
+    <form action="__URL__/email" method="post" class="form-horizontal" enctype="multipart/form-data">
+        <h5>1. 评审成功后需要密送的邮箱（管理员邮箱）&nbsp;&nbsp;
+            <input type="text" class="span3" name="audit_success_notify_email" value="{$audit_success_notify_email}" />
+        </h5>
+        <h5>2. 评审完马上给发成功/失败通知&nbsp;&nbsp;
+            {:Utility::Radios('audit_email_enable_realtime_notice_user', array(0=>'关闭',1=>'开启'), $audit_email_enable_realtime_notice_user, true)}
+        </h5>
+
+        <h5>3. 不同评审状态下成功/失败邮件模板设置</h5>
+        <ul id="myTab" class="nav nav-tabs">
+            <foreach name="audit_user_ststuses" item="one">
+                <li {$key==$hilighttypeid?"class='active'":""} >
+                  <a href="#tab{$one['id']}" data-toggle="tab">{$one['name']}</a>
+                </li>
+            </foreach>
+        </ul>
+        <div id="myTabContent" class="tab-content">
+        <?php 
+            $email_tos = array(''=>'-无-','recommender_email'=>'推荐人', 'email'=>'被推荐人(准伙伴)');
+         ?>
+            <foreach name="audit_user_ststuses" item="one">
+                <div class="tab-pane fade in {$key==$hilighttypeid?"active":""}" id="tab{$one['id']}">
+                    <h5>{$one['name']} - 评审成功后给通知邮件</h5>
+                    <blockquote>
+                        <p>1. 留空即不再通知</p>
+                        <p>2. 邮件内容中的替换字段：[#name#]：姓名；[#audit_content#]：评审意见；[#recommender_name#]：推荐人姓名</p>
+                        <if condition="$one['id'] lt 60">
+                            <p class="text-error"><b>3. 当前状态下邮件只发送给推荐人</b></p>
+                        <else />
+                            <p class="text-error"><b>3. 当前状态下邮件发送给准伙伴（申请人），抄送给推荐人</b></p>
+                        </if>
+                    </blockquote>
+                    <p>
+                        邮件题目：<input type="text" class="span7" name="audit_email_success_subject_{$one['id']}" value="{$success_subjects[$one['id']]}" />
+                        发送给：<select type="text" class="span2" name="audit_email_success_to_{$one['id']}">{:Utility::Option($email_tos,$success_tos[$one['id']])}</select>
+                    </p>
+                    <textarea name="audit_email_success_body_{$one['id']}" class="editor" id="audit_email_success_{$one['id']}">
+                        {$success_bodys[$one['id']]}
+                    </textarea>
+                    <hr />
+                    <h5>评审失败后给通知邮件</h5>
+                    <p>
+                        邮件题目：<input type="text" class="span7" name="audit_email_fail_subject_{$one['id']}" value="{$fail_subjects[$one['id']]}" />
+                        发送给：<select type="text" class="span2" name="audit_email_fail_to_{$one['id']}">{:Utility::Option($email_tos,$fail_tos[$one['id']])}</select>
+                    </p>
+                    <textarea name="audit_email_fail_body_{$one['id']}" class="editor" id="audit_email_fail_body_{$one['id']}">{$fail_bodys[$one['id']]}</textarea>
+
+                    <if condition="($one['id'] eq 20) OR ($one['id'] eq 60)">
+                        <hr />
+                        <h5>驳回修改的通知邮件</h5>
+                        <p>
+                            邮件题目：<input type="text" class="span7" name="audit_email_neededit_subject_{$one['id']}" value="{$neededit_subjects[$one['id']]}" />
+                            发送给：<select type="text" class="span2" name="audit_email_neededit_to_{$one['id']}">{:Utility::Option($email_tos,$neededit_tos[$one['id']])}</select>
+                        </p>
+                        <textarea name="audit_email_neededit_body_{$one['id']}" class="editor" id="audit_email_neededit_body_{$one['id']}">
+                            {$neededit_bodys[$one['id']]}
+                        </textarea>
+                    </if>
+                </div>
+            </foreach>
+        </div>
+
+        <br /><input type="submit" class="btn btn-danger" value="保存" />
+    </form>
+</div>

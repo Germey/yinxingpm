@@ -1,0 +1,43 @@
+<layout name="Public/frontend_template"/>
+<div id="content" class="wide">
+    <ul class="nav nav-tabs">
+      <li class="active"><a href="/stat/index">基本统计</a></li>
+      <!-- <li><a href="/stat/project">项目统计</a></li> -->
+    </ul>
+    
+    <h5>常用统计数据（除第一行项目数统计，以下统计只包含正式资助的项目）</h5>
+<!--     <form action="/stat/index" method="get">
+        <select class="chosen-select span3" multiple name="sbatchs[]" data-placeholder=" - 项目期 -">{:Utility::Option($batch_range, $sbatchs)}</select>        
+        <input type="submit" class="btn btn-small" value="筛选" />
+        <a class="btn btn-link" href="/stat/index">重置</a>
+    </form>
+ -->
+    <table class="table table-striped table-hover home-tb">
+      <tr>
+        <td class="l">总项目数：</td><td class="r"><a target="_blank" href="/project/all">{$project_count}个</a></td>
+        <td class="l">资助中/已结束项目数：</td><td class="r">{$ing_project_count}&nbsp;<span class="muted">/</span>&nbsp;{$end_project_count}个</td>
+        <td class="l">未通过：</td><td class="r">{$fail_project_count}个</td>
+      </tr>
+      <tr>
+        <td class="l">总申请/资助额：</td><td class="r">{:moneyit($all_need_budget)}&nbsp;<span class="muted">/</span>&nbsp;{:moneyit($total_contract_budget)}</td>
+        <td class="l">已拨款额：</td><td class="r">{:moneyit($had_grant_amount)}</td>
+        <td class="l">待拨款额：</td><td class="r">{:moneyit($total_contract_budget - $had_grant_amount)}</td>
+      </tr>
+      <tr>
+        <td class="l">最大项目金额：</td><td class="r"><a target="_blank" href="/project/detail/{$big_budget_id}">{:moneyit($big_budget)}</a></td>
+        <td class="l">最小项目金额：</td><td class="r"><a target="_blank" href="/project/detail/{$small_budget_id}">{:moneyit($small_budget)}</a></td>
+        <td class="l">平均项目金额：</td><td class="r">{:moneyit($average_budget)}</td>
+      </tr>
+      <tr>
+        <td class="l">最大项目周期：</td><td class="r"><a target="_blank" href="/project/detail/{$long_period_id}">{$long_period}月</a></td>
+        <td class="l">最短项目周期：</td><td class="r"><a target="_blank" href="/project/detail/{$short_period_id}">{$short_period}月</a></td>
+        <td class="l">平均项目周期：</td><td class="r">{$average_period}月</td>
+      </tr>
+<!--       <tr>
+        <td class="l">申请机构数：</td><td class="r"><a target="_blank" href="/partner">{$partner_count}个</a></td>
+        <td class="l">机构平均项目数：</td><td class="r">{$partner_average_project_count}个</td>
+        <td class="l">机构最大/最小项目数：</td><td class="r"><a target="_blank" href="/partner/detail/{$partner_max_project_id}">{$partner_max_project_count}</a> / {$partner_min_project_count}个</td>
+      </tr> -->
+    </table>
+
+</div>

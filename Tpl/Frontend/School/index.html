@@ -1,0 +1,165 @@
+<layout name="Public/frontend_template"/>
+<div id="content" class="wide">
+    <form method="get" action="/school" class="view-filter">
+        <foreach name="list_views" item="v">
+            {:display_filter_item($v,$_GET[$v],$all_columns)}
+        </foreach>
+        <button class="btn btn-small">{$Think.lang.search}</button>
+        <a class="btn btn-small" href="/school"><i class="icon-repeat"></i></a>
+
+        <a class="btn btn-small btn-primary pull-right" href="/school/edit"><i class="icon-plus icon-white"></i>新建学校</a>
+    </form>
+
+    <table class="table table-striped table-hover">
+        <tr>
+            <foreach name="list_views" item="v">
+              <th class="nowrap">{:column_item_key($v,$all_columns, 'school')}</th>
+            </foreach>
+            <th>教师数</th>
+            <th>{$Think.lang.action}</th>
+        </tr>
+        <foreach name="schools" item="one">
+          <tr class="schoollist <if condition="$one['id'] == $_GET['highlight_id']">success</if>" value="{$one['id']}" id='tr{$one['id']}'>
+            <foreach name="list_views" item="v">
+              <td>{:column_item_value($v, $one, $all_columns)}</td>
+            </foreach>
+            <td><a href="/school/render_user_list?id={$one['id']}" class="ajaxlink">{$school_user_count[$one['id']]}</a></td>
+            <td nowrap><small>
+                <a target="_blank" href="/school/detail/{$one['id']}">{$Think.lang.detail}</a>&nbsp;
+                <a href="/school/edit?id={$one['id']}">{$Think.lang.edit}</a>&nbsp;
+                <if condition="can_edit($login_user)">
+                    <a href="/school/delete?id={$one['id']}" class="ajaxlink">{$Think.lang.delete}</a>
+                </if>
+            </small></td>
+          </tr>
+        </foreach>
+        <tr><td colspan={:count($list_views)+3}>{$pagestring}</td><tr>
+      </table>
+    </div>
+</div>
+
+<script type="text/javascript">
+    //待改进
+    $(document).ready(function() {
+        $(".icon-edit-small").hide();
+    });
+
+    $(document).ready(function() {
+        $('.icon-edit-small').parent().parent().mouseover(function(){
+            var id = $(this).parent().attr('value');
+            $("#icon-edit-holder-"+id).hide();
+            $("#icon-edit-"+id).show();
+        });
+
+        $('.icon-edit-small').parent().parent().mouseout(function(){
+            var id = $(this).parent().attr('value');
+            $("#icon-edit-"+id).hide();
+            $("#icon-edit-holder-"+id).show();
+        });
+    });
+
+    //抽离出来，给别的页面也一样用
+    function checkall(item) {  
+        var checked = $(item).attr('checked');
+        $(".schoollist input:checkbox").each(function() {
+              var vs = this.value.split('::');
+              if(checked == 'checked') {
+                    this.checked = true;
+                    $('#tr'+vs[0]).addClass('info');
+              } else {
+                    this.checked = false;
+                    $('#tr'+vs[0]).removeClass('info');
+              }
+        });
+    }
+
+    $(".schoollist input:checkbox").click(function(){
+        // alert(this.value);
+          var vs = this.value.split('::');
+          if(this.checked) {
+                $('#tr'+vs[0]).addClass('info');
+          } else {
+                $('#tr'+vs[0]).removeClass('info');
+          }            
+    });
+
+    function massmail() {
+        var e = '';
+        $(".schoollist input:checkbox").each(function() {
+              if(this.checked) {
+                    var vs = this.value.split('::');
+                    e += vs[0] + ',';
+              }
+        });
+        window.open('/mail?tos=' + e);
+    }
+    function masssms() {
+        var e = '';
+        $(".schoollist input:checkbox").each(function() {
+              if(this.checked) {
+                    var vs = this.value.split('::');
+                    e += vs[0] + ',';
+              }
+        });
+        window.open('/sms?tos=' + e);
+    }
+
+    function massdelete() {
+        var e = '';
+        var count = 0;
+        $(".schoollist input:checkbox").each(function() {
+              if(this.checked) {
+                    var vs = this.id;
+                    if(vs) {
+                        count++;
+                        e += vs + ',';
+                    }
+              }
+        });
+        if(!count) return;
+        if(window.confirm("确认删除这 "+count+" 条记录？")) {
+            return X.get('/school/massdelete?ids='+e);
+        }
+    }
+
+    function massdelete_callback(ids_str) {
+        var ids = ids_str.split(',');
+        // console.log(ids);
+        var i = 0;
+        var id = 0;
+        for(i=0; i<ids.length;i++) {
+            id = ids[i];
+            if(id) {
+                $("#tr"+id).hide('slow', function(){ $("#tr"+id).remove(); });
+            }
+        }
+    }
+
+    function print_mailing_labels() {        
+        var ids = get_checked_ids();
+        if(!ids) return;
+   
+        var link = "/school/print_mailing_labels?ids=" + ids;
+        return window.open(link, "newwindow", "height=600, width=700, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, status=no");
+    }
+
+    function get_checked_ids() {
+        var ids = '';
+        $(".schoollist input:checkbox").each(function() {
+              if(this.checked) {
+                    var vs = this.value.split('::');
+                    ids += vs[0] + ',';
+              }
+        });
+
+        if(!ids) return alert('至少要选中一个联系人');
+        return ids;
+    }
+
+    function batch_update() {
+        var ids = get_checked_ids();
+        if(!ids) return;
+
+        return X.get('/school/render_batch_update?ids='+ids);
+    }
+</script>

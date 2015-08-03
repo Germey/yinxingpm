@@ -1,0 +1,48 @@
+<layout name="Public/frontend_template"/>
+
+<div id="content" class="wide">
+  <h4>{$Think.lang.edit_project} - {$project['title']}</h4>
+  <form method="post" action="/project/submit" enctype="multipart/form-data" class="validator form-horizontal">
+    <input type="hidden" name="id" value="{$project['id']}" />
+    <ul class="list_display">
+      {:display_edit_columns_list($all_columns, $project)}
+
+      <include file="edit_planed_grant_records" />
+<!--       <li><a href="javascript:void(0);" onclick="$('.detail_part').toggle()">展开项目申报书详情</a></li>
+      <foreach name="detail_items" item="one">
+        <li class="clear full detail_part" style="display:none">
+          <div class="control-group">
+            <label class="control-label">{$one}</label>
+            <div class="controls">
+              <if condition="$key eq 'budget_detail'">
+                  <table class="table table-bordered">
+                    <tr><th>预算类别</th><th>项目内容</th><th>费用标准</th><th>预算金额</th><th>备注</th></tr>
+                      <foreach name="project[$key]" item="bone">
+                        <tr>
+                          <td>{$bone['type']}</td>
+                          <td>{$bone['content']}</td>
+                          <td>{$bone['detail']}</td>
+                          <td>{:moneyit($bone['budget'])}</td>
+                          <td>{$bone['note']}</td>
+                        </tr>
+                      </foreach>
+                  </table>              
+              <else />
+                <textarea id="detail_{$key}" class="big {$key=='plan'?'editor':''}" name="project_detail_{$key}">{$project[$key]}</textarea>
+              </if>
+            </div>
+          </div>
+        </li>
+      </foreach> -->
+
+    </ul>
+    
+    <div class="act">
+      <input type="submit" class="btn btn-danger" value="{$Think.lang.save}"/>
+      <a class="btn btn-link" href="{$Think.server.http_referer}">{$Think.lang.cancel}</a>
+    </div>
+  </form>
+</div>
+<script type="text/javascript">
+
+</script>

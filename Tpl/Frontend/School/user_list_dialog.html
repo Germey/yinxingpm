@@ -1,0 +1,11 @@
+<layout name="../Common/Public/dialog_without_confirm"/>
+<table class="table table-bordered">
+    <thead><th>姓名</th><th>手机</th><th>备注</th></thead>
+    <foreach name="users" item="one">
+        <tr>
+            <td><a href="/user/detail/{$one['user_id']}" target="_blank">{$one['user']['name']}</a></td>
+            <td>{$one['user']['mobile']}</td>
+            <td>{$one['note']}</td>
+        </tr>
+    </foreach>
+</table>

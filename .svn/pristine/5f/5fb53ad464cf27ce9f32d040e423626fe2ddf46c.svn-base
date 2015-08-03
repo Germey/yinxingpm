@@ -1,0 +1,168 @@
+<if condition="can_edit($login_user)">
+<div class="btn-toolbar">
+    <div class="btn-group">
+        <button class="btn btn-small dropdown-toggle" data-toggle="dropdown"><i class="icon-share-alt"></i>导出项目 <span class="caret"></span></button>
+        <ul class="dropdown-menu">
+          <li><a href="javascript:void(0)" onclick="export_projects('check', '{$action_name}')">导出选中项目</a></li>
+          <li><a href="javascript:void(0)" onclick="export_projects('all', '{$action_name}')">导出全部项目</a></li>
+        </ul>
+    </div>
+    <button class="btn btn-small" onclick="massdelete()"><i class="icon-trash"></i>删除</button>
+    <a class="btn btn-small btn-primary pull-right" href="/project/edit"><i class="icon-plus icon-white"></i>新建项目</a>
+</div>
+</if>
+<form method="get" action="/project/{$action_name}" class="view-filter">
+    <input type="hidden" name="status" value="{$status}" />
+    {:display_filter_item('title',$_GET['title'],$all_columns)}
+    {:display_filter_item('identifier',$_GET['identifier'],$all_columns)}
+    {:display_filter_item('donor',$_GET['donor'],$all_columns)}
+    <button class="btn btn-small">{$Think.lang.search}</button>
+</form>
+
+
+<table class="table table-striped table-hover">
+<tr>
+    <th width="10"><input type="checkbox" onclick="checkall(this)"></th>
+    <foreach name="list_views" item="v">
+      <th class="nowrap">{:column_item_key($v,$all_columns, 'project/'.$action_name)}</th>
+    </foreach>
+    <th></th>
+</tr>
+<foreach name="projects" item="one">
+  <tr class="projectlist <if condition="$one['id'] == $_GET['highlight_id']">success</if>" value="{$one['id']}" id='tr{$one['id']}'>
+    <td width="10"><input type="checkbox" id="{$one['id']}" value="{$one['contact_id']}::{$one['email']}::{$one['mobile']}"></td>
+    <foreach name="list_views" item="v">
+        <php>
+            $class="";
+            if(strlen($one[$v]) < 20) {
+                $class = 'nowrap';
+            }
+        </php>
+      <td {$class}>{:column_item_value($v, $one, $all_columns)}</td>
+    </foreach>
+    <td><a target="_blank" href="{$one['link']}">详情</a></td>
+  </tr>
+</foreach>
+<tr><td colspan={:count($list_views)+2}>{$pagestring}</td><tr>
+</table>
+
+<script type="text/javascript">
+    //待改进
+    $(document).ready(function() {
+        $(".icon-edit-small").hide();
+    });
+
+    $(document).ready(function() {
+        $('.icon-edit-small').parent().parent().mouseover(function(){
+            var id = $(this).parent().attr('value');
+            $("#icon-edit-holder-"+id).hide();
+            $("#icon-edit-"+id).show();
+        });
+
+        $('.icon-edit-small').parent().parent().mouseout(function(){
+            var id = $(this).parent().attr('value');
+            $("#icon-edit-"+id).hide();
+            $("#icon-edit-holder-"+id).show();
+        });
+    });
+
+    //抽离出来，给别的页面也一样用
+    function checkall(item) {  
+        var checked = $(item).attr('checked');
+        $(".projectlist input:checkbox").each(function() {
+              var vs = this.id;
+              if(checked == 'checked') {
+                    this.checked = true;
+                    $('#tr'+vs).addClass('info');
+              } else {
+                    this.checked = false;
+                    $('#tr'+vs).removeClass('info');
+              }
+        });
+    }
+
+    $(".projectlist input:checkbox").click(function(){
+        // alert(this.value);
+          var vs = this.id;
+          if(this.checked) {
+                $('#tr'+vs).addClass('info');
+          } else {
+                $('#tr'+vs).removeClass('info');
+          }            
+    });
+
+    function stat() {
+        var ids = get_checked_ids('id');
+        if(ids) {
+            return window.open('/stat/project?ids='+ids);
+        }
+    }
+
+
+    function massdelete() {
+        var e = '';
+        var count = 0;
+        $(".projectlist input:checkbox").each(function() {
+              if(this.checked) {
+                    var vs = this.id;
+                    if(vs) {
+                        count++;
+                        e += vs + ',';
+                    }
+              }
+        });
+        if(!count) return;
+        if(window.confirm("确认删除这"+count+"个项目？")) {
+            return X.get('/project/massdelete?ids='+e);
+        }
+    }
+
+    function massdelete_callback(ids_str) {
+        var ids = ids_str.split(',');
+        // console.log(ids);
+        var i = 0;
+        var id = 0;
+        for(i=0; i<ids.length;i++) {
+            id = ids[i];
+            if(id) {
+                $("#tr"+id).hide('slow', function(){ $("#tr"+id).remove(); });
+            }
+        }
+    }
+
+    function export_projects(type,step) {
+        var ids = '';
+        if(type == 'all') {
+            if(!window.confirm("确认导出所有该类型项目？")) {
+                return;
+            }
+        } else {
+            ids = get_checked_ids('id');
+            if(!ids || !window.confirm("确认导出选中的项目？")) {
+                return;
+            }  
+        }
+        return window.open('/project/export_projects?step='+step+'&ids='+ids);
+    }
+
+    function get_checked_ids(from) {
+        var ids = '';
+        $(".projectlist input:checkbox").each(function() {
+              if(this.checked) {
+                if(from=='id') {
+                    var vs = this.id;
+                    if(vs) {
+                        ids += vs + ',';
+                    }
+                } else {
+                    var vs = this.value.split('::');
+                    ids += vs[0] + ',';                    
+                }
+              }
+        });
+
+        if(!ids) return alert('至少要选中一条记录');
+        return ids;
+    }
+
+</script>
