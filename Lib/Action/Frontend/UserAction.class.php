@@ -52,7 +52,6 @@ class UserAction extends BaseAction {
         if($order){
             $order = str_replace("|",' ',$order);
         }
-
         foreach(array_keys($this->data['recommend_columns']) as $v) {
             $value = trim(htmlspecialchars($this->_get($v)));
             if(!$value) continue;

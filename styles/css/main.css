@@ -339,7 +339,7 @@ input.errorInput{
 .icon-map-marker {background: url(images/gmap.png) no-repeat;}
 
 table.stat {width:100%;}
-table.stat td.out{vertical-align: top; padding: 10px 10px 30px 10px;}
+table.stat td.out{vertical-align: top; padding: 10px 10px 30px 10px;width: 30%;}
 
 .small_highchart{width: 650px; height: 400px; }
 

@@ -8,7 +8,7 @@ return array(
     'APP_GROUP_LIST' => "Frontend,Common,Admin",
     'DEFAULT_GROUP'   => "Frontend",
     'TMPL_FILE_DEPR'  => "/",
-
+    'SHOW_PAGE_TRACE' => true,
     'URL_CASE_INSENSITIVE' =>true,
     "LOAD_EXT_FILE"=>"json,nav,widget,mail,snoopy,sms",
 

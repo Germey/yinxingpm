@@ -57,6 +57,7 @@ class UserInfoModel extends BaseModel {
         return "convert(" . $order_by . " USING gbk) COLLATE gbk_chinese_ci " . $desc;
     }
 
+    //通过ID返回用户数据
     public function getUserInfo($user_id) {
         $u = $this->find($user_id);
         if(!$u) return null;
@@ -112,5 +113,17 @@ class UserInfoModel extends BaseModel {
 
         return $prefix . $year . str_pad($max+1, 3, "0", STR_PAD_LEFT);
     }
+
+
+    //返回ID序列数组
+    public function getIdMap() {
+
+        //第二个参数为True返回所有值
+        return $this->getField("id", true);
+
+    }
+
+
+
 }
 ?>

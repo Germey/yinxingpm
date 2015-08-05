@@ -175,7 +175,7 @@
 <?php if(is_array($users)): foreach($users as $key=>$one): ?><tr class="projectlist <?php if($one['id'] == $_GET['highlight_id']): ?>success<?php endif; ?>" value="<?php echo ($one['id']); ?>" id='tr<?php echo ($one['id']); ?>'>
     <td width="10"><input type="checkbox" id="<?php echo ($one['id']); ?>" value="<?php echo ($one['id']); ?>::<?php echo ($one['email']); ?>::<?php echo ($one['mobile']); ?>"></td>
     <?php if(is_array($list_views)): foreach($list_views as $key=>$v): $class=""; if(strlen($one[$v]) < 20) { $class = 'nowrap'; } ?>
-      <td <?php echo ($class); ?>><?php echo column_item_value($v, $one, $list_columns);?></td><?php endforeach; endif; ?>
+      <td class="<?php echo ($class); ?>"><?php echo column_item_value($v, $one, $list_columns);?></td><?php endforeach; endif; ?>
   </tr><?php endforeach; endif; ?>
 </table>
 <div class="text-right"><?php echo ($pagestring); ?><div>
