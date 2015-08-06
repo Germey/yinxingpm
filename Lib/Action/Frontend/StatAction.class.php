@@ -54,7 +54,7 @@ class StatAction extends BaseAction {
 
     //银杏伙伴
     public function partner() {
-
+        
         //银杏伙伴的数量
         $partner_count = D("UserRecommends")->getPartnerCount();
         $data['partner_count'] = $partner_count;

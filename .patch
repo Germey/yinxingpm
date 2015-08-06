@@ -1,0 +1,1457 @@
+Index: Conf/config.php
+===================================================================
+--- Conf/config.php	(revision 1)
++++ Conf/config.php	(working copy)
+@@ -8,7 +8,7 @@
+     'APP_GROUP_LIST' => "Frontend,Common,Admin",
+     'DEFAULT_GROUP'   => "Frontend",
+     'TMPL_FILE_DEPR'  => "/",
+-
++    'SHOW_PAGE_TRACE' => true,
+     'URL_CASE_INSENSITIVE' =>true,
+     "LOAD_EXT_FILE"=>"json,nav,widget,mail,snoopy,sms",
+ 
+Index: Conf/db.php
+===================================================================
+--- Conf/db.php	(revision 0)
++++ Conf/db.php	(working copy)
+@@ -0,0 +1,12 @@
++<?php
++return array(
++    'DB_TYPE'   => 'mysql',
++    'DB_HOST'   => '127.0.0.1',
++    'DB_NAME'   => 'yinxing',
++    'DB_USER'   => 'root',
++    'DB_PWD'    => '123456',
++    'DB_PORT'   => 3306,
++    'DB_PREFIX' => '', 
++    // 'TMPL_ENGINE_TYPE' => 'Smarty',
++    );
++?>
+\ No newline at end of file
+Index: Lib/Action/Frontend/StatAction.class.php
+===================================================================
+--- Lib/Action/Frontend/StatAction.class.php	(revision 1)
++++ Lib/Action/Frontend/StatAction.class.php	(working copy)
+@@ -2,402 +2,93 @@
+ 
+ class StatAction extends BaseAction {
+ 
++    private $data;
++
++    //默认页面
+     public function index() {
+-        // $data['sbatchs'] = $sbatchs = $this->_get('sbatchs');
+-        // $data['batch_range']  = $batchs = M('ProjectBatches')->getField('id,short_title',true);
+ 
+-        $filter['status'] = array('gt', 1);
+-        if($sbatchs) {
+-            $filter['batch_id'] = array('in', $sbatchs);
+-        }
+-        $all_projects = Utility::AssColumn(M('Projects')->where($filter)->select());
++        $this->recommend();
+ 
+-        $project_steps = D('ProjectStatuses')->getStatusStepIds();
++    }
+ 
+-        $small_budget = 100000000;
+-        $short_period_time = 900000000;      //月
+-        $time = time();
++    //推荐人信息
++    public function recommend() {
+ 
+-        foreach ($all_projects as $k => $v) {
+-            $project_count++;
+-            $all_need_budget += $v['need_budget'];
++        //推荐人数量
++        $recommend_count = D("UserRecommends")->getRecommedCount();
++        $data['recommend_count'] = $recommend_count;
++        //候选人数量
++        $candidate_count = D("UserRecommends")->getCandidateCount();
++        $data['candidate_count'] = $candidate_count;
++        //按照性别排名
++        $recommend_gender_rank = D("UserRecommends")->getRecommendGenderRank();
++        $data['recommend_gender_rank'] = $recommend_gender_rank;
++        //按照推荐人推荐的数量排名
++        $recommend_num_rank = D("UserRecommends")->getRecommendNumRank();
++        $data['recommend_num_rank'] = $recommend_num_rank;
++        $this->assign($data);
++        $this->display("recommend");
+ 
+-            if(in_array($v['status'], $project_steps['ing_status_ids'])) {
+-                $ing_project_count++;
+-            }
++    }
+ 
+-            if(in_array($v['status'], $project_steps['init_status_ids'])) {
+-                $init_project_count++;
+-            }
+-            if(in_array($v['status'], $project_steps['end_status_ids'])) {
+-                $end_project_count++;
+-            }
+-            if(in_array($v['status'], $project_steps['fail_status_ids'])) {
+-                $fail_project_count++;
+-                // 下面的统计就不要失败项目的了
+-                continue;
+-            }
++    //候选人信息
++    public function candidate() {
+ 
+-            $contract_budget = $v['contract_budget'];
+-            if(!intval($contract_budget)) continue;
++        //候选人的数量
++        $candidate_count = D("UserRecommends")->getCandidateCount();
++        $data['candidate_count'] = $candidate_count;
++        //候选人的地址
++        $candidate_province_rank = D("UserRecommends")->getCandidateProvinceRank();
++        $data['candidate_province_rank'] = $candidate_province_rank;
++        //候选人的性别，注意，此处候选人未通过之前没有性别信息，所以不统计
++        $candidate_gender_rank = D("UserRecommends")->getCandidateGenderRank();
++        $data['candidate_gender_rank'] = $candidate_gender_rank;
++        //候选人的年龄
++        $candidate_age_rank = D("UserRecommends")->getCandidateAgeRank();
++        $data['candidate_age_rank'] = $candidate_age_rank;
++        $this->assign($data);
++        $this->display("candidate");
+ 
+-            $good_project_count++;
+-            $total_contract_budget += $contract_budget;
+-            if($contract_budget && $contract_budget > $big_budget) {
+-                $big_budget_id = $k;
+-                $big_budget = $contract_budget;
+-            }
+-            if($contract_budget && $contract_budget < $small_budget) {
+-                $small_budget_id = $k;
+-                $small_budget = $contract_budget;
+-            }
+ 
+-            $tmpend = strtotime($v['actual_end_time']>'1'?$v['actual_end_time']:$v['end_time']);
+-            $tmpstart = strtotime($v['start_time']);
+-            $period_time = $tmpend - $tmpstart;
++    }
+ 
+-            $total_period_time += $period_time;
+-            if($period_time && $period_time > $long_period_time) {
+-                $long_period_time = $period_time;
+-                $long_period_id = $k;
+-            }
+-            if($period_time && $period_time < $short_period_time) {
+-                $short_period_time = $period_time;
+-                $short_period_id = $k;
+-            }
+-        }
++    //银杏伙伴
++    public function partner() {
+ 
+-        $data['project_count'] = intval($project_count);
+-        $data['all_need_budget'] = intval($all_need_budget);
+-        $data['ing_project_count'] = intval($ing_project_count);
+-        $data['init_project_count'] = intval($init_project_count);
+-        $data['fail_project_count'] = intval($fail_project_count);
+-        $data['end_project_count'] = intval($end_project_count);
+-
+-        $data['total_contract_budget'] = $total_contract_budget;
+-        if($big_budget) {
+-            $data['big_budget'] = $big_budget;
+-        }
+-        $data['big_budget_id'] = $big_budget_id;
+-        if($small_budget && $small_budget !== 100000000) {
+-            $data['small_budget'] = $small_budget;
+-        }
+-        $data['small_budget_id'] = $small_budget_id;
+-        $data['average_budget'] = intval($total_contract_budget/$good_project_count);
+-
+-        $month_time = 30*24*3600;
+-        if($long_period_time) {
+-            $data['long_period'] = round($long_period_time/$month_time, 1);
+-        }
+-        if($short_period_time && $short_period_time !== 900000000) {
+-            $data['short_period'] = round($short_period_time/$month_time, 1);
+-        }
+-        $data['long_period_id'] = $long_period_id;
+-        $data['short_period_id'] = $short_period_id;
+-        $data['average_period'] = round($total_period_time/$good_project_count/$month_time, 1);
+-
+-        $data['had_grant_amount'] = M('ProjectGrantRecords')->where('is_planed=0')->sum('amount');
+-
+-        $partner_ids = M('Partners')->getField('id', true);
+-        $data['partner_count'] = count($partner_ids);
+-        $data['partner_average_project_count'] = round($good_project_count/$data['partner_count'], 1);
++        //银杏伙伴的数量
++        $partner_count = D("UserRecommends")->getPartnerCount();
++        $data['partner_count'] = $partner_count;
++        //银杏伙伴的地址
++        $partner_province_rank = D("UserRecommends")->getPartnerProvinceRank();
++        $data['partner_province_rank'] = $partner_province_rank;
++        //银杏伙伴的性别
++        $partner_gender_rank = D("UserRecommends")->getPartnerGenderRank();
++        $data['partner_gender_rank'] = $partner_gender_rank;
++        $this->assign($data);
++        $this->display("partner");
+         
+-        // $ppm = D('Partners')->getPartnerProjectCount($partner_ids);
++    }
+ 
+-        // $partner_min_project_count = 10000;
++    //统计数据
++    public function data() {
+ 
+-        // foreach ($ppm as $k => $v) {
+-        //     if($v > $partner_max_project_count) {
+-        //         $partner_max_project_count = $v;
+-        //         $partner_max_project_id = $k;
+-        //     }
++        $num_of_status = D("UserRecommends")->getNumOfAllStatus();
++        $data['num_of_status'] = $this->_silceByMax($num_of_status, 9);
++        $this->assign($data);
++        $this->display("data");
+ 
+-        //     if($v < $partner_min_project_count) {
+-        //         $partner_min_project_count = $v;
+-        //     }
+-        // }
+-        // $data['partner_max_project_count'] = $partner_max_project_count;
+-        // $data['partner_max_project_id'] = $partner_max_project_id;
+-
+-        // $data['partner_min_project_count'] = $partner_min_project_count;
+-
+-        $this->assign($data);
+-        D('AdminVisits')->saveVisit('home', 0);
+-        $this->display();
+     }
+ 
+-    public function project() {
+ 
+-        // $data['sbatchs'] = $sbatchs = $this->_get('sbatchs');
+-        $data['samounts'] = $samounts = $this->_get('samounts');
+-        $data['stypes'] = $stypes = $this->_get('stypes');
+-        $data['sprovinces'] = $sprovinces = $this->_get('sprovinces');
+-        $data['sareas'] = $sareas = $this->_get('sareas');
+ 
+-        // 项目期
+-        // $data['batch_range']  = $batchs = M('ProjectBatches')->getField('id,short_title',true);
++    //传入一个数组，以及限制数量，返回截取后的数组
++    private function _silceByMax($target, $max = 10) {
+ 
+-        $data['amount_range'] =  $amount_range = array('10万以下', '10-20万', '20-30万', '30以上');
++        //如果当前数量小于指定的最大数量，那么直接输出，否则切出最大数量个数
++        return count($target) <= $max?$target:array_slice($target, 0, $max);
+ 
+-        $data['type_range'] = $types = M('CommonTypes')->where("`key`='project_type'")->getField('id,name',true);
+-        $type_ids = array_keys($types);
+-
+-        $data['province_range'] = $province_map = M('AreaProvinceMapping')->getField('province',true);
+-        $province_area_map = M('AreaProvinceMapping')->getField('province,area',true);
+-        $data['area_range'] = array_values(array_unique(array_values($province_area_map)));
+-
+-        // get all stat projects
+-        $project_steps = D('ProjectStatuses')->getStatusStepIds();
+-        $stat_status_ids = array_merge($project_steps['ing_status_ids'], $project_steps['end_status_ids']);
+-        $f['status'] = array('in', $stat_status_ids);
+-        // 从列表页来的统计
+-        if($ids = trim($this->_get('ids'),',')) {
+-            $ids = explode(',', $ids);
+-            $f['id'] = array('in', $ids);
+-        } 
+-        $ps = D('Projects')->getProjects($f,0,0,'contract_time');
+-
+-        foreach ($ps as $k => $v) {
+-            if($ids) {
+-                $show_project_titles[] = $v['title'];
+-            }
+-
+-            $amount = D('Stat')->getProjectAmountRange($v['contract_budget']);
+-            $add = $v['address_city'];
+-            if(!$add) $add = '未知';
+-
+-            //搜索过滤
+-            // if($sbatchs && !in_array($v['batch_id'], $sbatchs)) continue;
+-            if($samounts && !in_array($amount, $samounts)) continue;
+-            if($stypes && !array_intersect($stypes, $v['type'])) continue;
+-
+-            if($sprovinces && !in_array($v['address_city'], $sprovinces)) continue;
+-            if($sareas && !in_array($province_area_map[$add], $sareas)) continue;
+-
+-            // batch
+-            // $batch_data[$batchs[$v['batch_id']]]['need_budget'] += round($v['need_budget']/10000,1);
+-            // if($v['contract_time']>1) {
+-            //     $batch_pcount_map[$batch]++;
+-            //     // $batch_amount_map[$batch] += round($v['contract_budget']/10000,1);
+-            //     $batch_data[$batchs[$v['batch_id']]]['pcount']++;
+-            //     $batch_data[$batchs[$v['batch_id']]]['contract_budget'] += round($v['contract_budget']/10000,1);
+-            //     $batch_data[$batchs[$v['batch_id']]]['had_grant_amount'] += round($v['had_grant_amount']/10000,1);
+-            // }
+-
+-            //amount
+-            $amount_data[$amount]['need_budget'] += round($v['need_budget']/10000,1);
+-            if($v['contract_budget']>0) {
+-                $amount_pcount_map[$amount]++;
+-                $amount_amount_map[$amount] += round($v['contract_budget']/10000,1);
+-                $amount_data[$amount]['pcount']++;
+-                $amount_data[$amount]['contract_budget'] += round($v['contract_budget']/10000,1);
+-                $amount_data[$amount]['had_grant_amount'] += round($v['had_grant_amount']/10000,1);
+-            }
+-
+-
+-            foreach ($v['type'] as $iid) {
+-                // $ptypes[] = $types[$iid];
+-                $type_pcount_map[$types[$iid]]++;
+-                $type_amount_map[$types[$iid]] += round($v['contract_budget']/10000,1);
+-                $type_data[$types[$iid]]['pcount']++;
+-                $type_data[$types[$iid]]['contract_budget'] += round($v['contract_budget']/10000,1);
+-                $type_data[$types[$iid]]['had_grant_amount'] += round($v['had_grant_amount']/10000,1);
+-                $type_data[$types[$iid]]['need_budget'] += round($v['need_budget']/10000,1);
+-            }
+-
+-            // 省级统计
+-            $add_pcount_map[$add]++;
+-            $add_amount_map[$add] += round($v['contract_budget']/10000,1);
+-            $add_data[$add]['pcount']++;
+-            $add_data[$add]['contract_budget'] += round($v['contract_budget']/10000,1);
+-            $add_data[$add]['had_grant_amount'] += round($v['had_grant_amount']/10000,1);
+-            $add_data[$add]['need_budget'] += round($v['need_budget']/10000,1);
+-        }
+-
+-        $data['add_pcount_map'] = $add_pcount_map;
+-        $data['add_amount_map'] = $add_amount_map;
+-        $data['add_data']       = $add_data;
+-        $data['show_project_titles']       = $show_project_titles;
+-
+-        foreach ($add_pcount_map as $k => $v) {
+-            $area = $province_area_map[$k];
+-            $data['area_pcount_map'][$area] += $v;
+-            $data['area_amount_map'][$area] += $add_amount_map[$k];
+-
+-            $data['area_data'][$area]['pcount'] += $add_data[$k]['pcount'];
+-            $data['area_data'][$area]['contract_budget'] += $add_data[$k]['contract_budget'];
+-            $data['area_data'][$area]['had_grant_amount'] += $add_data[$k]['had_grant_amount'];
+-            $data['area_data'][$area]['need_budget'] += $add_data[$k]['need_budget'];
+-        }
+-
+-        $data['amount_pcount_map'] = $amount_pcount_map;
+-        $data['amount_amount_map'] = $amount_amount_map;
+-        $data['amount_data']       = $amount_data;
+-
+-        // 量化统计项        
+-        $this->result_codes = $result_codes = D("ResultCodes")->order('sequence')->getField('id,name',true);
+-
+-        $fr['project_id'] = array('in', Utility::GetColumn($ps));
+-        $quarter_results = D("ProjectQuarterResults")->where($fr)->order('quarter')->select();
+-
+-        foreach ($quarter_results as $v) {
+-            $detail = unserialize($v['detail']);
+-            $result_ranges[$v['quarter']] = 1;
+-            foreach($result_codes as $k => $c) {
+-                $code_data[$c][$v['quarter']] += intval($detail[$k]);
+-                $result_data_by_quarter[$v['quarter']][$k] += intval($detail[$k]);
+-            }
+-        }
+-
+-        $this->result_ranges = array_keys($result_ranges);
+-        $this->result_data_by_quarter = $result_data_by_quarter;
+-
+-        $visible = true;
+-        foreach ($code_data as $k => $v) {
+-            $code_data_tmp[] = array('name'=>$k, 'data' => array_values($v), "visible" => $visible);
+-            if($visible) {
+-                $visible = false;
+-            }
+-        }
+-
+-        $this->code_data  = $code_data_tmp;
+-
+-        $this->assign($data);
+-        $this->display('project');
+     }
+ 
+ 
+ 
+-    public function partner() {
+-
+-        $data['sgrantcounts'] = $sgrantcounts = $this->_get('sgrantcounts');
+-        $data['syears'] = $syears = $this->_get('syears');
+-        $data['sstatus'] = $sstatus = $this->_get('sstatus');
+-        $data['showtoknows'] = $showtoknows = $this->_get('showtoknows');
+-        $data['sprovinces'] = $sprovinces = $this->_get('sprovinces');
+-        $data['sareas'] = $sareas = $this->_get('sareas');
+-
+-        $data['year_range'] =  $year_range = array('1年以下', '1-2年', '2-4年', '4年以上');
+-        $data['statues_range'] = $statuses = M('CommonTypes')->where("`key`='partner_status'")->getField('id,name',true);
+-        $data['howtoknow_range'] = $howtoknows =  M('CommonTypes')->where("`key`='partner_howto_know'")->getField('id,name',true);
+-
+-        $data['province_range'] = $province_map = M('AreaProvinceMapping')->getField('province',true);
+-        $province_area_map = M('AreaProvinceMapping')->getField('province,area',true);
+-        $data['area_range'] = array_values(array_unique(array_values($province_area_map)));
+-
+-        $ps = D('Partners')->getPartners();
+-        $ppbm = D('Partners')->getPartnerProjectBudgetMap(Utility::GetColumn($ps));
+-
+-        // 资助次数
+-        $data['grant_count_range'] = Utility::GetColumn($ppbm, 'project_count');
+-        if($sgrantcounts) {        
+-            foreach ($ppbm as $k => $v) {
+-                if(!in_array($v['project_count'], $sgrantcounts)) {
+-                    unset($ps[$k]);
+-                    unset($ppbm[$k]);
+-                }
+-            }
+-        }
+-
+-        foreach ($ps as $k => $v) {
+-            $year =  substr($v['found_time'], 0, 4);
+-
+-            $add = $v['address_city'];
+-            if(!$add) $add = '未知';
+-
+-            //搜索过滤
+-            if($syears && !in_array(D('Stat')->getYearRange($year), $syears)) continue;
+-            if($showtoknows && !array_intersect($showtoknows, $v['howto_know'])) continue;
+-            if($sstatus && !in_array($v['status_id'], $sstatus)) continue;
+-            if($sprovinces && !in_array($v['address_city'], $sprovinces)) continue;
+-            if($sareas && !in_array($province_area_map[$add], $sareas)) continue;
+-
+-            // year
+-            if($year) {
+-                $year_range = D('Stat')->getYearRange($year);
+-                $year_pcount_map[$year_range]++;
+-                $year_amount_map[$year_range] += round($ppbm[$v['id']]['contract_budget']/10000,1);
+-                $year_data[$year_range]['pcount']++;
+-                $year_data[$year_range]['project_count'] += $ppbm[$v['id']]['project_count'];
+-                $year_data[$year_range]['need_budget'] += round($ppbm[$v['id']]['need_budget']/10000,1);
+-                $year_data[$year_range]['contract_budget'] += round($ppbm[$v['id']]['contract_budget']/10000,1);
+-                $year_data[$year_range]['had_grant_amount'] += round($ppbm[$v['id']]['had_grant_amount']/10000,1);
+-            }
+-
+-            //amount
+-            if($v['status_id']>0) {
+-                $status_name = $statuses[$v['status_id']];
+-                $status_pcount_map[$status_name]++;
+-                $status_amount_map[$status_name] += round($ppbm[$v['id']]['contract_budget']/10000,1);
+-                $status_data[$status_name]['pcount']++;
+-                $status_data[$status_name]['project_count'] += $ppbm[$v['id']]['project_count'];
+-                $status_data[$status_name]['need_budget'] += round($ppbm[$v['id']]['need_budget']/10000,1);
+-                $status_data[$status_name]['contract_budget'] += round($ppbm[$v['id']]['contract_budget']/10000,1);
+-                $status_data[$status_name]['had_grant_amount'] += round($ppbm[$v['id']]['had_grant_amount']/10000,1);
+-            }
+-
+-            foreach ($v['howto_know'] as $iid) {
+-                // $ptypes[] = $types[$iid];
+-                $howtoknow_pcount_map[$howtoknows[$iid]]++;
+-                $howtoknow_amount_map[$howtoknows[$iid]] += round($ppbm[$v['id']]['contract_budget']/10000,1);
+-                $howtoknow_data[$howtoknows[$iid]]['pcount']++;
+-                $howtoknow_data[$howtoknows[$iid]]['project_count'] += $ppbm[$v['id']]['project_count'];
+-                $howtoknow_data[$howtoknows[$iid]]['need_budget'] += round($ppbm[$v['id']]['need_budget']/10000,1);
+-                $howtoknow_data[$howtoknows[$iid]]['contract_budget'] += round($ppbm[$v['id']]['contract_budget']/10000,1);
+-                $howtoknow_data[$howtoknows[$iid]]['had_grant_amount'] += round($ppbm[$v['id']]['had_grant_amount']/10000,1);
+-            }
+-
+-
+-            // address
+-            $add_pcount_map[$add]++;
+-            $add_amount_map[$add] += round($ppbm[$v['id']]['contract_budget']/10000,1);
+-            $add_data[$add]['pcount']++;
+-            $add_data[$add]['project_count'] += $ppbm[$v['id']]['project_count'];
+-            $add_data[$add]['need_budget'] += round($ppbm[$v['id']]['need_budget']/10000,1);
+-            $add_data[$add]['contract_budget'] += round($ppbm[$v['id']]['contract_budget']/10000,1);
+-            $add_data[$add]['had_grant_amount'] += round($ppbm[$v['id']]['had_grant_amount']/10000,1);
+-        }
+-
+-
+-        $data['year_pcount_map'] = $year_pcount_map;
+-        $data['year_amount_map'] = $year_amount_map;
+-        $data['year_data']       = $year_data;
+-
+-        $data['howtoknow_pcount_map'] = $howtoknow_pcount_map;
+-        $data['howtoknow_amount_map'] = $howtoknow_amount_map;
+-        $data['howtoknow_data']       = $howtoknow_data;
+-
+-        $data['status_pcount_map'] = $status_pcount_map;
+-        $data['status_amount_map'] = $status_amount_map;
+-        $data['status_data']       = $status_data;
+-
+-        $data['add_pcount_map'] = $add_pcount_map;
+-        $data['add_amount_map'] = $add_amount_map;
+-        $data['add_data']       = $add_data;
+-
+-        foreach ($add_pcount_map as $k => $v) {
+-            $area = $province_area_map[$k];
+-            $data['area_pcount_map'][$area] += $v;
+-            $data['area_amount_map'][$area] += $add_amount_map[$k];
+-
+-            $data['area_data'][$area]['pcount'] += $add_data[$k]['pcount'];
+-            $data['area_data'][$area]['project_count'] += $add_data[$k]['project_count'];
+-            $data['area_data'][$area]['need_budget'] += $add_data[$k]['need_budget'];
+-            $data['area_data'][$area]['contract_budget'] += $add_data[$k]['contract_budget'];
+-            $data['area_data'][$area]['had_grant_amount'] += $add_data[$k]['had_grant_amount'];
+-        }
+-
+-        foreach ($ppbm as $k => $v) {
+-            $data['project_count_pcount_map'][$v['project_count']]++;
+-            $data['project_count_data'][$v['project_count']]['pcount']++;
+-            $data['project_count_data'][$v['project_count']]['project_count'] += $v['project_count'];
+-            $data['project_count_data'][$v['project_count']]['need_budget'] += round($v['need_budget']/10000,1);
+-            $data['project_count_data'][$v['project_count']]['contract_budget'] += round($v['contract_budget']/10000,1);
+-            $data['project_count_data'][$v['project_count']]['had_grant_amount'] += round($v['had_grant_amount']/10000,1);
+-        }
+-
+-        $this->assign($data);
+-        $this->display('partner');
+-    }
+-
+ }
+\ No newline at end of file
+Index: Lib/Action/Frontend/UserAction.class.php
+===================================================================
+--- Lib/Action/Frontend/UserAction.class.php	(revision 1)
++++ Lib/Action/Frontend/UserAction.class.php	(working copy)
+@@ -52,7 +52,6 @@
+         if($order){
+             $order = str_replace("|",' ',$order);
+         }
+-
+         foreach(array_keys($this->data['recommend_columns']) as $v) {
+             $value = trim(htmlspecialchars($this->_get($v)));
+             if(!$value) continue;
+Index: Lib/Model/UserInfoModel.class.php
+===================================================================
+--- Lib/Model/UserInfoModel.class.php	(revision 1)
++++ Lib/Model/UserInfoModel.class.php	(working copy)
+@@ -57,6 +57,7 @@
+         return "convert(" . $order_by . " USING gbk) COLLATE gbk_chinese_ci " . $desc;
+     }
+ 
++    //通过ID返回用户数据
+     public function getUserInfo($user_id) {
+         $u = $this->find($user_id);
+         if(!$u) return null;
+@@ -112,5 +113,17 @@
+ 
+         return $prefix . $year . str_pad($max+1, 3, "0", STR_PAD_LEFT);
+     }
++
++
++    //返回ID序列数组
++    public function getIdMap() {
++
++        //第二个参数为True返回所有值
++        return $this->getField("id", true);
++
++    }
++
++
++
+ }
+ ?>
+\ No newline at end of file
+Index: Lib/Model/UserRecommendsModel.class.php
+===================================================================
+--- Lib/Model/UserRecommendsModel.class.php	(revision 1)
++++ Lib/Model/UserRecommendsModel.class.php	(working copy)
+@@ -92,5 +92,240 @@
+         return $this->where($filter)->group('status')->getField('status,count(*) count',true);
+     } 
+ 
++
++
++    //传入一个数组，返回按照出现数量排序的二维数组
++    private function _getSortRank($target) {
++
++        //统计数组元素出现的次数
++        $count_res = array_count_values($target);     
++        //按数组的值降序排列
++        arsort($count_res);    
++        return $count_res;
++
++    }
++
++    //得到被推荐人表中ID与推荐人ID对应关系，参数为是否包括银杏伙伴，默认不包括
++    private function _getRecommendIdMap($include_partner = false) {
++
++        //如果包括银杏伙伴
++        if ($include_partner) {
++            return $this->getField('id,recommend_user_id');
++        } else {
++            return $this->where("status < 99")->getField('id,recommend_user_id');
++        }
++
++    }
++
++    //得到推荐人的所有去除重复后的ID数组
++    private function _getAllRecommedID() {
++
++        //初始化空数组，用来保存不重复的推荐人ID
++        $recommend_id = array();
++        //查找包括成为银杏伙伴的被推荐人
++        $id_map = $this->_getRecommendIdMap(true);
++        //得到UserInfo的ID,需要判定id_map中的ID是否有效
++        $user_info_id = D("UserInfo")->getIdMap();
++        foreach ($id_map as $key => $val) {
++            //$val代表推荐人的ID，如果该ID存在有效而且没有加入到recommend_id数组中,加之
++            if (in_array($val, $user_info_id) && !in_array($val, $recommend_id)) {
++                array_push($recommend_id, $val);
++            }
++        }
++        return $recommend_id;
++
++    }
++
++     //传入一个数组，以及限制数量，返回截取后的数组
++    private function _silceByMax($target, $max = 10) {
++
++        //如果当前数量小于指定的最大数量，那么直接输出，否则切出最大数量个数
++        return count($target) <= $max?$target:array_slice($target, 0, $max);
++
++    }
++
++    //得到推荐人的数量，被推荐人成为银杏伙伴也要统计
++    public function getRecommedCount() {
++
++        $recommend_id = $this->_getAllRecommedID();
++        return count($recommend_id);
++
++    }
++
++
++    //推荐人按照性别排名
++    public function getRecommendGenderRank() {
++
++        //去除重复后的推荐人ID
++        $recommend_id = $this->_getAllRecommedID();
++        //要统计的数组
++        $target = $this->table("user_recommends,user_info")->distinct(true)->where("user_recommends.recommend_user_id = 
++        user_info.id")->getField("user_info.id,gender",true);
++        $rank_result = $this->_getSortRank($target);
++        //如果不存在男或者女，则增补数量0
++        if (!$rank_result['男']) {
++            $rank_result['男'] = 0;
++        } 
++        if (!$rank_result['女']) {
++            $rank_result['女'] = 0;
++        }
++        return $rank_result;
++
++    }
++
++
++    //按照推荐人推荐的候选人数量排名
++    public function getRecommendNumRank() {
++
++        $recommed_name = array();
++        //要统计的数组
++        //$target = $this->table("user_recommends,user_info")->where("user_recommends.recommend_user_id = 
++        //user_info.id")->getField("user_info.name as name",true);
++        $target = $this->query("SELECT user_info.name
++                                FROM  `user_recommends` ,  `user_info` 
++                                WHERE user_recommends.recommend_user_id = user_info.id");
++        //取出name字段，然后变为一维数组
++        foreach ($target as $val) {
++            array_push($recommed_name, $val['name']);
++        }
++        //按照出现的个数统计
++        $rank_result = $this->_getSortRank($recommed_name);
++        return $this->_silceByMax($rank_result);
++
++    }
++
++
++    //得到候选人的数量，不包括银杏伙伴,不管成功失败均统计
++    public function getCandidateCount() {
++
++        $result = $this->where('status<99')->select();
++        return count($result);
++
++    }
++
++
++    //候选人按照省份排名
++    public function getCandidateProvinceRank() {
++
++        //要统计的数组
++        $target = $this->where("status<99")->getField("address_province",true);
++        $rank_result = $this->_getSortRank($target);
++        return $this->_silceByMax($rank_result);
++
++    }
++
++
++    //返回候选人的性别统计，没有成为合作伙伴
++    public function getCandidateGenderRank() {
++
++        //通过Invite_code来获得所有的候选人,两个表中invite_code一致且不为空，status小于99，即没有成为合作伙伴
++        $target = $this->table("user_recommends,user_info")->where("user_recommends.invite_code = 
++            user_info.invite_code and user_recommends.invite_code !='' and user_recommends.status < 99")->getField("gender",true);
++        $rank_result = $this->_getSortRank($target);
++        //如果不存在男或者女，则增补数量0
++        if (!$rank_result['男']) {
++            $rank_result['男'] = 0;
++        } 
++        if (!$rank_result['女']) {
++            $rank_result['女'] = 0;
++        }
++        return $rank_result;
++
++    }
++
++
++    //返回候选人的年龄统计，没有成为合作伙伴
++    public function getCandidateAgeRank() {
++
++        //通过Invite_code来获得所有的候选人,两个表中invite_code一致且不为空，status小于99，即没有成为合作伙伴
++        $target = $this->table("user_recommends,user_info")->where("user_recommends.invite_code = 
++            user_info.invite_code and user_recommends.invite_code !='' and user_recommends.status < 99")->getField("birthday",true);
++        $ages = array();
++        foreach ($target as $val) {
++            //echo intval(date("Y",time())) ."-" . intval(explode("-", $val)[0])."<br>";
++            array_push($ages, intval(date("Y",time())) - intval(explode("-", $val)[0]));
++        }
++        $rank_result = $this->_getSortRank($ages);
++        return $this->_silceByMax($rank_result);
++
++    }
++
++    //得到银杏伙伴的数量
++    public function getPartnerCount() {
++
++        $result = $this->where('status=99')->select();
++        return count($result);
++
++    }
++
++
++    //银杏伙伴按照省份排名
++    public function getPartnerProvinceRank() {
++
++        //要统计的数组
++        $target = $this->where("status=99")->getField("address_province",true);
++        $rank_result = $this->_getSortRank($target);
++        return $this->_silceByMax($rank_result);
++
++    }
++
++
++    //银杏伙伴按照性别排名
++    public function getPartnerGenderRank() {
++
++        //通过Invite_code来获得所有的银杏伙伴其他信息
++        $target = $this->table("user_recommends,user_info")->where("user_recommends.invite_code = 
++            user_info.invite_code and user_recommends.invite_code !='' and user_recommends.status = 99")->getField("gender",true);
++        $rank_result = $this->_getSortRank($target);
++        //如果不存在男或者女，则增补数量0
++        if (!$rank_result['男']) {
++            $rank_result['男'] = 0;
++        } 
++        if (!$rank_result['女']) {
++            $rank_result['女'] = 0;
++        }
++        return $rank_result;
++
++    }
++
++    //统计数据通用方法，传入status获得人数
++    private function _getNumByStatus($status) {
++
++        return $this->where("status=".$status)->getField("count(*)");
++        
++    }
++
++    //统计所有类别的数据
++    public function getNumOfAllStatus() {
++
++        //保存状态和数量对应关系的数组
++        $num_of_status = array();
++        //获得各个状态及代号
++        $user_statuses = D('UserStatuses')->getStatusIdNameMap();
++        $status_count = count($user_statuses);
++        foreach ($user_statuses as $key => $value) {
++           array_push($num_of_status,array($value => intval($this->_getNumByStatus($key))));
++        }
++        return $num_of_status;
++
++        /*
++        结果类似如下内容：
++        array (size=11)
++          0 => 
++            array (size=1)
++              '推荐表审核' => int 1
++          1 => 
++            array (size=1)
++              '待背景调查' => int 2
++
++        */
++
++    }
++
++
++
++
++
++
+ }
+ ?>
+\ No newline at end of file
+Index: Lib/Model/UsersModel.class.php
+===================================================================
+--- Lib/Model/UsersModel.class.php	(revision 1)
++++ Lib/Model/UsersModel.class.php	(working copy)
+@@ -85,4 +85,5 @@
+         }
+     }
+ 
++
+ }
+\ No newline at end of file
+Index: styles/css/main.css
+===================================================================
+--- styles/css/main.css	(revision 1)
++++ styles/css/main.css	(working copy)
+@@ -339,7 +339,7 @@
+ .icon-map-marker {background: url(images/gmap.png) no-repeat;}
+ 
+ table.stat {width:100%;}
+-table.stat td.out{vertical-align: top; padding: 10px 10px 30px 10px;}
++table.stat td.out{vertical-align: top; padding: 10px 10px 30px 10px;width: 30%;}
+ 
+ .small_highchart{width: 650px; height: 400px; }
+ 
+Index: Tpl/Frontend/Stat/candidate.html
+===================================================================
+--- Tpl/Frontend/Stat/candidate.html	(revision 0)
++++ Tpl/Frontend/Stat/candidate.html	(working copy)
+@@ -0,0 +1,166 @@
++<layout name="Public/frontend_template"/>
++
++<script type="text/javascript" src="/styles/js/highcharts/js/highcharts.js"></script>
++
++<div id="content" class="wide">
++    <ul class="nav nav-tabs" id="stat-nav">
++      <li><a href="/stat/recommend">推荐人</a></li>
++      <li class="active"><a href="/stat/candidate">候选人</a></li>
++      <li><a href="/stat/partner">银杏伙伴</a></li>
++      <li><a href="/stat/data">项目数据</a></li>
++    </ul>
++
++    <h5>候选人相关信息，包含了候选人数量，地区排名，年龄排名，性别比例</h5>
++
++    <table class="table table-striped table-hover home-tb">
++      <tr>
++        <td class="l">候选人数量：</td>
++        <td class="r">{$candidate_count}</td>
++      </tr>
++    </table>
++
++    <table class="stat">
++      <?php 
++            $column = array("候选人省份","人数");
++            $stat_type_name = '候选人省份分布';
++            $key_stat_type_key = 'candidate-province-rank';
++            $table_value = $candidate_province_rank;
++      ?>
++      <include file="stat_block" />
++
++      <?php
++            $column = array("候选人年龄","人数");
++            $stat_type_name='候选人年龄排名';
++            $key_stat_type_key = 'candidate-age-rank';
++            $table_value = $candidate_age_rank;
++        ?>
++      <include file="stat_block" />
++      <tr>
++        <td><h5>注：没有通过的初审的候选人不在年龄统计之中</h5></td>
++      </tr>
++      <?php
++            $column = array("候选人性别","人数");
++            $stat_type_name='候选人性别比例统计排名';
++            $key_stat_type_key = 'candidate-gender-rank';
++            $table_value = $candidate_gender_rank;
++        ?>
++      <include file="stat_block" />
++      <tr>
++        <td><h5>注：没有通过的初审的候选人不在性别统计之中</h5></td>
++      </tr>
++
++
++    </table>
++
++</div>
++
++<script type="text/javascript">
++
++$(function () {
++
++    $('#candidate-gender-rank-chart').highcharts({
++        credits: {text: ''},
++        chart: {
++            plotBackgroundColor: null,
++            plotBorderWidth: null,
++            plotShadow: false
++        },
++        title: { text: '候选人性别统计图' },
++        plotOptions: {
++            pie: {
++                allowPointSelect: true,
++                cursor: 'pointer',
++                dataLabels: {
++                    enabled: true,
++                    color: '#000000',
++                    connectorColor: '#000000',
++                    formatter: function() {
++                        return '<b>'+ this.point.name +'</b><br />'+ this.y + ' (' +Math.round(this.percentage*10)/10 + '%)';
++                    }
++                }
++            }
++        },
++        series: [{
++            type: 'pie',
++            name: '人数',
++            data: {:array_to_pie_chart_json($candidate_gender_rank)}
++        }]
++    });
++
++    $('#candidate-province-rank-chart').highcharts({
++        credits: {text: ''},
++        chart: {
++            type: 'column'
++        },
++        title: { text: '候选人省份分布' },
++        xAxis: [{
++            categories: {:json_encode(array_keys($candidate_province_rank))}
++        }],
++        yAxis: [{ 
++            labels: {
++                format: '{value}人',
++                style: {
++                    color: '#89A54E'
++                }
++            },
++            title: {
++                text: '人数',
++                style: {
++                    color: '#89A54E'
++                }
++            }
++        }],
++        tooltip: {
++            shared: true
++        },
++        series: [{
++            name: '人数',
++            color: '#4572A7',
++            type: 'column',
++            data: {:array_to_pie_chart_json($candidate_province_rank)},
++            tooltip: {
++                valueSuffix: '个'
++            }
++        }]
++    });
++
++    $('#candidate-age-rank-chart').highcharts({
++        credits: {text: ''},
++        chart: {
++            type: 'column'
++        },
++        title: { text: '候选人人年龄统计' },
++        xAxis: [{
++            categories: {:json_encode(array_keys($candidate_age_rank))}
++        }],
++        yAxis: [{ 
++            labels: {
++                format: '{value}人',
++                style: {
++                    color: '#89A54E'
++                }
++            },
++            title: {
++                text: '人数',
++                style: {
++                    color: '#89A54E'
++                }
++            }
++        }],
++        tooltip: {
++            shared: true
++        },
++        series: [{
++            name: '年龄',
++            color: '#4572A7',
++            type: 'column',
++            data: {:array_to_pie_chart_json($candidate_age_rank)},
++            tooltip: {
++                valueSuffix: '个'
++            }
++        }]
++    });
++    
++});
++  
++</script>
+\ No newline at end of file
+Index: Tpl/Frontend/Stat/data.html
+===================================================================
+--- Tpl/Frontend/Stat/data.html	(revision 0)
++++ Tpl/Frontend/Stat/data.html	(working copy)
+@@ -0,0 +1,34 @@
++<layout name="Public/frontend_template"/>
++
++<script type="text/javascript" src="/styles/js/highcharts/js/highcharts.js"></script>
++
++<div id="content" class="wide">
++    <ul class="nav nav-tabs" id="stat-nav">
++      <li><a href="/stat/recommend">推荐人</a></li>
++      <li><a href="/stat/candidate">候选人</a></li>
++      <li><a href="/stat/partner">银杏伙伴</a></li>
++      <li class="active"><a href="/stat/data">项目数据</a></li>
++    </ul>
++    
++    <h5>推荐人相关信息，包含了推荐人数量，推荐的候选人数量，推荐数量的TOP排名</h5>
++
++    <table class="table table-striped table-hover home-tb">
++        <foreach name="num_of_status" item="one">
++            <if condition="($key%3 == 0)">
++                <tr>
++            </if>
++            <foreach name="one" item="num" key="status">
++                <td class="l">{$status}</td>
++                <td class="r">{$num}</td>
++            </foreach>
++            <if condition="($key%3 == 3)">
++                </tr>
++            </if>
++        </foreach>
++    </table>
++
++
++
++</div>
++
++
+Index: Tpl/Frontend/Stat/index.html
+===================================================================
+--- Tpl/Frontend/Stat/index.html	(revision 1)
++++ Tpl/Frontend/Stat/index.html	(working copy)
+@@ -1,25 +1,29 @@
+ <layout name="Public/frontend_template"/>
++
++<script type="text/javascript" src="/styles/js/highcharts/js/highcharts.js"></script>
++
+ <div id="content" class="wide">
+     <ul class="nav nav-tabs">
+       <li class="active"><a href="/stat/index">基本统计</a></li>
+-      <!-- <li><a href="/stat/project">项目统计</a></li> -->
++      <li><a href="/stat/project">项目统计</a></li>
++      <li><a href="/stat/partner">团队统计</a></li>
+     </ul>
+     
+-    <h5>常用统计数据（除第一行项目数统计，以下统计只包含正式资助的项目）</h5>
+-<!--     <form action="/stat/index" method="get">
++    <h5>常用统计数据（除第一行项目数统计，以下统计只包含正式扶持的项目）</h5>
++    <form action="/stat/index" method="get">
+         <select class="chosen-select span3" multiple name="sbatchs[]" data-placeholder=" - 项目期 -">{:Utility::Option($batch_range, $sbatchs)}</select>        
+         <input type="submit" class="btn btn-small" value="筛选" />
+         <a class="btn btn-link" href="/stat/index">重置</a>
+     </form>
+- -->
++
+     <table class="table table-striped table-hover home-tb">
+       <tr>
+         <td class="l">总项目数：</td><td class="r"><a target="_blank" href="/project/all">{$project_count}个</a></td>
+-        <td class="l">资助中/已结束项目数：</td><td class="r">{$ing_project_count}&nbsp;<span class="muted">/</span>&nbsp;{$end_project_count}个</td>
++        <td class="l">扶持中/已结束项目数：</td><td class="r">{$ing_project_count}&nbsp;<span class="muted">/</span>&nbsp;{$end_project_count}个</td>
+         <td class="l">未通过：</td><td class="r">{$fail_project_count}个</td>
+       </tr>
+       <tr>
+-        <td class="l">总申请/资助额：</td><td class="r">{:moneyit($all_need_budget)}&nbsp;<span class="muted">/</span>&nbsp;{:moneyit($total_contract_budget)}</td>
++        <td class="l">总申请/扶持额：</td><td class="r">{:moneyit($all_need_budget)}&nbsp;<span class="muted">/</span>&nbsp;{:moneyit($total_contract_budget)}</td>
+         <td class="l">已拨款额：</td><td class="r">{:moneyit($had_grant_amount)}</td>
+         <td class="l">待拨款额：</td><td class="r">{:moneyit($total_contract_budget - $had_grant_amount)}</td>
+       </tr>
+@@ -34,9 +38,9 @@
+         <td class="l">平均项目周期：</td><td class="r">{$average_period}月</td>
+       </tr>
+ <!--       <tr>
+-        <td class="l">申请机构数：</td><td class="r"><a target="_blank" href="/partner">{$partner_count}个</a></td>
+-        <td class="l">机构平均项目数：</td><td class="r">{$partner_average_project_count}个</td>
+-        <td class="l">机构最大/最小项目数：</td><td class="r"><a target="_blank" href="/partner/detail/{$partner_max_project_id}">{$partner_max_project_count}</a> / {$partner_min_project_count}个</td>
++        <td class="l">申请团队数：</td><td class="r"><a target="_blank" href="/partner">{$partner_count}个</a></td>
++        <td class="l">团队平均项目数：</td><td class="r">{$partner_average_project_count}个</td>
++        <td class="l">团队最大/最小项目数：</td><td class="r"><a target="_blank" href="/partner/detail/{$partner_max_project_id}">{$partner_max_project_count}</a> / {$partner_min_project_count}个</td>
+       </tr> -->
+     </table>
+ 
+Index: Tpl/Frontend/Stat/nav_bar.html
+===================================================================
+--- Tpl/Frontend/Stat/nav_bar.html	(revision 0)
++++ Tpl/Frontend/Stat/nav_bar.html	(working copy)
+@@ -0,0 +1,5 @@
++<ul class="nav nav-tabs" id="stat-nav">
++  <li class="active"><a href="/stat/recommend">推荐人</a></li>
++  <li><a href="/stat/candidate">候选人</a></li>
++  <li><a href="/stat/partner">银杏伙伴</a></li>
++</ul>
+\ No newline at end of file
+Index: Tpl/Frontend/Stat/partner.html
+===================================================================
+--- Tpl/Frontend/Stat/partner.html	(revision 1)
++++ Tpl/Frontend/Stat/partner.html	(working copy)
+@@ -3,88 +3,120 @@
+ <script type="text/javascript" src="/styles/js/highcharts/js/highcharts.js"></script>
+ 
+ <div id="content" class="wide">
+-    <ul class="nav nav-tabs">
+-      <li><a href="/stat/index">基本统计</a></li>      
+-      <li><a href="/stat/project">项目统计</a></li>
+-      <li class="active"><a href="/stat/partner">机构统计</a></li>
++    <ul class="nav nav-tabs" id="stat-nav">
++      <li><a href="/stat/recommend">推荐人</a></li>
++      <li><a href="/stat/candidate">候选人</a></li>
++      <li class="active"><a href="/stat/partner">银杏伙伴</a></li>
++      <li><a href="/stat/data">项目数据</a></li>
+     </ul>
+ 
+-    <form action="/stat/partner" method="get" style="margin-bottom: 50px;">
+-        <select class="chosen-select span2" multiple name="sgrantcounts[]" data-placeholder=" - 资助次数 - ">{:Utility::Option($grant_count_range, $sgrantcounts)}</select>
+-        <select class="chosen-select span2" multiple name="syears[]" data-placeholder=" - 机构年限 -">{:Utility::Option($year_range, $syears)}</select>
+-        <select class="chosen-select span2" multiple name="showtoknows[]" data-placeholder=" - 信息来源渠道 - ">{:Utility::Option($howtoknow_range, $showtoknows)}</select>
+-        <select class="chosen-select span2" multiple name="sareas[]" data-placeholder=" - 所在大区 - ">{:Utility::Option($area_range, $sareas)}</select>
+-        <select class="chosen-select span2" multiple name="sprovinces[]" data-placeholder=" - 所在省份 - ">{:Utility::Option($province_range, $sprovinces)}</select>
+-        <input type="submit" class="btn btn-small" value="筛选" />
+-        <a class="btn btn-link" href="/stat/partner">重置</a>
+-    </form>
++    
+ 
++    <h5>银杏伙伴相关信息，包含了银杏伙伴数量，地区排名，性别比例</h5>
++
++    <table class="table table-striped table-hover home-tb">
++      <tr>
++        <td class="l">银杏伙伴数量：</td>
++        <td class="r">{$partner_count}</td>
++      </tr>
++    </table>
++
+     <table class="stat">
+-      <?php 
+-            $stat_type_name='资助次数';
+-            $stat_type_data = $project_count_data;
+-            $key_stat_type_key = 'project_count';
+-            $stat_type_pcount_map = $project_count_pcount_map;
+-            $stat_type_amount_map = $project_count_amount_map;
+-            $search_key = "grant_count";
+-      ?>
+-      <include file="partner_stat_block" />
+ 
+-      <?php
+-            $stat_type_name='机构年限';
+-            $stat_type_data = $year_data;
+-            $key_stat_type_key = 'year';
+-            $stat_type_pcount_map = $year_pcount_map;
+-            $stat_type_amount_map = $year_amount_map;
+-            $search_key = "found_year_range";
++        <?php 
++            $column = array("银杏伙伴省份","人数");
++            $stat_type_name = '银杏伙伴省份分布';
++            $key_stat_type_key = 'partner-province-rank';
++            $table_value = $partner_province_rank;
+         ?>
+-      <include file="partner_stat_block" />
+ 
+-     <?php
+-            $stat_type_name='机构状态';
+-            $stat_type_data = $status_data;
+-            $key_stat_type_key = 'status';
+-            $stat_type_pcount_map = $status_pcount_map;
+-            $stat_type_amount_map = $status_amount_map;
+-            $search_key = "";
+-        ?>
+-      <include file="partner_stat_block" />
++      <include file="stat_block" />
+ 
+-      <?php 
+-            $stat_type_name='信息来源渠道分布';
+-            $stat_type_data = $howtoknow_data;
+-            $key_stat_type_key = 'amount';
+-            $stat_type_pcount_map = $howtoknow_pcount_map;
+-            $stat_type_amount_map = $howtoknow_amount_map;
+-            $search_key = "";
+-      ?>
+-      <include file="partner_stat_block" />
+-
+-
+-      <?php 
+-            $stat_type_name='大区';
+-            $stat_type_data = $area_data;
+-            $key_stat_type_key = 'area';
+-            $stat_type_pcount_map = $area_pcount_map;
+-            $stat_type_amount_map = $area_amount_map;
+-            $search_key = null;
++        <?php
++            $column = array("银杏伙伴性别","人数");
++            $stat_type_name='银杏伙伴性别比例统计排名';
++            $key_stat_type_key = 'partner-gender-rank';
++            $table_value = $partner_gender_rank;
+         ?>
+-      <include file="partner_stat_block" />
+ 
+-      <?php 
+-            $stat_type_name='省份';
+-            $stat_type_data = $add_data;
+-            $key_stat_type_key = 'address';
+-            $stat_type_pcount_map = $add_pcount_map;
+-            $stat_type_amount_map = $add_amount_map;
+-            $search_key = "address_province";
+-        ?>
+-      <include file="partner_stat_block" />
++      <include file="stat_block" />
+ 
+     </table>
+ 
+ </div>
+ 
++
+ <script type="text/javascript">
+-    $(".chosen-select").chosen();
+-</script>
+\ No newline at end of file
++
++$(function () {
++
++    $('#partner-gender-rank-chart').highcharts({
++        credits: {text: ''},
++        chart: {
++            plotBackgroundColor: null,
++            plotBorderWidth: null,
++            plotShadow: false
++        },
++        title: { text: '银杏伙伴性别统计图' },
++        plotOptions: {
++            pie: {
++                allowPointSelect: true,
++                cursor: 'pointer',
++                dataLabels: {
++                    enabled: true,
++                    color: '#000000',
++                    connectorColor: '#000000',
++                    formatter: function() {
++                        return '<b>'+ this.point.name +'</b><br />'+ this.y + ' (' +Math.round(this.percentage*10)/10 + '%)';
++                    }
++                }
++            }
++        },
++        series: [{
++            type: 'pie',
++            name: '人数',
++            data: {:array_to_pie_chart_json($partner_gender_rank)}
++        }]
++    });
++
++    $('#partner-province-rank-chart').highcharts({
++        credits: {text: ''},
++        chart: {
++            type: 'column'
++        },
++        title: { text: '银杏伙伴省份分布' },
++        xAxis: [{
++            categories: {:json_encode(array_keys($partner_province_rank))}
++        }],
++        yAxis: [{ 
++            labels: {
++                format: '{value}个',
++                style: {
++                    color: '#89A54E'
++                }
++            },
++            title: {
++                text: '人数',
++                style: {
++                    color: '#89A54E'
++                }
++            }
++        }],
++        tooltip: {
++            shared: true
++        },
++        series: [{
++            name: '省份',
++            color: '#4572A7',
++            type: 'column',
++            data: {:array_to_pie_chart_json($partner_province_rank)},
++            tooltip: {
++                valueSuffix: '个'
++            }
++        }]
++    });
++    
++});
++  
++</script>
++
+Index: Tpl/Frontend/Stat/recommend.html
+===================================================================
+--- Tpl/Frontend/Stat/recommend.html	(revision 0)
++++ Tpl/Frontend/Stat/recommend.html	(working copy)
+@@ -0,0 +1,119 @@
++<layout name="Public/frontend_template"/>
++
++<script type="text/javascript" src="/styles/js/highcharts/js/highcharts.js"></script>
++
++<div id="content" class="wide">
++    <ul class="nav nav-tabs" id="stat-nav">
++      <li class="active"><a href="/stat/recommend">推荐人</a></li>
++      <li><a href="/stat/candidate">候选人</a></li>
++      <li><a href="/stat/partner">银杏伙伴</a></li>
++      <li><a href="/stat/data">项目数据</a></li>
++    </ul>
++    
++    <h5>推荐人相关信息，包含了推荐人数量，推荐的候选人数量，推荐数量的TOP排名</h5>
++
++    <table class="table table-striped table-hover home-tb">
++      <tr>
++        <td class="l">推荐人总数：</td>
++        <td class="r">{$recommend_count}</td>
++        <td class="l">候选人数量：</td>
++        <td class="r">{$candidate_count}</td>
++      </tr>
++    </table>
++
++    <table class="stat">
++      <?php 
++            $column = array("推荐人性别","推荐人数");
++            $stat_type_name = '推荐人性别比例';
++            $key_stat_type_key = 'recommend-gender-rank';
++            $table_value = $recommend_gender_rank;
++      ?>
++      <include file="stat_block" />
++
++      <?php
++            $column = array("推荐人","推荐人数");
++            $stat_type_name='推荐人数排名';
++            $key_stat_type_key = 'recommend-num-rank';
++            $table_value = $recommend_num_rank;
++        ?>
++      <include file="stat_block" />
++
++    </table>
++
++
++</div>
++
++
++<script type="text/javascript">
++
++$(function () {
++
++    $('#recommend-gender-rank-chart').highcharts({
++        credits: {text: ''},
++        chart: {
++            plotBackgroundColor: null,
++            plotBorderWidth: null,
++            plotShadow: false
++        },
++        title: { text: '推荐人性别统计图' },
++        plotOptions: {
++            pie: {
++                allowPointSelect: true,
++                cursor: 'pointer',
++                dataLabels: {
++                    enabled: true,
++                    color: '#000000',
++                    connectorColor: '#000000',
++                    formatter: function() {
++                        return '<b>'+ this.point.name +'</b><br />'+ this.y + ' (' +Math.round(this.percentage*10)/10 + '%)';
++                    }
++                }
++            }
++        },
++        series: [{
++            type: 'pie',
++            name: '人数',
++            data: {:array_to_pie_chart_json($recommend_gender_rank)}
++        }]
++    });
++
++    $('#recommend-num-rank-chart').highcharts({
++        credits: {text: ''},
++        chart: {
++            type: 'column'
++        },
++        title: { text: '推荐人个数排名统计' },
++        xAxis: [{
++            categories: {:json_encode(array_keys($recommend_num_rank))}
++        }],
++        yAxis: [{ 
++            labels: {
++                format: '{value}个',
++                style: {
++                    color: '#89A54E'
++                }
++            },
++            title: {
++                text: '推荐人数',
++                style: {
++                    color: '#89A54E'
++                }
++            }
++        }],
++        tooltip: {
++            shared: true
++        },
++        series: [{
++            name: '推荐人数',
++            color: '#4572A7',
++            type: 'column',
++            data: {:array_to_pie_chart_json($recommend_num_rank)},
++            tooltip: {
++                valueSuffix: '个'
++            }
++        }]
++    });
++    
++});
++  
++</script>
+Index: Tpl/Frontend/Stat/stat_block.html
+===================================================================
+--- Tpl/Frontend/Stat/stat_block.html	(revision 0)
++++ Tpl/Frontend/Stat/stat_block.html	(working copy)
+@@ -0,0 +1,30 @@
++<tr>
++  <td class="out">
++    <table class="table table-striped table-hover">
++        <thead>
++            <tr>
++                <foreach name="column" item="one">
++                    <th>{$one}</th>
++                </foreach>
++            </tr>
++        </thead>
++        <foreach name="table_value" item="one">
++          <tr>
++            <td>{$key}</td>
++            <td>{$one}</td>
++          </tr>
++        </foreach>
++    </table>
++  </td>
++  <td class="out">
++        <ul class="nav nav-tabs">
++          <li class="active"><a href="#{$key_stat_type_key}-tab1" data-toggle="tab">{$stat_type_name}</a></li>
++        </ul>
++        <div class="tab-content">
++          <div class="tab-pane active" id="{$key_stat_type_key}-tab1">
++              <div id="{$key_stat_type_key}-chart" class="small_highchart"></div>
++          </div>
++        </div>
++  </td>
++<tr>
++
+Index: Tpl/Frontend/User/list.html
+===================================================================
+--- Tpl/Frontend/User/list.html	(revision 1)
++++ Tpl/Frontend/User/list.html	(working copy)
+@@ -43,7 +43,7 @@
+                 $class = 'nowrap';
+             }
+         ?>
+-      <td {$class}>{:column_item_value($v, $one, $list_columns)}</td>
++      <td class="{$class}">{:column_item_value($v, $one, $list_columns)}</td>
+     </foreach>
+   </tr>
+ </foreach>

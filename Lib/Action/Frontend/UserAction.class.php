@@ -37,7 +37,6 @@ class UserAction extends BaseAction {
                 );
     }
 
-
     /**
      * 在用户提交申请表之前，准伙伴们的信息在user_recommends   status<60
      *                 之后，准伙伴们的信息在user_info表，状态分隔符：status>=60
@@ -129,8 +128,6 @@ class UserAction extends BaseAction {
 
     /**
      * - 修改评委
-     * [ajax_change_audit_user description]
-     * @return [type] [description]
      */
     public function ajax_change_audit_user()
     {
@@ -159,6 +156,7 @@ class UserAction extends BaseAction {
 
     // 详情页
     public function detail() {
+
         $id = $this->_get('id');
         $this->user = D('UserRecommends')->getRecommend($id);
         $this->userinfo = $this->user['userinfo'];
@@ -168,14 +166,16 @@ class UserAction extends BaseAction {
 
         $this->data['attachment_title'] = "附件";
         $this->data['note_title'] = "备注";
-        $this->data['selector'] = "user/index?apply_type_id=".$user['apply_type_id'];
         
+        $this->data['selector'] = "user/index?apply_type_id=".$user['apply_type_id'];
+         
 
         /**附件分目录*********************************************/
         $attachmentDir = D("AttachmentDir")->getDirectories('user',$id);
         $this->diretories = $attachmentDir['diretories'];
         $this->dir_data = $attachmentDir['dir_data'];
         $this->nodir = $attachmentDir['nodir'];
+
         /*****************************************/
 
         $this->user_status_xedit_str =  json_encode_for_xedit($this->user_statuses);
@@ -355,15 +355,6 @@ class UserAction extends BaseAction {
     }
 
 
-    // 更新合同相关信息
-    public function submit_contract() {
-        $id = D("UserInfo")->saveOrUpdate($_POST);
-        Session::Set("success", "保存合同信息成功，请在“1. 基本资料”最后部分查看");
-        D('AdminLogs')->saveLog('userinfo', $_POST, 'update', $id);
-
-        $this->redirect('/user/detail/' . $id);
-    }
-
     public function massdelete() {
         $ids_str = strval($this->_get('ids'));
         $ids = explode(',', $ids_str);
@@ -378,183 +369,7 @@ class UserAction extends BaseAction {
         json("massdelete_callback('$ids_str');", 'eval');
     }
 
-
-    public function delete() {
-        $id = intval($this->_get('id'));
-        
-        $this->permission_ajaxrefresh("Projects", "delete", $id);
-        D('Projects')->deleteProject($id);
-        Session::Set("success", L('success'));
-
-        //log
-        D('AdminLogs')->saveLog('project', $id, 'delete');        
-        json(null, "refresh");
-    }
-
     
-    // 导出用户
-    public function export_users() {
-
-        $ids = strval($this->_param('ids'));
-        $status = intval($this->_param('status'));
-        $apply_type_id = intval($this->_param('apply_type_id'));
-
-        if($ids) $filter['id'] = array('in', explode(',', $ids));
-        if($status) $filter['status'] = $status;
-        if($apply_type_id) $filter['apply_type_id'] = $apply_type_id;
-
-        $users = D("UserInfo")->getUserInfos($filter);
-
-        if($this->_param('infotype')=='school') {
-            return $this->_export_user_schools($users);
-        }
-
-        $columns = D("CustomColumns")->getUserInfoModuleColumns();
- 
-        $no_needs = array('self_introduction', 'experience', 'edu_info', 'apply_type_id', 'howto_know');
-        foreach ($columns as $k => $v) {
-            if(in_array($k, $no_needs)) continue;
-            $keynames[$k] = $v['display_name'];
-        }
-
-        $column_data = array();
-        foreach ($users as $one) {
-            $single_data = array();
-            foreach ($keynames as $key => $name) {
-                if(!$one[$key]) $one[$key] = '';
-                $single_data[] = str_replace('&nbsp;','',$one[$key]);
-            }
-
-            $column_data[] = $single_data;
-        }
-
-        D('AdminLogs')->saveLog('project', Utility::GetColumn($projects, 'title'), 'user_export');
-        Excel::createExcel($column_data, "会员", "会员导出-" . date('Y-m-d'), array_values($keynames));
-    }
-
-
-    function _export_user_schools($users) {
-
-        $keynames['identifier'] = '编号';
-        $keynames['name'] = '姓名';
-        $keynames['shool_name'] = '学校名称';
-        $keynames['shool_leader'] = '校长';
-        $keynames['shool_leader_contact'] = '校长联系方式';
-
-        $detail_info_key = D("Schools")->get_map_detail_group_info();
-        foreach ($detail_info_key as $k => $v) {
-            $keynames[$k] = $v['name'];
-        }
-
-        $users = Utility::AssColumn($users);
-        $user_ids = Utility::GetColumn($users);
-        foreach ($user_ids as $uid) {
-            $user_schools = D("Schools")->getSchoolUserInfo($uid);
-            foreach($user_schools as $one) {
-                $details = unserialize($one['teach_detail']);
-                foreach ($details as $line) {
-                    $single_data = array();
-                    $single_data[] = $users[$uid]['identifier'];
-                    $single_data[] = $users[$uid]['name'];
-                    $single_data[] = $one['school']['name'];
-                    $single_data[] = $one['school']['leader_name'];
-                    $single_data[] = $one['school']['leader_contact'];
-
-                    foreach($detail_info_key as $dk=>$dv) {
-                        $single_data[] = $line[$dk];
-                    }
-
-                    $column_data[] = $single_data;
-                }
-            }
-        }
-
-        D('AdminLogs')->saveLog('user_school_info', Utility::GetColumn($users, 'name'), 'user_export');
-        Excel::createExcel($column_data, "会员任教详情", "会员任教详情导出-" . date('Y-m-d'), array_values($keynames));    
-    }
-
-
-    function ajax_save_content_block_toggle() {
-        $id = intval(I("id"));
-        $block = I("block");
-
-        $toggle = unserialize(M("UserRecommends")->where('id='.$id)->getField('pm_display_toggle'));
-
-        if($toggle[$block]) {
-            $toggle[$block] = 0;
-        } else {
-            $toggle[$block] = 1;
-        }
-        $data['id'] = $id;
-        $data['pm_display_toggle'] = serialize($toggle);
-
-        M('UserRecommends')->save($data);
-    }
-
-    function ajax_add_school() {
-        $data['user_id'] = intval($this->_param('pk'));
-        $data['school_id'] = intval($this->_param('value'));
-        $data['create_user_id'] = $this->login_user['id'];
-        $data['create_time'] = date('Y-m-d H:i:s');
-
-        D("SchoolUserMapping")->add($data);
-        return;
-    }
-
-    function ajax_edit_mapping_note() {
-        $data['id'] = intval($this->_param('pk'));
-        $data['note'] = $this->_param('value');
-
-        D("SchoolUserMapping")->save($data);
-        return;        
-    }
-
-    // 
-    public function render_map_teach_detail() {
-
-        $this->title = '修改任教详情';
-        $this->modal_style= 'style="width:800px"';
-        $this->school_id = $this->_get('id');
-        $this->user_id = $this->_get('uid');
-
-        $value = D("SchoolUserMapping")->where('id=%d',$this->school_id)->getField('teach_detail');
-        
-        // var_dump($value);
-
-        $this->edit_part = dashboard_group_edit('teach_map',NULL, $this->map_teach_detail_group_option, $value);
-
-        $html = $this->fetch('change_tech_detail_dialog');
-        $j = array(
-            array("data" => $html, "type" => "dialog"),
-            array("data" => "dialog_validator()", "type" => "eval")
-        );
-        json($j, "mix");
-    }
-
-    public function submit_map_teach_detail() {
-        $options = $this->map_teach_detail_group_option;
-        for($i=0; $i<100; $i++) {
-            $keep = 0;                  //有完全空的行，直接忽略
-            foreach ($options as $k => $v) {
-                $groups[$i][$k] = trim($_POST['teach_map_group_'.$k][$i]);
-                if($groups[$i][$k]) {
-                    $keep = 1;
-                }
-            }
-            if(!$keep) {
-                unset($groups[$i]);
-            }
-        }
-
-        $data['id'] = $this->_post('id');
-        $data['teach_detail'] = serialize($groups);
-
-        D("SchoolUserMapping")->save($data);
-
-        $uid = $this->_post('uid');
-        redirect('/user/detail/'.$uid.'#schoolinfo');
-    }
-
     public function ajax_only_me() {
         $data['show_only_related_me'] = intval($this->_get('to'));
         $data['id'] = $this->login_user['id'];

@@ -88,7 +88,7 @@
       <li class="active"><a href="/stat/recommend">推荐人</a></li>
       <li><a href="/stat/candidate">候选人</a></li>
       <li><a href="/stat/partner">银杏伙伴</a></li>
-      <li><a href="/stat/data">统计数据</a></li>
+      <li><a href="/stat/data">项目数据</a></li>
     </ul>
     
     <h5>推荐人相关信息，包含了推荐人数量，推荐的候选人数量，推荐数量的TOP排名</h5>

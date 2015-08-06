@@ -136,6 +136,14 @@ class UserRecommendsModel extends BaseModel {
 
     }
 
+     //传入一个数组，以及限制数量，返回截取后的数组
+    private function _silceByMax($target, $max = 10) {
+
+        //如果当前数量小于指定的最大数量，那么直接输出，否则切出最大数量个数
+        return count($target) <= $max?$target:array_slice($target, 0, $max);
+
+    }
+
     //得到推荐人的数量，被推荐人成为银杏伙伴也要统计
     public function getRecommedCount() {
 
@@ -182,7 +190,7 @@ class UserRecommendsModel extends BaseModel {
         }
         //按照出现的个数统计
         $rank_result = $this->_getSortRank($recommed_name);
-        return $rank_result;
+        return $this->_silceByMax($rank_result);
 
     }
 
@@ -202,7 +210,7 @@ class UserRecommendsModel extends BaseModel {
         //要统计的数组
         $target = $this->where("status<99")->getField("address_province",true);
         $rank_result = $this->_getSortRank($target);
-        return $rank_result;
+        return $this->_silceByMax($rank_result);
 
     }
 
@@ -238,7 +246,7 @@ class UserRecommendsModel extends BaseModel {
             array_push($ages, intval(date("Y",time())) - intval(explode("-", $val)[0]));
         }
         $rank_result = $this->_getSortRank($ages);
-        return $rank_result;
+        return $this->_silceByMax($rank_result);
 
     }
 
@@ -257,7 +265,7 @@ class UserRecommendsModel extends BaseModel {
         //要统计的数组
         $target = $this->where("status=99")->getField("address_province",true);
         $rank_result = $this->_getSortRank($target);
-        return $rank_result;
+        return $this->_silceByMax($rank_result);
 
     }
 
