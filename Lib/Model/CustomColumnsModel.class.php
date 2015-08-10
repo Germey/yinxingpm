@@ -192,6 +192,8 @@ class CustomColumnsModel extends BaseModel {
             "org" => array("display_name" => "工作单位", "param" =>array("placeholder" => "",)),
             "mobile" => array("display_name" => "联系电话" , ),
             "email" => array("display_name" => "联系邮件", ),
+            //为了便于构建filter，增加了一个column，可以通过URL参数来查询省份，同时为了便于统计页面的超链接省份跳转
+            "address_province" => array("display_name" => "所在省份", ),
             "address" => array("display_name" => "所在地区", "type"=>"address", "li_class" => "fw", ),
         );
 

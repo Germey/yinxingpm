@@ -335,11 +335,7 @@ input.errorInput{
 #content.project-detail ul.list_display .column_display_li .column_content {margin-left: 10px; line-height: 21px; padding-top: 7px;}
 #content.project-detail ul.list_display .three .column_content {width: 85%; line-height: 26px; padding-top: 6px;}
 #content.project-detail ul.list_display > li {padding-top:0;}
-#content .filter input[type="text"] {
-  height: 24px;
-  width: 150px;
-  margin-bottom: 0px;
-}
+
 .icon-map-marker {background: url(images/gmap.png) no-repeat;}
 
 table.stat {width:100%;}
@@ -400,4 +396,3 @@ table.stat td.out{vertical-align: top; padding: 10px 10px 30px 10px;width: 30%;}
 
 #content .embed_recommend {padding-left: 20px;}
 #content .embed_recommend h5.bg{font-size: 15px;}
-

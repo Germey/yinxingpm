@@ -10,16 +10,8 @@
         </thead>
         <foreach name="table_value" item="one">
           <tr>
-            <if condition = "$key_stat_type_key == 'recommend-num-rank'">
-                <td><a href="/user/recommend?recommender_name={$key}">{$key}</td>
-            <elseif condition = "$key_stat_type_key == 'candidate-province-rank'" />
-                <td><a href="/user/recommend?address_province={$key}">{$key}</td>
-            <elseif condition = "$key_stat_type_key == 'partner-province-rank'" />
-                <td><a href="/user/recommend?status=99&address_province={$key}">{$key}</td>
-            <else />
-                <td>{$key}</td>
-            </if>
-                <td>{$one}</td>
+            <td>{$key}</td>
+            <td>{$one}</td>
           </tr>
         </foreach>
     </table>

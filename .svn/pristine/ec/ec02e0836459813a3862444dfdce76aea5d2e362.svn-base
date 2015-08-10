@@ -53,19 +53,9 @@ class UserAction extends BaseAction {
         foreach(array_keys($this->data['recommend_columns']) as $v) {
             $value = trim(htmlspecialchars($this->_get($v)));
             if(!$value) continue;
-            //修复通过查询推荐人查询不到的问题，起初原因是查找的recommender_name字段，而字段并不存在
-            if ($v == "recommender_name") {
-                $value = D("UserInfo")->getIdByName($value);
-                $v = "recommend_user_id";
-            }
-            //因为recommend_user_id是int类型，所以不能用like来匹配
-            if ($v == "recommend_user_id") {
-                $filter["user_recommends." . $v] = array('eq', $value);
-            } else {
-                $filter["user_recommends." . $v] = array('like', '%'.$value.'%');
-            }
-
+            $filter["user_recommends." . $v] = array('like', '%'.$value.'%');
         }
+
         $count = D('UserRecommends')->getCount($filter);
         list($pagesize, $page_num, $this->pagestring) = pagestring($count, 20);
         $this->users = D('UserRecommends')->gets($filter, $page_num, $pagesize, $order);

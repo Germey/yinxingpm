@@ -12,16 +12,6 @@
 
     <h5>候选人相关信息，包含了候选人数量，地区排名，年龄排名，性别比例</h5>
 
-    <form class="filter" action="/stat/candidate" method="get" style="margin: 20px 0">
-        <input type="text" name="name" placeholder="姓名">
-        <input type="text" name="mobile" placeholder="电话">
-        <input type="text" name="org" placeholder="工作单位">
-        <input type="text" name="email" placeholder="邮件">
-        <input type="text" name="address_province" placeholder="省份">
-        <input type="submit" class="btn btn-small" value="筛选">
-        <a type="button" href="/stat/candidate" class="btn btn-small" >重置</a>
-    </form>
-    <!-- <h5>您可输入如上字段进行模糊查询筛选</h5> -->
     <table class="table table-striped table-hover home-tb">
       <tr>
         <td class="l">候选人数量：</td>
@@ -40,7 +30,7 @@
 
       <?php
             $column = array("候选人年龄","人数");
-            $stat_type_name='候选人年龄段统计';
+            $stat_type_name='候选人年龄排名';
             $key_stat_type_key = 'candidate-age-rank';
             $table_value = $candidate_age_rank;
         ?>
@@ -139,7 +129,7 @@ $(function () {
         chart: {
             type: 'column'
         },
-        title: { text: '候选人人年龄段统计' },
+        title: { text: '候选人人年龄统计' },
         xAxis: [{
             categories: {:json_encode(array_keys($candidate_age_rank))}
         }],

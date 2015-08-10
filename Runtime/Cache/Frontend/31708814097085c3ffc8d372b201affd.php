@@ -80,32 +80,27 @@
     <?php else: ?>
         <div style="height:5px"></div><?php endif; ?>
     
-
-<script type="text/javascript" src="/styles/js/highcharts/js/highcharts.js"></script>
-
 <div id="content" class="wide">
-    <ul class="nav nav-tabs" id="stat-nav">
-      <li><a href="/stat/recommend">推荐人</a></li>
-      <li><a href="/stat/candidate">候选人</a></li>
-      <li><a href="/stat/partner">银杏伙伴</a></li>
-      <li class="active"><a href="/stat/data">项目数据</a></li>
-    </ul>
-    
-    <h5>统计信息，包括了各个阶段的人数统计</h5>
+<h4>成员任务列表【<?php echo ($_GET['status_name']?$_GET['status_name']:'全部'); ?>】</h4>
+    <table class="table table-bordered">
+        <tr>
+            <th>成员</th>
+            <?php if(is_array($task_list)): foreach($task_list as $key=>$one): ?><th style="text-align: center"><?php echo ($one); ?></th><?php endforeach; endif; ?>
+        </tr>
+        <?php if(is_array($users)): foreach($users as $key=>$one): ?><tr>            
+                <td><a target="_blank" href="/user/detail/<?php echo ($one['id']); ?>"><?php echo ($one['name']); ?></a></td>
+                <?php if(is_array($task_list)): foreach($task_list as $tkey=>$tone): ?><td style="text-align: center">
+                        <?php if($one['task'][$tkey]['done']): ?><img src="/styles/css/images/check.png"/><?php endif; ?>
 
-    <table class="table table-striped table-hover home-tb">
-        <?php if(is_array($num_of_status)): foreach($num_of_status as $key=>$one): if(($key%3 == 0)): ?><tr><?php endif; ?>
-            <?php if(is_array($one)): foreach($one as $status=>$num): ?><td class="l"><a href="/user/recommend?status=<?php echo ($status_map[$status]); ?>"><?php echo ($status); ?></a></td>
-                <td class="r"><?php echo ($num); ?></td><?php endforeach; endif; ?>
-            <?php if(($key%3 == 3)): ?></tr><?php endif; endforeach; endif; ?>
-    </table>
-
-
-
+                        <?php if($one['task'][$tkey]['note']): ?><a href="#" class="mytooltip" data-toggle="tooltip" data-placement="top" title="<?php echo ($one['task'][$tkey]['note']); ?>">
+                                <img src="/styles/css/images/note.png"/>
+                            </a>
+                        <?php else: endif; ?>
+                    </td><?php endforeach; endif; ?>                
+            </tr><?php endforeach; endif; ?>
+      </table>
+    </div>
 </div>
-
-
-
 </div>
 <div class="clear"></div>
 <div id="modaldialog"></div>

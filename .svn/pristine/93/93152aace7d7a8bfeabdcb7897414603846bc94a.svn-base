@@ -123,12 +123,6 @@ class UserInfoModel extends BaseModel {
 
     }
 
-    //通过姓名获取ID
-    public function getIdByName($name) {
-
-        $id = $this->where("name like '%".$name."%'")->getField("id");
-        return $id;
-    }
 
 
 }

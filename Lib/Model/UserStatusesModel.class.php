@@ -15,6 +15,10 @@ class UserStatusesModel extends BaseModel {
         return $this->where($f)->getField('id,name',true);
     }
     
+    //返回以各个状态名为键值，ID为键名的数组
+    public function getAuditStatusNameIdMap() {
+        return $this->getField('name,id',true);
+    }
 }
 
 ?>

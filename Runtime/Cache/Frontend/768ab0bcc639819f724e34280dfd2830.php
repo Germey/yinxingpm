@@ -93,15 +93,26 @@
     
     <h5>推荐人相关信息，包含了推荐人数量，推荐的候选人数量，推荐数量的TOP排名</h5>
 
+     <form class="filter" action="/stat/recommend" method="get" style="margin: 20px 0">
+        <input type="text" name="name" placeholder="姓名">
+        <input type="text" name="gender" placeholder="性别">
+        <input type="text" name="mobile" placeholder="电话">
+        <input type="text" name="org" placeholder="工作单位">
+        <input type="text" name="email" placeholder="邮件">
+        <input type="text" name="address_province" placeholder="省份">
+        <input type="submit" class="btn btn-small" value="筛选">
+        <a type="button" href="/stat/recommend" class="btn btn-small" >重置</a>
+    </form>
+
     <table class="table table-striped table-hover home-tb">
       <tr>
         <td class="l">推荐人总数：</td>
         <td class="r"><?php echo ($recommend_count); ?></td>
-        <td class="l">候选人数量：</td>
+        <td class="l">候选人总数：</td>
         <td class="r"><?php echo ($candidate_count); ?></td>
       </tr>
     </table>
-
+    <h5>注：候选人总数指满足筛选条件的推荐人推荐的候选人数量</h5>
     <table class="stat">
       <?php  $column = array("推荐人性别","推荐人数"); $stat_type_name = '推荐人性别比例'; $key_stat_type_key = 'recommend-gender-rank'; $table_value = $recommend_gender_rank; ?>
       <tr>
@@ -113,8 +124,14 @@
             </tr>
         </thead>
         <?php if(is_array($table_value)): foreach($table_value as $key=>$one): ?><tr>
-            <td><?php echo ($key); ?></td>
-            <td><?php echo ($one); ?></td>
+            <?php if($key_stat_type_key == 'recommend-num-rank'): ?><td><a href="/user/recommend?recommender_name=<?php echo ($key); ?>"><?php echo ($key); ?></td>
+            <?php elseif($key_stat_type_key == 'candidate-province-rank'): ?>
+                <td><a href="/user/recommend?address_province=<?php echo ($key); ?>"><?php echo ($key); ?></td>
+            <?php elseif($key_stat_type_key == 'partner-province-rank'): ?>
+                <td><a href="/user/recommend?status=99&address_province=<?php echo ($key); ?>"><?php echo ($key); ?></td>
+            <?php else: ?>
+                <td><?php echo ($key); ?></td><?php endif; ?>
+                <td><?php echo ($one); ?></td>
           </tr><?php endforeach; endif; ?>
     </table>
   </td>
@@ -143,8 +160,14 @@
             </tr>
         </thead>
         <?php if(is_array($table_value)): foreach($table_value as $key=>$one): ?><tr>
-            <td><?php echo ($key); ?></td>
-            <td><?php echo ($one); ?></td>
+            <?php if($key_stat_type_key == 'recommend-num-rank'): ?><td><a href="/user/recommend?recommender_name=<?php echo ($key); ?>"><?php echo ($key); ?></td>
+            <?php elseif($key_stat_type_key == 'candidate-province-rank'): ?>
+                <td><a href="/user/recommend?address_province=<?php echo ($key); ?>"><?php echo ($key); ?></td>
+            <?php elseif($key_stat_type_key == 'partner-province-rank'): ?>
+                <td><a href="/user/recommend?status=99&address_province=<?php echo ($key); ?>"><?php echo ($key); ?></td>
+            <?php else: ?>
+                <td><?php echo ($key); ?></td><?php endif; ?>
+                <td><?php echo ($one); ?></td>
           </tr><?php endforeach; endif; ?>
     </table>
   </td>

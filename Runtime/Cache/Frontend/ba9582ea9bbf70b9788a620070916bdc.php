@@ -95,6 +95,16 @@
 
     <h5>银杏伙伴相关信息，包含了银杏伙伴数量，地区排名，性别比例</h5>
 
+    <form class="filter" action="/stat/partner" method="get" style="margin: 20px 0">
+        <input type="text" name="name" placeholder="姓名">
+        <input type="text" name="mobile" placeholder="电话">
+        <input type="text" name="org" placeholder="工作单位">
+        <input type="text" name="email" placeholder="邮件">
+        <input type="text" name="address_province" placeholder="省份">
+        <input type="submit" class="btn btn-small" value="筛选">
+        <a type="button" href="/stat/partner" class="btn btn-small" >重置</a>
+    </form>
+
     <table class="table table-striped table-hover home-tb">
       <tr>
         <td class="l">银杏伙伴数量：</td>
@@ -115,8 +125,14 @@
             </tr>
         </thead>
         <?php if(is_array($table_value)): foreach($table_value as $key=>$one): ?><tr>
-            <td><?php echo ($key); ?></td>
-            <td><?php echo ($one); ?></td>
+            <?php if($key_stat_type_key == 'recommend-num-rank'): ?><td><a href="/user/recommend?recommender_name=<?php echo ($key); ?>"><?php echo ($key); ?></td>
+            <?php elseif($key_stat_type_key == 'candidate-province-rank'): ?>
+                <td><a href="/user/recommend?address_province=<?php echo ($key); ?>"><?php echo ($key); ?></td>
+            <?php elseif($key_stat_type_key == 'partner-province-rank'): ?>
+                <td><a href="/user/recommend?status=99&address_province=<?php echo ($key); ?>"><?php echo ($key); ?></td>
+            <?php else: ?>
+                <td><?php echo ($key); ?></td><?php endif; ?>
+                <td><?php echo ($one); ?></td>
           </tr><?php endforeach; endif; ?>
     </table>
   </td>
@@ -146,8 +162,14 @@
             </tr>
         </thead>
         <?php if(is_array($table_value)): foreach($table_value as $key=>$one): ?><tr>
-            <td><?php echo ($key); ?></td>
-            <td><?php echo ($one); ?></td>
+            <?php if($key_stat_type_key == 'recommend-num-rank'): ?><td><a href="/user/recommend?recommender_name=<?php echo ($key); ?>"><?php echo ($key); ?></td>
+            <?php elseif($key_stat_type_key == 'candidate-province-rank'): ?>
+                <td><a href="/user/recommend?address_province=<?php echo ($key); ?>"><?php echo ($key); ?></td>
+            <?php elseif($key_stat_type_key == 'partner-province-rank'): ?>
+                <td><a href="/user/recommend?status=99&address_province=<?php echo ($key); ?>"><?php echo ($key); ?></td>
+            <?php else: ?>
+                <td><?php echo ($key); ?></td><?php endif; ?>
+                <td><?php echo ($one); ?></td>
           </tr><?php endforeach; endif; ?>
     </table>
   </td>
