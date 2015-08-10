@@ -5,6 +5,7 @@ function header_nav($user) {
     "/user/recommend" => '候选人',
     "/user/success" => '伙伴们',
     "/user/fail" => '备选库',
+    "/user/recomlist" => '推荐人',
     // "/project/all" =>  '所有项目',
     // "/project/ing" =>  '在资助项目',
     // "/partner" =>  '所有机构',

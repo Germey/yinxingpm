@@ -78,6 +78,39 @@ class UserAction extends BaseAction {
         $this->display('index');
     }
 
+    //推荐人
+    private function _getRecommendFilterColumns() {
+
+         $columns = array(
+            "name" => array("display_name" => "姓名" , ),
+            "gender" => array("display_name" => "性别" , ),
+            "mobile" => array("display_name" => "联系电话" , ),
+            "org" => array("display_name" => "工作单位" , ),
+            "email" => array("display_name" => "联系邮件", ),
+            "address_province" => array("display_name" => "省份", ),
+        );
+
+        return $columns;
+    }
+
+
+    //推荐人列表
+    public function recomlist() {
+
+        $columns = $this->_getRecommendFilterColumns();
+        $this->columns = $columns;
+        $filter = array();
+        foreach(array_keys($columns) as $v) {
+            $value = trim(htmlspecialchars($this->_get($v)));
+            if(!$value) continue;
+            $filter["user_info." . $v] = array('like', '%'.$value.'%');
+        }
+        $count = D('UserRecommends')->getRecommedCount($filter);
+        list($pagesize, $page_num, $this->pagestring) = pagestring($count, 10);
+        $this->users = D('UserRecommends')->getRecommendInfos($filter, $page_num, $pagesize, $order);
+
+        $this->display("recomlist");
+    }
 
     public function index() {
 

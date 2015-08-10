@@ -139,6 +139,24 @@ class UserRecommendsModel extends BaseModel {
 
     }
 
+    //得到推荐人的详细信息
+    public function getRecommendInfos($filter, $page=0, $size=0, $order = null) {
+
+        
+        $user_obj = D("UserInfo");
+        if(!$order) {
+            $order = 'id asc';
+        }
+        $users = $user_obj->where($filter)->order($order);
+        if($page && $size) {
+            $users->page($page, $size);
+        }
+        $result = $users->select();
+        return $result;
+
+        // return $this->_rich($data, $rich);
+    }
+
     //这里指的是满足条件的推荐人所推荐候选人的总数量
     public function getRecommendCandidateCount($filter) {
 
