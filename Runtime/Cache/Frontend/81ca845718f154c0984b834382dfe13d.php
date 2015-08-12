@@ -88,27 +88,13 @@
         <button class="btn btn-small"><?php echo (L("search")); ?></button>
         <a class="btn btn-small" href="/user/recomlist">重置</a>
     </form>
-    
     <!-- <?php echo (display_tag_filter($_GET['tagid'])); ?> -->
-
     <table class="table table-striped table-hover">
         <tr>
-            <th>姓名</th>
-            <th>性别</th>
-            <th>工作单位</th>
-            <th>职务</th>
-            <th>参加工作时间</th>
-            <th>电话</th>
-            <th>邮箱</th>
+            <?php if(is_array($list_columns)): foreach($list_columns as $key=>$one): ?><th><?php echo ($one["display_name"]); ?></th><?php endforeach; endif; ?>
         </tr>
         <?php if(is_array($users)): foreach($users as $key=>$one): ?><tr>
-                <td><?php echo ($one['name']); ?></td>
-                <td><?php echo ($one['gender']); ?></td>
-                <td><?php echo ($one['org']); ?></td>
-                <td><?php echo ($one['duty']); ?></td>
-                <td><?php echo ($one['work_from']); ?></td>
-                <td><?php echo ($one['mobile']); ?></td>
-                <td><?php echo ($one['email']); ?></td>
+                <?php if(is_array($list_columns)): foreach($list_columns as $key=>$item): ?><td><?php echo ($one[$key]); ?></td><?php endforeach; endif; ?>
             </tr><?php endforeach; endif; ?>
       </table>
       <div class="text-right"><td colspan=<?php echo count($list_views)+3;?>><?php echo ($pagestring); ?></td></div>

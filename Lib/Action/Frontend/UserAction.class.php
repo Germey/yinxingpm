@@ -41,9 +41,7 @@ class UserAction extends BaseAction {
      * 在用户提交申请表之前，准伙伴们的信息在user_recommends   status<60
      *                 之后，准伙伴们的信息在user_info表，状态分隔符：status>=60
      */
-    
     public function recommend() {
-
         $status = $this->data['status'];
         $filter['status'] = $status;
         $order = $this->_param("order");
@@ -80,7 +78,6 @@ class UserAction extends BaseAction {
 
     //推荐人
     private function _getRecommendFilterColumns() {
-
          $columns = array(
             "name" => array("display_name" => "姓名" , ),
             "gender" => array("display_name" => "性别" , ),
@@ -89,14 +86,12 @@ class UserAction extends BaseAction {
             "email" => array("display_name" => "联系邮件", ),
             "address_province" => array("display_name" => "省份", ),
         );
-
         return $columns;
     }
 
 
     //推荐人列表
     public function recomlist() {
-
         $columns = $this->_getRecommendFilterColumns();
         $this->columns = $columns;
         $filter = array();
@@ -108,12 +103,25 @@ class UserAction extends BaseAction {
         $count = D('UserRecommends')->getRecommedCount($filter);
         list($pagesize, $page_num, $this->pagestring) = pagestring($count, 10);
         $this->users = D('UserRecommends')->getRecommendInfos($filter, $page_num, $pagesize, $order);
-
+        $this->list_columns = $this->_getListColumns();
         $this->display("recomlist");
     }
 
-    public function index() {
+    private function _getListColumns() {
+         $columns = array(
+            "name" => array("display_name" => "姓名" , ),
+            "gender" => array("display_name" => "性别" , ),
+            "org" => array("display_name" => "工作单位" , ),
+            "duty" => array("display_name" => "职务" , ),
+            "work_from" => array("display_name" => "工作时间", ),
+            "mobile" => array("display_name" => "电话", ),
+            "email" => array("display_name" => "邮箱", ),
+        );
 
+        return $columns;
+    }
+
+    public function index() {
         $filter = null;
         $status = $filter['status'] = intval($this->_get('status'));
         $order = $this->_param("order");
@@ -139,7 +147,6 @@ class UserAction extends BaseAction {
 
 
     public function todo() {
-
         $this->data['is_todo'] = 'Y';
 
         $filter['status'] = array('between','2,60');
@@ -201,7 +208,6 @@ class UserAction extends BaseAction {
 
     // 详情页
     public function detail() {
-
         $id = $this->_get('id');
         $this->user = D('UserRecommends')->getRecommend($id);
         $this->userinfo = $this->user['userinfo'];

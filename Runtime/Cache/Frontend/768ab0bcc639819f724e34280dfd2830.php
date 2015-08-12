@@ -90,20 +90,12 @@
       <li><a href="/stat/partner">银杏伙伴</a></li>
       <li><a href="/stat/data">项目数据</a></li>
     </ul>
-    
     <h5>推荐人相关信息，包含了推荐人数量，推荐的候选人数量，推荐数量的TOP排名</h5>
-
      <form class="filter" action="/stat/recommend" method="get" style="margin: 20px 0">
-        <input type="text" name="name" placeholder="姓名">
-        <input type="text" name="gender" placeholder="性别">
-        <input type="text" name="mobile" placeholder="电话">
-        <input type="text" name="org" placeholder="工作单位">
-        <input type="text" name="email" placeholder="邮件">
-        <input type="text" name="address_province" placeholder="省份">
+        <?php if(is_array($filter_columns)): foreach($filter_columns as $key=>$one): ?><input type="text" name="<?php echo ($key); ?>" placeholder="<?php echo ($one['display_name']); ?>"><?php endforeach; endif; ?>
         <input type="submit" class="btn btn-small" value="筛选">
         <a type="button" href="/stat/recommend" class="btn btn-small" >重置</a>
     </form>
-
     <table class="table table-striped table-hover home-tb">
       <tr>
         <td class="l">推荐人总数：</td>
@@ -114,7 +106,8 @@
     </table>
     <h5>注：候选人总数指满足筛选条件的推荐人推荐的候选人数量</h5>
     <table class="stat">
-      <?php  $column = array("推荐人性别","推荐人数"); $stat_type_name = '推荐人性别比例'; $key_stat_type_key = 'recommend-gender-rank'; $table_value = $recommend_gender_rank; ?>
+      <?php
+ $column = array("推荐人性别","推荐人数"); $stat_type_name = '推荐人性别比例'; $key_stat_type_key = 'recommend-gender-rank'; $table_value = $recommend_gender_rank; ?>
       <tr>
   <td class="out">
     <table class="table table-striped table-hover">

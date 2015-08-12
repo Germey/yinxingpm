@@ -339,6 +339,7 @@ input.errorInput{
   height: 24px;
   width: 150px;
   margin-bottom: 0px;
+  margin-left: 5px;
 }
 .icon-map-marker {background: url(images/gmap.png) no-repeat;}
 

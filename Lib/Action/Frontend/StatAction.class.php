@@ -6,14 +6,11 @@ class StatAction extends BaseAction {
 
     //默认页面
     public function index() {
-
         $this->recommend();
-
     }
 
     //推荐人信息
     public function recommend() {
-
         $filter_columns = $this->_getRecommendFilterColumns();
         $filter = array();
         foreach(array_keys($filter_columns) as $v) {
@@ -34,6 +31,7 @@ class StatAction extends BaseAction {
         //按照推荐人推荐的数量排名
         $recommend_num_rank = D("UserRecommends")->getRecommendNumRank($filter);
         $data['recommend_num_rank'] = $recommend_num_rank;
+        $data['filter_columns'] = $filter_columns;
         $this->assign($data);
         $this->display("recommend");
 
@@ -41,7 +39,6 @@ class StatAction extends BaseAction {
 
     //推荐人和候选人字段略有不同，单独列出
     private function _getRecommendFilterColumns() {
-
          $columns = array(
             "name" => array("display_name" => "姓名" , ),
             "gender" => array("display_name" => "性别" , ),
@@ -57,7 +54,6 @@ class StatAction extends BaseAction {
 
     //候选人信息
     public function candidate() {
-
         $filter_columns = $this->_getFilterColumns();
         $filter = array();
         foreach(array_keys($filter_columns) as $v) {
@@ -78,14 +74,12 @@ class StatAction extends BaseAction {
         //候选人的年龄
         $candidate_age_rank = D("UserRecommends")->getCandidateAgeRank($filter);
         $data['candidate_age_rank'] = $candidate_age_rank;
+        $data['filter_columns'] = $filter_columns;
         $this->assign($data);
         $this->display("candidate");
-
-
     }
 
     private function _getFilterColumns() {
-
          $columns = array(
             "name" => array("display_name" => "姓名" , ),
             "mobile" => array("display_name" => "联系电话" , ),
@@ -93,14 +87,12 @@ class StatAction extends BaseAction {
             "email" => array("display_name" => "联系邮件", ),
             "address_province" => array("display_name" => "省份", ),
         );
-
         return $columns;
     }
 
 
     //银杏伙伴
     public function partner() {
-        
         $filter_columns = $this->_getFilterColumns();
         $filter = array();
         foreach(array_keys($filter_columns) as $v) {
@@ -118,32 +110,27 @@ class StatAction extends BaseAction {
         //银杏伙伴的性别
         $partner_gender_rank = D("UserRecommends")->getPartnerGenderRank($filter);
         $data['partner_gender_rank'] = $partner_gender_rank;
+        $data['filter_columns'] = $filter_columns;
         $this->assign($data);
         $this->display("partner");
-        
     }
 
 
     //统计数据
     public function data() {
-
         $num_of_status = D("UserRecommends")->getNumOfAllStatus();
-        $data['num_of_status'] = $this->_silceByMax($num_of_status, 9);
-        $status_map = D("UserStatuses")->getAuditStatusNameIdMap();
-        $data['status_map'] = $status_map;
+        $data['num_of_status'] = $this->_silceByMax($num_of_status, 9); 
+        $data['status_map'] = D("UserStatuses")->getAuditStatusNameIdMap();
         $this->assign($data);
         $this->display("data");
-
     }
 
 
 
     //传入一个数组，以及限制数量，返回截取后的数组
     private function _silceByMax($target, $max = 10) {
-
         //如果当前数量小于指定的最大数量，那么直接输出，否则切出最大数量个数
         return count($target) <= $max?$target:array_slice($target, 0, $max);
-
     }
 
 

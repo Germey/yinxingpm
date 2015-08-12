@@ -117,16 +117,14 @@ class UserInfoModel extends BaseModel {
 
     //返回ID序列数组
     public function getIdMap() {
-
         //第二个参数为True返回所有值
         return $this->getField("id", true);
-
     }
 
     //通过姓名获取ID
     public function getIdByName($name) {
-
-        $id = $this->where("name like '%".$name."%'")->getField("id");
+        $where['name'] = array("like",'%'.$name.'%');
+        $id = $this->where($where)->getField("id");
         return $id;
     }
 

@@ -90,17 +90,9 @@
       <li class="active"><a href="/stat/partner">银杏伙伴</a></li>
       <li><a href="/stat/data">项目数据</a></li>
     </ul>
-
-    
-
     <h5>银杏伙伴相关信息，包含了银杏伙伴数量，地区排名，性别比例</h5>
-
     <form class="filter" action="/stat/partner" method="get" style="margin: 20px 0">
-        <input type="text" name="name" placeholder="姓名">
-        <input type="text" name="mobile" placeholder="电话">
-        <input type="text" name="org" placeholder="工作单位">
-        <input type="text" name="email" placeholder="邮件">
-        <input type="text" name="address_province" placeholder="省份">
+        <?php if(is_array($filter_columns)): foreach($filter_columns as $key=>$one): ?><input type="text" name="<?php echo ($key); ?>" placeholder="<?php echo ($one['display_name']); ?>"><?php endforeach; endif; ?>
         <input type="submit" class="btn btn-small" value="筛选">
         <a type="button" href="/stat/partner" class="btn btn-small" >重置</a>
     </form>
@@ -234,7 +226,7 @@ $(function () {
         xAxis: [{
             categories: <?php echo json_encode(array_keys($partner_province_rank));?>
         }],
-        yAxis: [{ 
+        yAxis: [{
             labels: {
                 format: '{value}个',
                 style: {

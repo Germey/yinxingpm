@@ -90,9 +90,7 @@
       <li><a href="/stat/partner">银杏伙伴</a></li>
       <li class="active"><a href="/stat/data">项目数据</a></li>
     </ul>
-    
     <h5>统计信息，包括了各个阶段的人数统计</h5>
-
     <table class="table table-striped table-hover home-tb">
         <?php if(is_array($num_of_status)): foreach($num_of_status as $key=>$one): if(($key%3 == 0)): ?><tr><?php endif; ?>
             <?php if(is_array($one)): foreach($one as $status=>$num): ?><td class="l"><a href="/user/recommend?status=<?php echo ($status_map[$status]); ?>"><?php echo ($status); ?></a></td>
