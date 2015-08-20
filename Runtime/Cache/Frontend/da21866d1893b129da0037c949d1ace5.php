@@ -99,11 +99,11 @@
       <a href="#" id="change_status" data-type="select" data-pk="<?php echo ($user['id']); ?>" data-url="/user/ajax_save_status" data-title="修改状态">
           <?php echo ($user['status_name']); ?>
       </a>
-      <span class="muted">
-        「备注：<a href="#" id="change_status_note" data-type="text" data-pk="<?php echo ($user['id']); ?>" data-url="/user/ajax_save_status_note" data-title="备注">
-            <span class="muted"><?php echo ($user['status_note']?$user['status_note']:'备注'); ?></span>
-        </a>」
-      </span>
+      <?php if($user['status']==100): ?><span class="muted">
+          「评级：<a href="#" id="change_status_note" data-type="text" data-pk="<?php echo ($user['id']); ?>" data-url="/user/ajax_save_status_note" data-title="备注">
+              <span class="muted"><?php echo ($user['status_note']?$user['status_note']:'评级'); ?></span>
+          </a>」
+        </span><?php endif; ?>
     </span>
 </div>
 

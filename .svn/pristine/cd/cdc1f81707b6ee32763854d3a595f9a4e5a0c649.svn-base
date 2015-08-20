@@ -1,0 +1,124 @@
+<layout name="Public/frontend_template"/>
+
+<script type="text/javascript" src="/styles/js/highcharts/js/highcharts.js"></script>
+
+<div id="content" class="wide">
+    <ul class="nav nav-tabs" id="stat-nav">
+      <li class="active"><a href="/stat/recommend">推荐人</a></li>
+      <li><a href="/stat/candidate">候选人</a></li>
+      <li><a href="/stat/partner">银杏伙伴</a></li>
+      <li><a href="/stat/data">项目数据</a></li>
+    </ul>
+    <h5>推荐人相关信息，包含了推荐人数量，推荐的候选人数量，推荐数量的TOP排名</h5>
+     <form class="filter" action="/stat/recommend" method="get" style="margin: 20px 0">
+        <foreach name="filter_columns" item="one">
+            <input type="text" name="{$key}" placeholder="{$one['display_name']}">
+        </foreach>
+        <input type="submit" class="btn btn-small" value="筛选">
+        <a type="button" href="/stat/recommend" class="btn btn-small" >重置</a>
+    </form>
+    <table class="table table-striped table-hover home-tb">
+      <tr>
+        <td class="l">推荐人总数：</td>
+        <td class="r">{$recommend_count}</td>
+        <td class="l">候选人总数：</td>
+        <td class="r">{$candidate_count}</td>
+      </tr>
+    </table>
+    <h5>注：候选人总数指满足筛选条件的推荐人推荐的候选人数量</h5>
+    <table class="stat">
+      <?php
+            $column = array("推荐人性别","推荐人数");
+            $stat_type_name = '推荐人性别比例';
+            $key_stat_type_key = 'recommend-gender-rank';
+            $table_value = $recommend_gender_rank;
+      ?>
+      <include file="stat_block" />
+
+      <?php
+            $column = array("推荐人","推荐人数");
+            $stat_type_name='推荐人数排名';
+            $key_stat_type_key = 'recommend-num-rank';
+            $table_value = $recommend_num_rank;
+        ?>
+      <include file="stat_block" />
+
+    </table>
+
+
+</div>
+
+
+<script type="text/javascript">
+
+$(function () {
+
+    $('#recommend-gender-rank-chart').highcharts({
+        credits: {text: ''},
+        chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false
+        },
+        title: { text: '推荐人性别统计图' },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: true,
+                    color: '#000000',
+                    connectorColor: '#000000',
+                    formatter: function() {
+                        return '<b>'+ this.point.name +'</b><br />'+ this.y + ' (' +Math.round(this.percentage*10)/10 + '%)';
+                    }
+                }
+            }
+        },
+        series: [{
+            type: 'pie',
+            name: '人数',
+            data: {:array_to_pie_chart_json($recommend_gender_rank)}
+        }]
+    });
+
+    $('#recommend-num-rank-chart').highcharts({
+        credits: {text: ''},
+        chart: {
+            type: 'column'
+        },
+        title: { text: '推荐人个数排名统计' },
+        xAxis: [{
+            categories: {:json_encode(array_keys($recommend_num_rank))}
+        }],
+        yAxis: [{ 
+            labels: {
+                format: '{value}个',
+                style: {
+                    color: '#89A54E'
+                }
+            },
+            title: {
+                text: '推荐人数',
+                style: {
+                    color: '#89A54E'
+                }
+            }
+        }],
+        tooltip: {
+            shared: true
+        },
+        series: [{
+            name: '推荐人数',
+            color: '#4572A7',
+            type: 'column',
+            data: {:array_to_pie_chart_json($recommend_num_rank)},
+            tooltip: {
+                valueSuffix: '个'
+            }
+        }]
+    });
+    
+});
+  
+</script>

@@ -154,17 +154,17 @@
         </ul>
     </div>
     <button class="btn btn-small" onclick="massdelete()"><i class="icon-trash"></i><?php echo (L("delete")); ?></button>
-    <button class="btn btn-link"><a target="_blank" href="/task?status=<?php echo ($_GET['status']); ?>&status_name=<?php echo ($user_statuses[$_GET['status']]); ?>">查看任务列表</a></button>
 </div><?php endif; ?>
 <form method="get" action="/user/<?php echo ($action_name); ?>" class="view-filter">
     <input type="hidden" name="status" value="<?php echo ($_GET['status']); ?>" />
     <input type="hidden" name="apply_type_id" value="<?php echo ($_GET['apply_type_id']); ?>" />
     <?php echo display_filter_item('name',$_GET['name'],$all_columns);?>
-    <?php echo display_filter_item('identifier',$_GET['identifier'],$all_columns);?>
-    <?php echo display_filter_item('email',$_GET['email'],$all_columns);?>
-    <?php echo display_filter_item('mobile',$_GET['mobile'],$all_columns);?>
+    <?php echo display_filter_item('id',$_GET['id'],$all_columns);?>
+    <?php echo display_filter_item('classify',$_GET['classify'],$all_columns);?>
     <?php echo display_filter_item('recommender_name',$_GET['mobile'],$all_columns);?>
+    <?php if($_GET['status']==100): echo display_filter_item('status_note',$_GET['status_note'],$all_columns); endif; ?>
     <button class="btn btn-small"><?php echo (L("search")); ?></button>
+    <!-- <button class="btn btn-small" onclick="resetURL()">重置</button> -->
 </form>
 
 <table class="table table-striped table-hover">
@@ -185,7 +185,7 @@
     $(document).ready(function() {
         $(".icon-edit-small").hide();
     });
-
+    
     $(document).ready(function() {
         $('.icon-edit-small').parent().parent().mouseover(function(){
             var id = $(this).parent().attr('value');
@@ -198,7 +198,31 @@
             $("#icon-edit-"+id).hide();
             $("#icon-edit-holder-"+id).show();
         });
+
+        showTabs();
+
     });
+
+    //显示部分选项卡
+    function showTabs() {
+        pathname = window.location.pathname;
+        path = pathname.split('/')[2];
+        switch(path) {
+            case "ever":
+                $(".wide .nav-tabs li:lt(8)").css("display","block");
+            break;
+            case "fail":
+                //$(".wide .nav-tabs li:eq(9)").css("display","block");
+            break;
+            case "success":
+                //$(".wide .nav-tabs li:eq(8)").css("display","block");
+            break;
+            case "recommend":
+                $(".wide .nav-tabs li").css("display","block");
+            break;
+
+        }
+    }
 
     //抽离出来，给别的页面也一样用
     function checkall(item) {  
@@ -297,6 +321,15 @@
 
         if(!ids) return alert('至少要选中一条记录');
         return ids;
+    }
+
+    //点击重置按钮时，把URL参数都去掉
+    function resetURL() {
+        search = window.location.search;
+        param = search.split('&');
+        newURL = "http://" + window.location.host + window.location.pathname + param[0];
+        alert(newURL);
+        document.URL = newURL;
     }
 
 </script>
