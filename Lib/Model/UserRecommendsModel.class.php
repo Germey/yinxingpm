@@ -60,7 +60,6 @@ class UserRecommendsModel extends BaseModel {
 
         // var_dump($users->getLastSql());
         // return $result;
-
         foreach($result as $k => $v) {
             $result[$k] = $this->_rich($v);
         }
@@ -247,11 +246,12 @@ class UserRecommendsModel extends BaseModel {
         $filter_str = $this->_filterToString($filter);
         //通过Invite_code来获得所有的候选人,两个表中invite_code一致且不为空，status小于99，即没有成为合作伙伴
         $target = $this->table("user_recommends,user_info")->where("user_recommends.invite_code =
-            user_info.invite_code and user_recommends.invite_code !='' and user_recommends.status < 99" . $filter_str)->getField("birthday",true);
+            user_info.invite_code and user_recommends.invite_code !='' and user_recommends.status < 99" . $filter_str)->getField("birthday,recommend_submit_time");
         $ages = array();
-        foreach ($target as $val) {
+        foreach ($target as $key=>$val) {
             //echo intval(date("Y",time())) ."-" . intval(explode("-", $val)[0])."<br>";
-            array_push($ages, intval(date("Y",time())) - intval(explode("-", $val)[0]));
+            //推荐时间减去出生日期
+            array_push($ages, intval(explode("-", $val)[0]) - intval(explode("-", $key)[0]));
         }
         $rank_result = $this->_getSortRank($ages);
         $age_seg = array("20-25" => 0,

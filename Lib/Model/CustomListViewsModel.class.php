@@ -6,7 +6,7 @@ class CustomListViewsModel extends BaseModel {
             'Projects'   => array('title', 'identifier', 'donor','status', 'grant_amount_ratio'),
             'Schools' => array('name', 'province','city', 'leader_name', 'leader_contact', 'grade_amount', 'class_amount', 'class_avg_amount', 'student_amount'),
             'UserInfo' => array(
-                           '0'=> array('id','name', 'org', 'classify', 'recommender_name', 'recommender_org', 'recommend_submit_time'),
+                           '0'=> array('identifier','name', 'org', 'classify', 'recommender_name', 'recommender_org', 'recommend_submit_time'),
                            '60,70' => array('name','identifier', 'gender', 'email', 'mobile','recommender_name'),
                            '100'=> array('id','name', 'org', 'classify', 'recommender_name', 'recommender_org', 'recommend_submit_time',"status_note"),
                            ),

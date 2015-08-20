@@ -178,7 +178,12 @@ return array(
 
     'stat'  => '统计',
     'stat_chart'  => '统计数据',
-
+    'recommender_org' => '推荐人机构',
+    'recommend_submit_time' => '推荐时间',
+    'classify' => '分类',
+    'status_note' => '评级',
+    'identifer' => '编号',
+    'RECOMMENDER_IDENTIFIER' => '编号',
     'RECOMMENDER_NAME' => '推荐人姓名',
     'STATUS_NAME' => '状态',
 );

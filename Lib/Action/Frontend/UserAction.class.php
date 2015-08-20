@@ -5,14 +5,6 @@ class UserAction extends BaseAction {
 
     public function __construct() {
         parent::__construct();
-
-        //暂时不知放哪好
-        L("recommender_org","推荐人机构");
-        L("recommend_submit_time","推荐时间");
-        L("classify","分类");
-        L("status_note","评级");
-
-
         $this->data['action_name'] = ACTION_NAME;
 
         $this->data['all_columns'] = D('CustomColumns')->getUserInfoModuleColumns();
@@ -74,7 +66,6 @@ class UserAction extends BaseAction {
         $count = D('UserRecommends')->getCount($filter);
         list($pagesize, $page_num, $this->pagestring) = pagestring($count, 20);
         $this->users = D('UserRecommends')->gets($filter, $page_num, $pagesize, $order);
-
         $this->list_columns = $this->data['recommend_columns'];
 
         $this->assign($this->data);
@@ -286,6 +277,24 @@ class UserAction extends BaseAction {
         return;
     }
 
+    function ajax_save_content_block_toggle() {
+        $id = intval(I("id"));
+        $block = I("block");
+        echo "id".$id."block".$block;
+        $toggle = unserialize(M("UserRecommends")->where('id='.$id)->getField('pm_display_toggle'));
+        var_dump($toggle);
+        if($toggle[$block]) {
+            $toggle[$block] = 0;
+        } else {
+            $toggle[$block] = 1;
+        }
+        $data['id'] = $id;
+        $data['pm_display_toggle'] = serialize($toggle);
+        var_dump($data);
+        M('UserRecommends')->save($data);
+    }
+
+
     // 提交评审意见
     public function submit_audit() {
         $data = $_POST;
@@ -345,7 +354,7 @@ class UserAction extends BaseAction {
                 2 => 'fail',
                 4 => 'neededit',
             );
-
+        
         $mail_info = D("UserStatuses")->getById($data['status']);
 
         $mailto     = $userinfo[$mail_info[$email_status_map[$data['audit_result']].'_email_to']];
@@ -415,7 +424,7 @@ class UserAction extends BaseAction {
     //银杏伙伴
     public function ever() {
 
-        $this->data['status'] = $this->_get('status')?$this->_get('status'):20;
+        $this->data['status'] = $this->_get('status')?$this->_get('status'):30;
         $this->recommend();
     }
 

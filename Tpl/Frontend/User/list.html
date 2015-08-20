@@ -18,7 +18,7 @@
     <input type="hidden" name="status" value="{$_GET['status']}" />
     <input type="hidden" name="apply_type_id" value="{$_GET['apply_type_id']}" />
     {:display_filter_item('name',$_GET['name'],$all_columns)}
-    {:display_filter_item('id',$_GET['id'],$all_columns)}
+    {:display_filter_item('identifier',$_GET['identifier'],$all_columns)}
     {:display_filter_item('classify',$_GET['classify'],$all_columns)}
     {:display_filter_item('recommender_name',$_GET['mobile'],$all_columns)}
     <if condition="$_GET['status']==100">
@@ -79,6 +79,8 @@
     function showTabs() {
         pathname = window.location.pathname;
         path = pathname.split('/')[2];
+        //去掉推荐表审核
+        $(".wide .nav-tabs li:eq(0)").remove();
         switch(path) {
             case "ever":
                 $(".wide .nav-tabs li:lt(8)").css("display","block");

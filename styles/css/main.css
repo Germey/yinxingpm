@@ -404,3 +404,7 @@ table.stat td.out{vertical-align: top; padding: 10px 10px 30px 10px;width: 30%;}
 .wide .tabs-left .nav li {
   display: none;
 }
+.detail_iden {
+  font-size: 14px;
+  margin-left: 5px;
+}

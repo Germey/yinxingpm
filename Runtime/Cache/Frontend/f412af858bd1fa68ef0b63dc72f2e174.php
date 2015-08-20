@@ -92,26 +92,26 @@
 <input type="hidden" id="recommend_id" value="<?php echo ($user['id']); ?>"/>
 <div>
     <span style="font-size:32px;">
-      <?php if($user['identifier']): ?>[<?php echo ($user["identifier"]); ?>]<?php endif; ?>
-      <?php echo ($user["name"]); ?>
+      <?php echo ($user["name"]); if($user['identifier']): ?><span class="muted detail_iden">[<?php echo ($user["identifier"]); ?>]</span><?php endif; ?>
     </span> 
     <span style="padding-left:20px;">
       <a href="#" id="change_status" data-type="select" data-pk="<?php echo ($user['id']); ?>" data-url="/user/ajax_save_status" data-title="修改状态">
           <?php echo ($user['status_name']); ?>
       </a>
       <?php if($user['status']==100): ?><span class="muted">
-          「评级：<a href="#" id="change_status_note" data-type="text" data-pk="<?php echo ($user['id']); ?>" data-url="/user/ajax_save_status_note" data-title="备注">
+          「评级：<a href="#" id="change_status_note" data-type="select" data-pk="<?php echo ($user['id']); ?>" data-url="/user/ajax_save_status_note" data-title="备注">
               <span class="muted"><?php echo ($user['status_note']?$user['status_note']:'评级'); ?></span>
           </a>」
         </span><?php endif; ?>
     </span>
 </div>
-
 <script type="text/javascript">
   $('#change_status').editable({
       source: <?php echo ($user_status_xedit_str); ?>
   });
-  $('#change_status_note').editable({ });  
+  $('#change_status_note').editable({
+    source: <?php echo createJSONRank(4);?>
+  });  
 </script>
   
     <!-- 基本信息 -->

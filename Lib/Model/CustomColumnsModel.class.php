@@ -173,6 +173,7 @@ class CustomColumnsModel extends BaseModel {
         $columns = array(
             "recommender_name" => array("display_name" => "姓名", "type" => "text",),
             "recommender_gender" => array("display_name" => "性别" , "type" => "select", "param" => array("options" => array('女', '男'))),
+            "recommender_identifier" => array("display_name" => "编号" , ),
             "recommender_org" => array("display_name" => "工作单位" , ),
             "recommender_duty" => array("display_name" => "职务" ),
             "recommender_mobile" => array("display_name" => "联系电话" , ),
@@ -191,7 +192,7 @@ class CustomColumnsModel extends BaseModel {
             "name" => array("display_name" => "姓名", "type" => "text", 'link' => array('link_type' => 'user', 'column'=>'id'),),
             "org" => array("display_name" => "工作单位", "param" =>array("placeholder" => "",)),
             "mobile" => array("display_name" => "联系电话" , ),
-            "id" => array("display_name" => "编号" , ),
+            "identifier" => array("display_name" => "编号" , ),
             "classify" => array("display_name" => "分类" , ),
             "status_note" => array("display_name" => "评级" , ),
             "email" => array("display_name" => "联系邮件", ),

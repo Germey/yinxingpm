@@ -1,24 +1,23 @@
 <?php
 function header_nav($user) {
-  $a = array(
-    // "/user/todo" => '待办事项',
-    "/user/ever" => '当年考察',
-    "/user/fail" => '备选库',
-    "/user/success" => '银杏伙伴',
-    "/user/recommend" => '所有候选人',
-    "/user/recomlist" => '推荐人',
-    
-    // "/project/all" =>  '所有项目',
-    // "/project/ing" =>  '在资助项目',
-    // "/partner" =>  '所有机构',
-    // "/mail" =>  L('mass_mail'),
-    // "/sms" =>  L('mass_sms'),
-    // "/setting" => L('setting'),
-  );
-
-  $a['/stat'] = '统计';
-  // $a['/attachment/index'] = '附件';
-  $a['/setting'] = '设置';
+  if ($user['role'] == 'admin') {
+    $a = array(
+      // "/user/todo" => '待办事项',
+      "/user/ever" => '当年考察',
+      "/user/fail" => '备选库',
+      "/user/success" => '银杏伙伴',
+      "/user/recommend" => '所有候选人',
+      "/user/recomlist" => '推荐人',
+      "/stat/" => '统计',
+      "/setting" => '设置'
+    );
+  } else if ($user['role'] == 'role_volunteer') {
+    $a = array(
+      // "/user/todo" => '待办事项',
+      "/user/ever" => '当年考察',
+    );
+  }
+  
   return $a;
 }
 

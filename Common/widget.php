@@ -408,3 +408,12 @@ function display_group($value, $options, $label_name) {
 
     return $table;
 }
+
+function createJSONRank($num = 4) {
+    $str = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    $result = array();
+    for ($i = 0; $i < $num; $i ++) {
+        array_push($result, array("value" => substr($str, $i, 1),"text" => substr($str, $i, 1)));
+    }
+    return json_encode($result);
+}
