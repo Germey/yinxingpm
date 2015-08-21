@@ -44,9 +44,12 @@ class UserRecommendsModel extends BaseModel {
     }
 
 
-    public function gets($filter, $page=0, $size=0, $order = null) {
+    public function gets($filter, $page=0, $size=0, $order = null, $user=null) {
 
         $filter = $this->_buildFilter($filter);
+        if ($user['id']&&auditEditable($user['role'])) {
+            $filter['bg_survey_user'] = $user['id'];
+        }
         $user_obj = D("UserRecommends");
         if(!$order) {
             $order = 'id,update_time desc';
@@ -85,8 +88,11 @@ class UserRecommendsModel extends BaseModel {
         return $one;
     }
 
-    public function getStatusCountMap() {
+    public function getStatusCountMap($user=null) {
         $filter['status'] = array('gt',1);
+        if ($user['id']&&auditEditable($user['role'])) {
+            $filter['bg_survey_user'] = $user['id'];
+        }
         // $filter['apply_type_id'] = $apply_type_id;
         return $this->where($filter)->group('status')->getField('status,count(*) count',true);
     } 

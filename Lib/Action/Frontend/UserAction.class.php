@@ -13,8 +13,7 @@ class UserAction extends BaseAction {
         $this->data['status'] = $this->_get('status')?$this->_get('status'):'all';
 
         $this->data['list_views'] = D('CustomListViews')->getListView('UserInfo', $this->data['status']);
-
-        $this->status_count = D('UserRecommends')->getStatusCountMap();
+        $this->status_count = D('UserRecommends')->getStatusCountMap($this->login_user);
         $this->user_statuses = D('UserStatuses')->getStatusIdNameMap();
 
         foreach ($this->user_statuses as $key => $value) {
@@ -65,7 +64,7 @@ class UserAction extends BaseAction {
         }
         $count = D('UserRecommends')->getCount($filter);
         list($pagesize, $page_num, $this->pagestring) = pagestring($count, 20);
-        $this->users = D('UserRecommends')->gets($filter, $page_num, $pagesize, $order);
+        $this->users = D('UserRecommends')->gets($filter, $page_num, $pagesize, $order, $this->login_user);
         $this->list_columns = $this->data['recommend_columns'];
 
         $this->assign($this->data);
@@ -212,7 +211,7 @@ class UserAction extends BaseAction {
 
         $this->data['notes'] = D('UserNotes')->getByUserId($id);
         $this->data['attachments'] = D('UserAttachments')->getByUserId($id);
-
+        $this->date['login_user'] = $this->login_user;
         $this->data['attachment_title'] = "附件";
         $this->data['note_title'] = "备注";
 
@@ -255,6 +254,21 @@ class UserAction extends BaseAction {
         return;
     }
 
+
+    // 修改指派的背景调查人员
+    public function ajax_assert_servey_user() {
+        //permission
+        $u['id'] = $this->_param('pk');
+        $u['bg_survey_user'] = $this->_param('value');
+
+        var_dump($u);
+        if(!$u['id'] || !$u['bg_survey_user']) return;
+        M('UserRecommends')->saveOrUpdate($u);
+
+        
+        return;
+    }
+
     function ajax_save_status_note() {
         //permission
         $u['id'] = $this->_param('pk');
@@ -265,6 +279,39 @@ class UserAction extends BaseAction {
 
         return;
     }
+
+    function ajax_send_mail_to_admin() {
+        $where['option_name'] = "contact_email";
+        $mailto     = D("Options")->where($where)->getField("option_value");
+        $subject    = "背景调查已经填写完毕，请审阅";
+        $body       = "<br>".I("post.msg")."<br>".$_SERVER['HTTP_HOST']."/user/detail/".I("post.id");
+        if($mailto && $subject && $body) {
+            $res = Mailer::SmtpMail(NULL, $mailto, $subject, $body, null, array('guorunmiao@justering.com'));
+            if($res) {
+                $msg .= '，通知邮件已发送给：' . $mailto;
+                $audit_up['id'] = $audit_id;
+                $audit_up['audit_email'] = serialize(array('to'=>$mailto, 'subject'=>$subject, 'body'=>$body));
+                M("UserAudits")->save($audit_up);
+                echo "1";
+            }
+        }
+    }
+
+    function ajax_save_bg_survey() {
+        $p = I('post.');
+        $p['date'] = date('Y-m-d');
+        if(!$p['recommend_id']) return;
+        $where['recommend_id'] = $p['recommend_id'];
+        $where['question_id'] = $p['question_id'];
+        $r = D("BackgroundSurvey")->where($where)->select();
+        if ($r) {
+            $p['id']=$r[0]['id'];
+            echo D("BackgroundSurvey")->saveOrUpdate($p);
+        } else {
+            echo D("BackgroundSurvey")->add($p);
+        }
+    }
+
 
     function ajax_save_extra_link() {
         //permission
@@ -280,9 +327,7 @@ class UserAction extends BaseAction {
     function ajax_save_content_block_toggle() {
         $id = intval(I("id"));
         $block = I("block");
-        echo "id".$id."block".$block;
         $toggle = unserialize(M("UserRecommends")->where('id='.$id)->getField('pm_display_toggle'));
-        var_dump($toggle);
         if($toggle[$block]) {
             $toggle[$block] = 0;
         } else {
@@ -290,7 +335,6 @@ class UserAction extends BaseAction {
         }
         $data['id'] = $id;
         $data['pm_display_toggle'] = serialize($toggle);
-        var_dump($data);
         M('UserRecommends')->save($data);
     }
 
@@ -354,7 +398,7 @@ class UserAction extends BaseAction {
                 2 => 'fail',
                 4 => 'neededit',
             );
-        
+
         $mail_info = D("UserStatuses")->getById($data['status']);
 
         $mailto     = $userinfo[$mail_info[$email_status_map[$data['audit_result']].'_email_to']];

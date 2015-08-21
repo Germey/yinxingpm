@@ -214,6 +214,61 @@
     <div id="audit_tab_content" class="tab-content" style="padding: 0 10px;">
       <?php if(is_array($display_status)): foreach($display_status as $status=>$one): ?><div class="tab-pane fade <?php echo ($status==$active_status?'in active':''); ?>" id="audit_<?php echo ($status); ?>">
           <p class="alert alert-success audit_view_all_title"><?php echo str_replace('待','',$one);?></span></p>
+          <?php if($status == 30): $bg_survey_questions = D("UserTypeQuestions")->getsByTypeId(4); $bg_survey_answers = D("BackgroundSurvey")->getAnswers($user['id']); $editable = auditEditable($login_user['role']); $survey_user = D("Users")->getById($user['bg_survey_user']); ?>
+
+<div class="label label-warning alert-tip" id="alert-tip"><p>警告框</p></div>
+<div class="background_survey">
+	<?php if(is_array($bg_survey_questions)): foreach($bg_survey_questions as $key=>$one): ?><div class="question">
+			<p style="background: #f4f4f4;padding:4px 0;font-weight: bold;">
+	        <span class="label label-info">问</span>
+	        <?php echo ($one['question']); ?>
+	    	</p>
+	    </div>
+	    <div style="padding-left: 25px;">
+	    	<textarea class="answer" question="<?php echo ($one['id']); ?>"row="3" col="10" <?php if(!$editable) echo "disabled" ?>><?php echo ($bg_survey_answers[$one['id']]); ?></textarea>
+	    </div><?php endforeach; endif; ?>
+	<?php if(!$editable): ?><p><span>当前负责背景调查人员：</span>
+			<a href="#" id="assert_bg_survey" data-type="select" data-pk="<?php echo ($user['id']); ?>" data-url="/user/ajax_assert_servey_user" data-title="指派背景调查人员">
+	          <?php echo ($survey_user['username']); ?>
+	      </a>
+	  	</p>
+	<?php else: ?>
+		<input type="button" class="btn btn-danger" id="save_bg_survey" value="保存"><?php endif; ?>
+</div>
+
+
+<script type="text/javascript">
+
+  $('#assert_bg_survey').editable({ 
+  	source: <?php echo getEditUsers();?>
+  });
+
+  $(".background_survey .answer").on("blur", function() {
+    $.post("/user/ajax_save_bg_survey",{
+    	"question_id":$(this).attr("question"),
+    	"recommend_id":<?php echo ($user['id']); ?>,
+    	"survey_id":<?php echo ($user['bg_survey_user']); ?>,
+    	"answer":$(this).val()
+    },function(data) {
+    	if(data>0) {
+    		show_alert_tip("调查结果已保存");
+    	}	
+    })
+  });
+
+  $("#save_bg_survey").on("click", function() {
+  	save_all();
+  });
+
+function show_alert_tip(msg) {
+    $("#alert-tip").html("<p>"+msg+"</p>").show();
+    setTimeout("$('#alert-tip').slideUp('slow', function(){ $('#alert-tip').hide(); })", 5000);
+}
+
+function save_all() {
+	$(".background_survey .answer").trigger("blur");
+}
+</script><?php endif; ?>
           <?php if(is_array($audits[$status])): foreach($audits[$status] as $key=>$one): ?><div id="audit_list_<?php echo ($one['id']); ?>">            
               <div style="margin: 10px 0 5px 0;">
                 <i class="icon-comment"></i>&nbsp;&nbsp;

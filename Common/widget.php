@@ -417,3 +417,21 @@ function createJSONRank($num = 4) {
     }
     return json_encode($result);
 }
+
+//待背景调查等阶段被指派任务的人
+function getEditUsers() {
+    $user_groups = array("2","21");
+    $where = join(" or ",preg_replace('/^/', 'user_groups.id=', $user_groups));
+    $edit_user = D("Users")->query("select users.id value, username text from users, user_groups, user_group_mapping where users.id=user_group_mapping.user_id and user_groups.id=user_group_mapping.user_group_id and (".$where.")");
+    return json_encode($edit_user);
+}
+
+//获取当前用户是否可以编辑背景调查等权限
+function auditEditable($role) {
+    if ($role=="role_audit" or $role=="role_volunteer") {
+        return true;
+    } else {
+        return false;
+    }
+}
+

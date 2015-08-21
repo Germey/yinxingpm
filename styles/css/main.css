@@ -408,3 +408,8 @@ table.stat td.out{vertical-align: top; padding: 10px 10px 30px 10px;width: 30%;}
   font-size: 14px;
   margin-left: 5px;
 }
+.background_survey .answer {
+  width: 97%;
+  margin-bottom: 20px;
+}
+.alert-tip { position:fixed; top:1px; margin-left:30px; display:none; text-align: center; padding-top:10px; padding-left: 50px; padding-right: 50px}

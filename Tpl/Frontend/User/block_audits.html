@@ -56,6 +56,9 @@
       <foreach name="display_status" key="status" item="one">
         <div class="tab-pane fade {$status==$active_status?'in active':''}" id="audit_{$status}">
           <p class="alert alert-success audit_view_all_title">{:str_replace('待','',$one)}</span></p>
+          <if condition="$status eq 30">
+            <include file="background_survey" />
+          </if>
           <foreach name="audits[$status]" item="one">
             <div id="audit_list_{$one['id']}">            
               <div style="margin: 10px 0 5px 0;">
