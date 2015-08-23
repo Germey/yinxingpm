@@ -1,17 +1,23 @@
 <?php 
 	$names = D("Users")->getField("id,username");
+	if($status == 40){
+		$status_name = "项目组初筛";
+	} else if ($status == 60) {
+		$status_name = "秘书处二筛";
+	} else if ($status == 80) {
+		$status_name = "秘书处终筛";
+	}
 ?>
-<div class="email_select">
-	<select class="chosen-select span2" multiple name="emails[]" data-placeholder="邮件列表">{:Utility::Option($names,null)}</select>
+<div class="send_to_audits">
+	<div class="email_select" >
+		<select class="chosen-select span2" multiple name="emails[]" data-placeholder="邮件列表">{:Utility::Option($names,null)}</select>
+	</div>
+	<textarea class="msg" id="email_msg_{$status}" placeholder="请告诉大家您要说的话">{$user['name']}已经进入{$status_name}阶段，请大家共同讨论意见。</textarea>
+	<input type="button" class="btn btn-primary send_email_to_audits" value="发送邮件给通知大家">
 </div>
-<div style="margin-top: 50px">
-	<textarea id="email_msg" placeholder="请告诉大家您要说的话">{$user['name']}已经进入项目初筛阶段，请大家共同讨论意见。</textarea>
-	<input type="button" class="btn btn-primary" id="send_email_to_audits" value="发送邮件给通知大家">
-<div>
-
 <script type="text/javascript">
 
-$('#send_email_to_audits').on("click", function() {
+$('.send_email_to_audits').on("click", function() {
 	var size = $(".email_select li.search-choice").size();
 	var arr = new Array();
 	$(".email_select li.search-choice span").each(function(){
@@ -23,7 +29,7 @@ $('#send_email_to_audits').on("click", function() {
 		if (confirm("确定要发送邮件吗？")) {
 	  		$.post("/user/ajax_send_mail_to_audits",{
 		    	"audits":arr,
-		    	"msg":$("#email_msg").val(),
+		    	"msg":$("#email_msg_{$status}").val(),
 		    	"name":"{$user['name']}",
 		    	"id":"{$user['id']}",
 		    }, function(data) {

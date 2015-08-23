@@ -229,7 +229,7 @@ class UserAction extends BaseAction {
         $this->user_status_xedit_str =  json_encode_for_xedit($this->user_statuses);
 
         $this->assign($this->data);
-
+        //var_dump($this->userinfo);
         if($this->userinfo) {
             $this->display('detail');
         } else {
@@ -302,7 +302,7 @@ class UserAction extends BaseAction {
         foreach ($audits as $key => $value) {
             $where['username'] = $value;
             $mailto = D("Users")->where($where)->getField("email");
-            $subject    = "请大家一同来参与".I("post.name")."的项目初筛吧";
+            $subject    = "请大家一同来参与".I("post.name")."的审核吧";
             $body       = "<br>".I("post.msg")."<br>".$_SERVER['HTTP_HOST']."/user/detail/".I("post.id");
             if($mailto && $subject && $body) {
             $res = Mailer::SmtpMail(NULL, $mailto, $subject, $body, null, array('guorunmiao@justering.com'));

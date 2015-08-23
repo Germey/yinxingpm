@@ -412,4 +412,14 @@ table.stat td.out{vertical-align: top; padding: 10px 10px 30px 10px;width: 30%;}
   width: 97%;
   margin-bottom: 20px;
 }
-.alert-tip { position:fixed; top:1px; margin-left:30px; display:none; text-align: center; padding-top:10px; padding-left: 50px; padding-right: 50px}
+.alert-tip { position:fixed; top:1px; z-index: 1000;margin-left:30px; display:none; text-align: center; padding-top:10px; padding-left: 50px; padding-right: 50px}
+.email_select .chzn-choices {
+  position: relative;
+top: 30px;
+}
+.send_to_audits {
+  padding-bottom: 30px;
+}
+.send_to_audits .msg{
+  margin-left: 160px;margin-right: 20px;
+}

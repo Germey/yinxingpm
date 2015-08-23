@@ -101,7 +101,7 @@
         </tr>
         <?php if(is_array($attachments)): foreach($attachments as $key=>$one): ?><tr id="tr<?php echo ($one['id']); ?>">
             <?php if(is_array($list_views)): foreach($list_views as $key=>$v): $class=""; if(strlen($one[$v]) < 20) { $class = 'nowrap'; } ?>
-              <td <?php echo ($class); ?>><?php echo column_item_value($v, $one, $all_columns);?></td><?php endforeach; endif; ?>
+              <td class="<?php echo ($class); ?>"><?php echo column_item_value($v, $one, $all_columns);?></td><?php endforeach; endif; ?>
             <td>
                 <a href="/attachment/download?id=<?php echo ($one['id']); ?>&module=<?php echo ($type); ?>"><i class="icon icon-download-alt"></i></a>
                 <a class="ajaxlink" ask="确认要删除？" href="/attachment/ajax_delete?id=<?php echo ($one['id']); ?>&module=<?php echo ($type); ?>"><i class="icon icon-remove"></i></a>
@@ -112,11 +112,21 @@
     </div>
 </div>
 
-
 <script type="text/javascript">
     function delete_attachment_callback(id){
         $('#tr'+id).remove();
     }
+    $(function() {
+        $("table tr").each(function() {
+            if ($(this).attr("id")) {
+                $(this).children('td').eq(1).wrapInner("<a></a>").children().attr({
+                    "data-type": "text",
+                    "data-pk": $(this).attr("id").substr(2),
+                    "data-url": "/attachment/ajax_change_file_name"
+                }).editable();
+            }
+        });
+    });
 </script>
 </div>
 <div class="clear"></div>

@@ -126,6 +126,15 @@ class AttachmentAction extends BaseAction {
         M('AttachmentsDir')->where(array('id' => $id))->delete();
     }
 
+    public function ajax_change_file_name() {
+        $id = intval(I("post.pk"));
+        $title = I("post.value");
+        //居然不生效
+        //$result = D("UserAttachments")->where()->setField();
+        $sql = "update user_attachments set title ='".$title."' where id=".$id;
+        $result = D("UserAttachments")->execute($sql);
+
+    }
     public function check_attachment_exist(){
         $pid = $this->_param('id');
         $title = $this->_param('title');

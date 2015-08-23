@@ -53,78 +53,85 @@
     </ul>
     
     <div id="audit_tab_content" class="tab-content" style="padding: 0 10px;">
-      <foreach name="display_status" key="status" item="one">
-        <div class="tab-pane fade {$status==$active_status?'in active':''}" id="audit_{$status}">
-          <p class="alert alert-success audit_view_all_title">{:str_replace('待','',$one)}</span></p>
-          <if condition="$status eq 30">
-            <include file="background_survey" />
-          <elseif condition="$status eq 40" />
-            <include file="send_email_to_audits" />
-          </if>
-          <foreach name="audits[$status]" item="one">
-            <div id="audit_list_{$one['id']}">            
-              <div style="margin: 10px 0 5px 0;">
-                <i class="icon-comment"></i>&nbsp;&nbsp;
-                <span class=""><b>{$one['audit_user_name_display']}@{:substr($one['audit_time'],0,16)}</b></span>&nbsp;&nbsp;
-                <span class="label label-{$all_audit_opinions[$one['audit_result']]['label-class']}">{$all_audit_opinions[$one['audit_result']]['name']}</span>
-                <if condition="$one['audit_user_id'] eq $login_user['id']">
-                  <a href="/user/ajax_delete_audit?id={$one['id']}" ask="确认删除该评审记录？" class="muted ajaxlink pull-right">x</a>
+        <foreach name="display_status" key="status" item="one">
+            <div class="tab-pane fade {$status==$active_status?'in active':''}" id="audit_{$status}">
+                <p class="alert alert-success audit_view_all_title">{:str_replace('待','',$one)}</span></p>
+                <if condition="$status eq 30">
+                    <include file="background_survey" />
+                <elseif condition="$status eq 40" />
+                    <include file="send_email_to_audits" />
+                <elseif condition="$status eq 60" />
+                    <include file="send_email_to_audits" />
+                <elseif condition="$status eq 70" />
+                    <include file="background_survey" />
+                <elseif condition="$status eq 80" />
+                    <include file="send_email_to_audits" />
                 </if>
-              </div>
-              <blockquote>
-                {:nl2br($one['audit_content'])}
-              <if condition="$one['audit_email']">
-                <hr />
-                <p><i class="icon-envelope"></i> {$one['audit_email']['to']} 【邮件题目：{$one['audit_email']['subject']}】</p>
-              </if>
-              </blockquote>
-              <br />
+                <foreach name="audits[$status]" item="one">
+                    <div id="audit_list_{$one['id']}">            
+                        <div style="margin: 10px 0 5px 0;">
+                            <i class="icon-comment"></i>&nbsp;&nbsp;
+                            <span class=""><b>{$one['audit_user_name_display']}@{:substr($one['audit_time'],0,16)}</b></span>&nbsp;&nbsp;
+                            <span class="label label-{$all_audit_opinions[$one['audit_result']]['label-class']}">{$all_audit_opinions[$one['audit_result']]['name']}</span>
+                            <if condition="$one['audit_user_id'] eq $login_user['id']">
+                                <a href="/user/ajax_delete_audit?id={$one['id']}" ask="确认删除该评审记录？" class="muted ajaxlink pull-right">x</a>
+                            </if>
+                        </div>
+                        <blockquote>
+                            {:nl2br($one['audit_content'])}
+                            <if condition="$one['audit_email']">
+                            <hr />
+                            <p><i class="icon-envelope"></i> {$one['audit_email']['to']} 【邮件题目：{$one['audit_email']['subject']}】</p>
+                            </if>
+                        </blockquote>
+                    </div>
+                </foreach>
+
+                <if condition="$auditing_status eq $status">
+                    <input type="hidden" name="user_id" value="{$user['id']}" />
+                    <!--             <input type="hidden" name="id" value="{$audits[$status]['id']}" /> -->
+                    <input type="hidden" name="status" value="{$auditing_status}" />
+                    <input type="hidden" name="create_user_id" value="{$audits[$status]['create_user_id']?$audits[$status]['create_user_id']:$login_user['id']}" />
+                    <input type="hidden" name="create_time" value="{$audits[$status]['create_time']?$audits[$status]['create_time']:date('Y-m-d H:i:s')}" />
+                    <input type="hidden" name="audit_user_id" value="{$audits[$status]['audit_user_id']?$audits[$status]['audit_user_id']:$login_user['id']}" />
+                    <input type="hidden" name="audit_user_name" value="{$audits[$status]['audit_user_name']?$audits[$status]['audit_user_name']:$login_user['realname']}" />
+
+                    <if condition="$audits[$status]['audit_user_id'] AND ($audits[$status]['audit_user_id'] neq $login_user['user_id'])">
+                      <input type="hidden" name="actual_audit_user_id" value="{$login_user['id']}" />
+                      <input type="hidden" name="actual_audit_user_name" value="{$login_user['realname']}" />
+                    </if>
+
+                    <table class="table table-noborder">
+                        <tr>
+                            <td style="vertical-align: top"><b>考核意见</b></td>
+                            <td><textarea name="audit_content" id="audit_content" class="span12" style="height: 100px">{$audits[$status]['audit_content']}</textarea></td>
+                        </tr>
+                        <tr>
+                            <td><b>通过否？</b></td>
+                            <td>
+                              <select name="audit_result">{:Utility::Option($audit_opinions, $audits[$status]['audit_result'])}</select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><b>考核人</b></td>
+                            <td>{$audits[$status]['audit_user_name']?$audits[$status]['audit_user_name']:$login_user['realname']}</td>
+                        </tr>
+                        <if condition="$audits[$status]['audit_user_id'] AND ($audits[$status]['audit_user_id'] neq $login_user['id'])">
+                            <tr>
+                                <td><b>实际考核人</b></td><td>{$login_user['realname']}</td>
+                            </tr>
+                        </if>
+                        <tr>
+                            <td></td>
+                            <td>
+                              <input type="submit" class="btn btn-danger" value="提 交" />
+                              <span class="muted">{:M("UserStatuses")->where("id=%d",$user['status'])->getField('audit_tip')}</span>
+                            </td>
+                        </tr>
+                    </table>
+                </if>
             </div>
-          </foreach>
-
-          <if condition="$auditing_status eq $status">
-            <input type="hidden" name="user_id" value="{$user['id']}" />
-<!--             <input type="hidden" name="id" value="{$audits[$status]['id']}" /> -->
-            <input type="hidden" name="status" value="{$auditing_status}" />
-            <input type="hidden" name="create_user_id" value="{$audits[$status]['create_user_id']?$audits[$status]['create_user_id']:$login_user['id']}" />
-            <input type="hidden" name="create_time" value="{$audits[$status]['create_time']?$audits[$status]['create_time']:date('Y-m-d H:i:s')}" />
-            <input type="hidden" name="audit_user_id" value="{$audits[$status]['audit_user_id']?$audits[$status]['audit_user_id']:$login_user['id']}" />
-            <input type="hidden" name="audit_user_name" value="{$audits[$status]['audit_user_name']?$audits[$status]['audit_user_name']:$login_user['realname']}" />
-            <if condition="$audits[$status]['audit_user_id'] AND ($audits[$status]['audit_user_id'] neq $login_user['user_id'])">
-              <input type="hidden" name="actual_audit_user_id" value="{$login_user['id']}" />
-              <input type="hidden" name="actual_audit_user_name" value="{$login_user['realname']}" />
-            </if>
-
-            <br /><table class="table table-noborder">
-              <tr>
-                <td style="vertical-align: top"><b>考核意见</b></td>
-                <td><textarea name="audit_content" id="audit_content" class="span12" style="height: 100px">{$audits[$status]['audit_content']}</textarea></td>
-              </tr>
-              <tr>
-                <td><b>通过否？</b></td>
-                <td>
-                  <select name="audit_result">{:Utility::Option($audit_opinions, $audits[$status]['audit_result'])}</select>
-                </td>
-              </tr>
-              <tr>
-                <td><b>考核人</b></td><td>{$audits[$status]['audit_user_name']?$audits[$status]['audit_user_name']:$login_user['realname']}</td>
-              </tr>
-            <if condition="$audits[$status]['audit_user_id'] AND ($audits[$status]['audit_user_id'] neq $login_user['id'])">
-              <tr>
-                <td><b>实际考核人</b></td><td>{$login_user['realname']}</td>
-              </tr>
-            </if>
-              <tr>
-                <td></td>
-                <td>
-                  <input type="submit" class="btn btn-danger" value="提 交" />
-                  <span class="muted">{:M("UserStatuses")->where("id=%d",$user['status'])->getField('audit_tip')}</span>
-                </td>
-              </tr>
-            </table>
-          </if>
-        </div>
-      </foreach>
+        </foreach>
     </div>
   </div>
 </form>

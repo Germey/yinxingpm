@@ -1,13 +1,17 @@
-<?php 
-	$bg_survey_questions = D("UserTypeQuestions")->getsByTypeId(4);
+<?php
+	if ($status == 30) {
+		$bg_survey_questions = D("UserTypeQuestions")->getsByTypeId(4);
+	} else if ($status == 70) {
+		$bg_survey_questions = D("UserTypeQuestions")->getsByTypeId(5);
+	}
 	$bg_survey_answers = D("BackgroundSurvey")->getAnswers($user['id']);
 	//只有秘书或志愿者可以填写调查表
 	$editable = auditEditable($login_user['role']);
 	$survey_user = D("Users")->getById($user['bg_survey_user']);
 ?>
 
-
-<div class="background_survey">
+<div class="print_content">
+<div class="background_survey" id="background_survey_{$status}">
 	<foreach name="bg_survey_questions" item="one">
 		<div class="question">
 			<p style="background: #f4f4f4;padding:4px 0;font-weight: bold;">
@@ -16,26 +20,50 @@
 	    	</p>
 	    </div>
 	    <div style="padding-left: 25px;">
-	    	<textarea class="answer editor" id="editor_{$one['id']}" question="{$one['id']}"row="3" col="10" <?php if(!$editable) echo "disabled" ?>>{$bg_survey_answers[$one['id']]}</textarea>
+	    	<textarea class="answer editor" id="editor_{$one['id']}" question="{$one['id']}"row="3" col="10">{$bg_survey_answers[$one['id']]}</textarea>
 	    </div>
 	</foreach>
 	<if condition="!$editable">
 		<p><span>当前负责背景调查人员：</span>
-			<a href="#" id="assert_bg_survey" data-type="select" data-pk="{$user['id']}" data-url="/user/ajax_assert_servey_user" data-title="指派背景调查人员">
+			<a href="#" class="assert_bg_survey" data-type="select" data-pk="{$user['id']}" data-url="/user/ajax_assert_servey_user" data-title="指派背景调查人员">
 	          {$survey_user['username']}
 	      </a>
 	  	</p>
+	  	<input type="button" class="btn btn-danger save_bg_survey" value="保存">
+	  	<input type="button" class="btn btn-primary pirnt_bg_survey" value="打印">
 	<else />
-		<input type="button" class="btn btn-danger" id="save_bg_survey" value="保存">
+		<input type="button" class="btn btn-danger save_bg_survey" value="保存">
+		<input type="button" class="btn btn-primary pirnt_bg_survey" value="打印">
 		<textarea id="email_msg" placeholder="如果调查完毕，请写句话告诉管理员吧">{$user['name']}的背景调查已经填写完毕，请审核。</textarea>
-		<input type="button" class="btn btn-primary" id="send_email_to_amdin" value="发送邮件给管理员">
+		<input type="button" class="btn btn-primary send_email_to_amdin" value="发送邮件给管理员">
   	</if>
+</div>
 </div>
 
 
 <script type="text/javascript">
 
-  $('#assert_bg_survey').editable({ 
+$(".pirnt_bg_survey").on("click", function() {
+	$("#background_survey_{$status} textarea").removeClass("editor");
+	document.body.innerHTML = $("#background_survey_{$status}").parent().html();
+	window.print();
+});
+
+
+function saveContent(question_id, editor_id){
+	$.post("/user/ajax_save_bg_survey",{
+    	"question_id":question_id,
+    	"recommend_id":{$user['id']},
+    	"survey_id":{$user['bg_survey_user']},
+    	"answer":UE.getEditor(editor_id).getContent()
+    },function(data) {
+    	if(data>0) {
+    		show_alert_tip("调查结果已保存");
+    	}	
+    })
+}
+
+  $('.assert_bg_survey').editable({ 
   	source: {:getEditUsers()}
   });
 
@@ -51,7 +79,7 @@
     	}	
     })
   });
-  $("#send_email_to_amdin").on("click", function() {
+  $(".send_email_to_amdin").on("click", function() {
   	if (confirm("确定要发送邮件吗？")) {
   		$.post("/user/ajax_send_mail_to_admin",{
 	    	"msg":$("#email_msg").val(),
@@ -64,8 +92,10 @@
 	    });
   	}
   });
-  $("#save_bg_survey").on("click", function() {
-  	save_all();
+  $(".save_bg_survey").on("click", function() {
+  	<?php foreach($bg_survey_questions as $key => $val) { ?>
+		saveContent({$val['id']},"editor_{$val['id']}");
+	<?php } ?>
   });
 
 function show_alert_tip(msg) {
@@ -76,4 +106,9 @@ function show_alert_tip(msg) {
 function save_all() {
 	$(".background_survey .answer").trigger("blur");
 }
+
+<?php foreach($bg_survey_questions as $key => $val) { ?>
+	UE.getEditor("editor_{$val['id']}").setContent('{$bg_survey_answers[$val["id"]]}');
+<?php } ?>
+
 </script>

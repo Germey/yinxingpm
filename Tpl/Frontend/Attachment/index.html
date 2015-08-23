@@ -31,7 +31,7 @@
                         $class = 'nowrap';
                     }
                  ?>
-              <td {$class}>{:column_item_value($v, $one, $all_columns)}</td>
+              <td class="{$class}">{:column_item_value($v, $one, $all_columns)}</td>
             </foreach>
             <td>
                 <a href="/attachment/download?id={$one['id']}&module={$type}"><i class="icon icon-download-alt"></i></a>
@@ -44,9 +44,19 @@
     </div>
 </div>
 
-
 <script type="text/javascript">
     function delete_attachment_callback(id){
         $('#tr'+id).remove();
     }
+    $(function() {
+        $("table tr").each(function() {
+            if ($(this).attr("id")) {
+                $(this).children('td').eq(1).wrapInner("<a></a>").children().attr({
+                    "data-type": "text",
+                    "data-pk": $(this).attr("id").substr(2),
+                    "data-url": "/attachment/ajax_change_file_name"
+                }).editable();
+            }
+        });
+    });
 </script>
