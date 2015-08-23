@@ -195,7 +195,7 @@
     <!-- 审核信息 -->
   <?php
  $display_status = D("UserStatuses")->getAuditStatusIdNameMap(); $max_audit_status = max(array_keys($display_status)); $tmps = Utility::AssColumn(D("UserAudits")->where('user_id=%d',$user['id'])->order('id desc')->select()); foreach($tmps as $k=>$v) { $audits[$v['status']][] = $v; } $auditing_status = 0; foreach ($display_status as $status => $name) { if($status>$user['status']) { unset($display_status[$status]); } if($status==$user['status']) { $auditing_status = $active_status = $status; } } if($user['status']>$max_audit_status) { foreach ($audits as $k => $v) { if(!$v || !$v[0]['audit_time']) { unset($display_status[$k]); } } $active_status = max(array_keys($display_status)); } if(in_array($user['status'], array(20,60))) { $audit_opinions[4] = '驳回修改'; } ?>
-
+<div class="label label-warning alert-tip" id="alert-tip"><p>警告框</p></div>
 <h5 class="clear bg colortip" title="点击展开/合并" style="cursor: pointer;" onclick="toggle_content_block('_audit_content');">
   # 考核过程 #<i class="icon-fullscreen"></i>
 </h5>
@@ -216,7 +216,7 @@
           <p class="alert alert-success audit_view_all_title"><?php echo str_replace('待','',$one);?></span></p>
           <?php if($status == 30): $bg_survey_questions = D("UserTypeQuestions")->getsByTypeId(4); $bg_survey_answers = D("BackgroundSurvey")->getAnswers($user['id']); $editable = auditEditable($login_user['role']); $survey_user = D("Users")->getById($user['bg_survey_user']); ?>
 
-<div class="label label-warning alert-tip" id="alert-tip"><p>警告框</p></div>
+
 <div class="background_survey">
 	<?php if(is_array($bg_survey_questions)): foreach($bg_survey_questions as $key=>$one): ?><div class="question">
 			<p style="background: #f4f4f4;padding:4px 0;font-weight: bold;">
@@ -233,7 +233,9 @@
 	      </a>
 	  	</p>
 	<?php else: ?>
-		<input type="button" class="btn btn-danger" id="save_bg_survey" value="保存"><?php endif; ?>
+		<input type="button" class="btn btn-danger" id="save_bg_survey" value="保存">
+		<textarea id="email_msg" placeholder="如果调查完毕，请写句话告诉管理员吧"><?php echo ($user['name']); ?>的背景调查已经填写完毕，请审核。</textarea>
+		<input type="button" class="btn btn-primary" id="send_email_to_amdin" value="发送邮件给管理员"><?php endif; ?>
 </div>
 
 
@@ -255,7 +257,19 @@
     	}	
     })
   });
-
+  $("#send_email_to_amdin").on("click", function() {
+  	if (confirm("确定要发送邮件吗？")) {
+  		$.post("/user/ajax_send_mail_to_admin",{
+	    	"msg":$("#email_msg").val(),
+	    	"name":"<?php echo ($user['name']); ?>",
+	    	"id":"<?php echo ($user['id']); ?>"
+	    }, function(data) {
+	    	if (data==1) {
+	    		show_alert_tip("邮件已发送给管理员");
+	    	}
+	    });
+  	}
+  });
   $("#save_bg_survey").on("click", function() {
   	save_all();
   });
@@ -268,6 +282,41 @@ function show_alert_tip(msg) {
 function save_all() {
 	$(".background_survey .answer").trigger("blur");
 }
+</script>
+          <?php elseif($status == 40): ?>
+            <?php  $names = D("Users")->getField("id,username"); ?>
+<div class="email_select">
+	<select class="chosen-select span2" multiple name="emails[]" data-placeholder="邮件列表"><?php echo Utility::Option($names,null);?></select>
+</div>
+<div style="margin-top: 50px">
+	<textarea id="email_msg" placeholder="请告诉大家您要说的话"><?php echo ($user['name']); ?>已经进入项目初筛阶段，请大家共同讨论意见。</textarea>
+	<input type="button" class="btn btn-primary" id="send_email_to_audits" value="发送邮件给通知大家">
+<div>
+
+<script type="text/javascript">
+
+$('#send_email_to_audits').on("click", function() {
+	var size = $(".email_select li.search-choice").size();
+	var arr = new Array();
+	$(".email_select li.search-choice span").each(function(){
+		arr.push($(this).text());
+	});
+	if (size <= 0) {
+		show_alert_tip("请至少选择一个人员");
+	} else {
+		if (confirm("确定要发送邮件吗？")) {
+	  		$.post("/user/ajax_send_mail_to_audits",{
+		    	"audits":arr,
+		    	"msg":$("#email_msg").val(),
+		    	"name":"<?php echo ($user['name']); ?>",
+		    	"id":"<?php echo ($user['id']); ?>",
+		    }, function(data) {
+		    	show_alert_tip(data);
+		    });
+	  	}
+	}
+});
+
 </script><?php endif; ?>
           <?php if(is_array($audits[$status])): foreach($audits[$status] as $key=>$one): ?><div id="audit_list_<?php echo ($one['id']); ?>">            
               <div style="margin: 10px 0 5px 0;">

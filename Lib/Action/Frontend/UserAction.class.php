@@ -297,6 +297,26 @@ class UserAction extends BaseAction {
         }
     }
 
+    function ajax_send_mail_to_audits() {
+        $audits = I("post.audits");
+        foreach ($audits as $key => $value) {
+            $where['username'] = $value;
+            $mailto = D("Users")->where($where)->getField("email");
+            $subject    = "请大家一同来参与".I("post.name")."的项目初筛吧";
+            $body       = "<br>".I("post.msg")."<br>".$_SERVER['HTTP_HOST']."/user/detail/".I("post.id");
+            if($mailto && $subject && $body) {
+            $res = Mailer::SmtpMail(NULL, $mailto, $subject, $body, null, array('guorunmiao@justering.com'));
+            if($res) {
+                $msg .= '通知邮件已发送给' . $value;
+                $audit_up['id'] = $audit_id;
+                $audit_up['audit_email'] = serialize(array('to'=>$mailto, 'subject'=>$subject, 'body'=>$body));
+                M("UserAudits")->save($audit_up);
+                echo $msg;
+            }
+        }
+        }
+    }
+
     function ajax_save_bg_survey() {
         $p = I('post.');
         $p['date'] = date('Y-m-d');

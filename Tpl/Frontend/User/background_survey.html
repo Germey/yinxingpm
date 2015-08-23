@@ -6,7 +6,7 @@
 	$survey_user = D("Users")->getById($user['bg_survey_user']);
 ?>
 
-<div class="label label-warning alert-tip" id="alert-tip"><p>警告框</p></div>
+
 <div class="background_survey">
 	<foreach name="bg_survey_questions" item="one">
 		<div class="question">
@@ -16,7 +16,7 @@
 	    	</p>
 	    </div>
 	    <div style="padding-left: 25px;">
-	    	<textarea class="answer" question="{$one['id']}"row="3" col="10" <?php if(!$editable) echo "disabled" ?>>{$bg_survey_answers[$one['id']]}</textarea>
+	    	<textarea class="answer editor" id="editor_{$one['id']}" question="{$one['id']}"row="3" col="10" <?php if(!$editable) echo "disabled" ?>>{$bg_survey_answers[$one['id']]}</textarea>
 	    </div>
 	</foreach>
 	<if condition="!$editable">

@@ -34,7 +34,7 @@
         $audit_opinions[4] = '驳回修改';
     }
 ?>
-
+<div class="label label-warning alert-tip" id="alert-tip"><p>警告框</p></div>
 <h5 class="clear bg colortip" title="点击展开/合并" style="cursor: pointer;" onclick="toggle_content_block('_audit_content');">
   # 考核过程 #<i class="icon-fullscreen"></i>
 </h5>
@@ -58,6 +58,8 @@
           <p class="alert alert-success audit_view_all_title">{:str_replace('待','',$one)}</span></p>
           <if condition="$status eq 30">
             <include file="background_survey" />
+          <elseif condition="$status eq 40" />
+            <include file="send_email_to_audits" />
           </if>
           <foreach name="audits[$status]" item="one">
             <div id="audit_list_{$one['id']}">            
