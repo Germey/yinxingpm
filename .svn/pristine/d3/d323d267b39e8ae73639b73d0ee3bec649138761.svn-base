@@ -156,7 +156,7 @@ class CustomColumnsModel extends BaseModel {
             "hobby" => array("display_name" => "兴趣爱好", "type" => "textarea", 'display_colspan' => 3),
             "self_introduction" => array("display_name" => "自我评价", "type" => "textarea", 'display_colspan' => 3),
             "honor" => array("display_name" => "所获荣誉", "type" => "textarea", 'display_colspan' => 3),
-            "link" => array("display_name" => "相关链接", "type" => "textarea", 'display_colspan' => 3),
+            
             //     "contract_time" => array("display_name" => "签合同日期", 'status_range'=>'80,100'),
             //     "contract_note" => array("display_name" => "合同信息", 'display_colspan'=>2, 'status_range'=>'80,100'),
             //     "bank_account_name" => array("display_name" => "银行账户名", 'status_range'=>'80,100'),

@@ -410,7 +410,10 @@ table.stat td.out{vertical-align: top; padding: 10px 10px 30px 10px;width: 30%;}
 }
 .background_survey .answer {
   width: 97%;
-  margin-bottom: 20px;
+  word-break: break-all;
+}
+.background_survey .ans-item {
+  padding: 10px 0;;
 }
 .alert-tip { position:fixed; top:1px; z-index: 1000;margin-left:30px; display:none; text-align: center; padding-top:10px; padding-left: 50px; padding-right: 50px}
 .email_select .chzn-choices {

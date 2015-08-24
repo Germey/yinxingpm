@@ -17,22 +17,18 @@
 
 <div class="print_content">
 <div class="background_survey" id="background_survey_{$status}">
+	<foreach name="bg_survey_questions" item="one">
+		<div class="question">
+			<p style="background: #f4f4f4;padding:4px 0;font-weight: bold;">
+	        <span class="label label-info">问</span>
+	        {$one['question']}
+	    	</p>
+	    </div>
+	    <div style="padding-left: 25px;">
+	    	<textarea class="answer editor" id="editor_{$one['id']}" question="{$one['id']}"row="3" col="10">{$bg_survey_answers[$one['id']]}</textarea>
+	    </div>
+	</foreach>
 	<if condition="!$editable">
-		<foreach name="bg_survey_questions" item="one">
-			<div class="question">
-				<p style="background: #f4f4f4;padding:4px 0;font-weight: bold;">
-		        <span class="label label-info">问</span>
-		        {$one['question']}
-		    	</p>
-		    </div>
-		    <div class="ans-item">
-		    	<div class="answer" id="unedit_{$one['id']}" question="{$one['id']}"row="3" col="10">{$bg_survey_answers[$one['id']]}</div>
-		    	<div id="editable_{$one['id']}" style="display:none">
-			    	<textarea class="answer editor" id="editor_{$one['id']}" question="{$one['id']}"row="3" col="10">{$bg_survey_answers[$one['id']]}</textarea>
-			    </div>
-		    	<a target="{$one['id']}" class="edit">编辑</a>
-		    </div>
-		</foreach>
 		<p><span>当前负责背景调查人员：</span>
 			<a href="#" class="assert_bg_survey" data-type="select" data-pk="{$user['id']}" data-url="/user/ajax_assert_servey_user" data-title="指派背景调查人员">
 	          {$survey_user['username']}
@@ -41,25 +37,10 @@
 	  	<input type="button" class="btn btn-danger" id="save_bg_survey_{$status}" value="保存">
 	  	<input type="button" class="btn btn-primary" id="pirnt_bg_survey_{$status}" value="打印">
 	<else />
-		<foreach name="bg_survey_questions" item="one">
-			<div class="question">
-				<p style="background: #f4f4f4;padding:4px 0;font-weight: bold;">
-		        <span class="label label-info">问</span>
-		        {$one['question']}
-		    	</p>
-		    </div>
-		    <div class="ans-item">
-		    	<div id="editable_{$one['id']}">
-			    	<textarea class="answer editor" id="editor_{$one['id']}" question="{$one['id']}"row="3" col="10">{$bg_survey_answers[$one['id']]}</textarea>
-			    </div>
-		    </div>
-		</foreach>
-		<input type="button" class="btn btn-danger" id="save_bg_survey_{$status}" value="保存"><br><br>
+		<input type="button" class="btn btn-dangerid" id="save_bg_survey_{$status}" value="保存">
+		<input type="button" class="btn btn-primary" id="pirnt_bg_survey_{$status}" value="打印">
 		<textarea id="email_msg_{$status}" placeholder="如果调查完毕，请写句话告诉管理员吧">{$user['name']}的背景调查已经填写完毕，请审核。</textarea>
 		<input type="button" class="btn btn-primary" id="send_email_to_amdin_{$status}" value="发送邮件给项目负责人">
-		<script>
-			setInterval("save_all_{$status}()", 5000);
-		</script>
   	</if>
 </div>
 </div>
@@ -89,14 +70,6 @@
 
 <script type="text/javascript">
 
-$(function(){
-	$(".edit").on("click", function() {
-		$("#editable_"+$(this).attr("target")).css("display","block");
-		$("#unedit_"+$(this).attr("target")).css("display","none");
-		$(this).css("display","none");
-	});
-})
-
 $("#pirnt_bg_survey_{$status}").on("click", function() {
 	$("#save_bg_survey_{$status}").trigger("click");
 	$.post("/user/ajax_get_bg_survey_answers",{
@@ -111,6 +84,7 @@ $("#pirnt_bg_survey_{$status}").on("click", function() {
     });
 	
 });
+setInterval("save_all()", 15000);
 
 function saveContent(question_id, editor_id){
 	$.post("/user/ajax_save_bg_survey",{
@@ -173,14 +147,12 @@ function show_alert_tip(msg) {
     setTimeout("$('#alert-tip').slideUp('slow', function(){ $('#alert-tip').hide(); })", 5000);
 }
 
-function save_all_{$status}() {
-	if($("#save_bg_survey_{$status}").is(":visible")) {
-		$("#save_bg_survey_{$status}").trigger("click");
-	}
+function save_all() {
+	$("#save_bg_survey_{$status}").trigger("click");
 }
 
 <?php foreach($bg_survey_questions as $key => $val) { ?>
-	//UE.getEditor("editor_{$val['id']}").setContent('{$bg_survey_answers[$val["id"]]}');
+	UE.getEditor("editor_{$val['id']}").setContent('{$bg_survey_answers[$val["id"]]}');
 <?php } ?>
 
 </script>

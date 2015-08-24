@@ -141,9 +141,8 @@
             <?php if(is_array($sub_types)): foreach($sub_types as $key=>$one): ?><li class="<?php if($key == $status): ?>active<?php endif; ?>"><a href="/user/<?php echo ($action_name); ?>?status=<?php echo ($key); ?>"><?php echo ($one); ?></a></li><?php endforeach; endif; ?>
           </ul>
           <div class="tab-content">
-            <h4 class="pull-left"  style="font-size:18px; margin-right: 10px; margin-top: 12px; color:#666;"><?php echo ($apply_type_name); ?></h4>
-<?php if(can_edit($login_user)): ?><div class="btn-toolbar">
-    <div class="btn-group">
+            <!-- <div class="btn-toolbar">
+<?php if(can_edit($login_user)): ?><div class="btn-group">
         <button class="btn btn-small dropdown-toggle" data-toggle="dropdown"><i class="icon-share-alt"></i>导出 <span class="caret"></span></button>
         <ul class="dropdown-menu">
           <li><a href="javascript:void(0)" onclick="export_users('check', '<?php echo ($_GET['status']); ?>', '<?php echo ($_GET['apply_type_id']); ?>','')">导出选中成员基本资料</a></li>
@@ -153,8 +152,8 @@
           <li><a href="javascript:void(0)" onclick="export_users('all', '<?php echo ($_GET['status']); ?>', '<?php echo ($_GET['apply_type_id']); ?>','school')">导出全部成员任教信息</a></li>
         </ul>
     </div>
-    <button class="btn btn-small" onclick="massdelete()"><i class="icon-trash"></i><?php echo (L("delete")); ?></button>
-</div><?php endif; ?>
+    <button class="btn btn-small" onclick="massdelete()"><i class="icon-trash"></i><?php echo (L("delete")); ?></button><?php endif; ?>
+</div> -->
 <form method="get" action="/user/<?php echo ($action_name); ?>" class="view-filter">
     <input type="hidden" name="status" value="<?php echo ($_GET['status']); ?>" />
     <input type="hidden" name="apply_type_id" value="<?php echo ($_GET['apply_type_id']); ?>" />
@@ -207,8 +206,6 @@
     function showTabs() {
         pathname = window.location.pathname;
         path = pathname.split('/')[2];
-        //去掉推荐表审核
-        $(".wide .nav-tabs li:eq(0)").remove();
         switch(path) {
             case "ever":
                 $(".wide .nav-tabs li:lt(8)").css("display","block");
