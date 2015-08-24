@@ -158,8 +158,8 @@
 <form method="get" action="/user/<?php echo ($action_name); ?>" class="view-filter">
     <input type="hidden" name="status" value="<?php echo ($_GET['status']); ?>" />
     <input type="hidden" name="apply_type_id" value="<?php echo ($_GET['apply_type_id']); ?>" />
-    <?php echo display_filter_item('name',$_GET['name'],$all_columns);?>
     <?php echo display_filter_item('identifier',$_GET['identifier'],$all_columns);?>
+    <?php echo display_filter_item('name',$_GET['name'],$all_columns);?>
     <?php echo display_filter_item('classify',$_GET['classify'],$all_columns);?>
     <?php echo display_filter_item('recommender_name',$_GET['mobile'],$all_columns);?>
     <?php if($_GET['status']==100): echo display_filter_item('status_note',$_GET['status_note'],$all_columns); endif; ?>

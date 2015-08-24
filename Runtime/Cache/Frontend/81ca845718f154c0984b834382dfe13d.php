@@ -94,7 +94,8 @@
             <?php if(is_array($list_columns)): foreach($list_columns as $key=>$one): ?><th><?php echo ($one["display_name"]); ?></th><?php endforeach; endif; ?>
         </tr>
         <?php if(is_array($users)): foreach($users as $key=>$one): ?><tr>
-                <?php if(is_array($list_columns)): foreach($list_columns as $key=>$item): ?><td><?php echo ($one[$key]); ?></td><?php endforeach; endif; ?>
+                <?php if(is_array($list_columns)): foreach($list_columns as $key=>$item): if($key!='recommend_count'): ?><td><?php echo ($one[$key]); ?></td><?php endif; endforeach; endif; ?>
+                <td><a href="/user/recommend?recommender_name=<?php echo ($one['name']); ?>"><?php echo ($recommend_count[$one['id']]); ?></td>
             </tr><?php endforeach; endif; ?>
       </table>
       <div class="text-right"><td colspan=<?php echo count($list_views)+3;?>><?php echo ($pagestring); ?></td></div>

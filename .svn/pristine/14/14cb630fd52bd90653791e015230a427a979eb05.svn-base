@@ -13,11 +13,11 @@
 		<select class="chosen-select span2" multiple name="emails[]" data-placeholder="邮件列表">{:Utility::Option($names,null)}</select>
 	</div>
 	<textarea class="msg" id="email_msg_{$status}" placeholder="请告诉大家您要说的话">{$user['name']}已经进入{$status_name}阶段，请大家共同讨论意见。</textarea>
-	<input type="button" class="btn btn-primary" id="send_email_to_audits_{$status}" value="发送邮件给通知大家">
+	<input type="button" class="btn btn-primary send_email_to_audits" value="发送邮件给通知大家">
 </div>
 <script type="text/javascript">
 
-$('#send_email_to_audits_{$status}').on("click", function() {
+$('.send_email_to_audits').on("click", function() {
 	var size = $(".email_select li.search-choice").size();
 	var arr = new Array();
 	$(".email_select li.search-choice span").each(function(){

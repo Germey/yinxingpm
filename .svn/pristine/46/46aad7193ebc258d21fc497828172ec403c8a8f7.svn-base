@@ -1,0 +1,34 @@
+<div class="pull-right">
+    <a href="#attachments" class="btn btn-small btn-link">{$Think.lang.attachment} ({:count($attachments)})</a>
+    <a href="#notes" class="btn btn-small btn-link">{$Think.lang.note} ({:count($notes)})</a>
+    <a class="btn btn-small btn-link" target="_blank" href="{:D('Options')->getOption('webroot_apply')}/userinfo/preview?id={$user['id']}&token={:Crypt::en($user['id'])}">打印预览推荐表</a>
+    <if condition="$user['status'] gt 50">
+     <a class="btn btn-small btn-link" target="_blank" href="{:D('Options')->getOption('webroot_apply')}/userinfo/preview?id={$user['id']}&token={:Crypt::en($user['id'])}">打印预览申请表</a>
+    </if>
+</div>
+<input type="hidden" id="recommend_id" value="{$user['id']}"/>
+<div>
+    <span style="font-size:32px;">
+      {$user.name}<if condition="$user['identifier']"><span class="muted detail_iden">[{$user.identifier}]</span></if>
+    </span> 
+    <span style="padding-left:20px;">
+      <a href="#" id="change_status" data-type="select" data-pk="{$user['id']}" data-url="/user/ajax_save_status" data-title="修改状态">
+          {$user['status_name']}
+      </a>
+      <if condition="$user['status']==100">
+        <span class="muted">
+          「评级：<a href="#" id="change_status_note" data-type="select" data-pk="{$user['id']}" data-url="/user/ajax_save_status_note" data-title="备注">
+              <span class="muted">{$user['status_note']?$user['status_note']:'评级'}</span>
+          </a>」
+        </span>
+      </if>
+    </span>
+</div>
+<script type="text/javascript">
+  $('#change_status').editable({
+      source: {$user_status_xedit_str}
+  });
+  $('#change_status_note').editable({
+    source: {:createJSONRank(4)}
+  });  
+</script>

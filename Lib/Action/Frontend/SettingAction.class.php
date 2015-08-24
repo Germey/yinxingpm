@@ -330,10 +330,18 @@ class SettingAction extends BaseAction {
 
 
     function apply_intro() {
-        if($_POST) {
+        if($_POST['apply_intro']) {
             D("Options")->update('apply_intro', $_POST['apply_intro']);
         }
+        if($_POST['candidate_intro']) {
+            D("Options")->update('candidate_intro', $_POST['candidate_intro']);
+        }
+        if($_POST['recommend_intro']) {
+            D("Options")->update('recommend_intro', $_POST['recommend_intro']);
+        }
         $this->apply_intro = D("Options")->getOption('apply_intro');
+        $this->candidate_intro = D("Options")->getOption('candidate_intro');
+        $this->recommend_intro = D("Options")->getOption('recommend_intro');
         $this->display();
     }
 

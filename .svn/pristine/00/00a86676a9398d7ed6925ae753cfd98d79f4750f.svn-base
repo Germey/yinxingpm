@@ -17,8 +17,8 @@
 <form method="get" action="/user/{$action_name}" class="view-filter">
     <input type="hidden" name="status" value="{$_GET['status']}" />
     <input type="hidden" name="apply_type_id" value="{$_GET['apply_type_id']}" />
-    {:display_filter_item('identifier',$_GET['identifier'],$all_columns)}
     {:display_filter_item('name',$_GET['name'],$all_columns)}
+    {:display_filter_item('identifier',$_GET['identifier'],$all_columns)}
     {:display_filter_item('classify',$_GET['classify'],$all_columns)}
     {:display_filter_item('recommender_name',$_GET['mobile'],$all_columns)}
     <if condition="$_GET['status']==100">

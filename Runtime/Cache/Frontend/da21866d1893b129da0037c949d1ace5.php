@@ -214,7 +214,7 @@
     <div id="audit_tab_content" class="tab-content" style="padding: 0 10px;">
         <?php if(is_array($display_status)): foreach($display_status as $status=>$one): ?><div class="tab-pane fade <?php echo ($status==$active_status?'in active':''); ?>" id="audit_<?php echo ($status); ?>">
                 <p class="alert alert-success audit_view_all_title"><?php echo str_replace('待','',$one);?></span></p>
-                <?php if($status == 30): if ($status == 30) { $bg_survey_questions = D("UserTypeQuestions")->getsByTypeId(4); } else if ($status == 70) { $bg_survey_questions = D("UserTypeQuestions")->getsByTypeId(5); } $bg_survey_answers = D("BackgroundSurvey")->getAnswers($user['id']); $editable = auditEditable($login_user['role']); $survey_user = D("Users")->getById($user['bg_survey_user']); ?>
+                <?php if($status == 30): if ($status == 30) { $bg_survey_questions = D("UserTypeQuestions")->getsByTypeId(4); } else if ($status == 70) { $bg_survey_questions = D("UserTypeQuestions")->getsByTypeId(5); } $bg_survey_answers = D("BackgroundSurvey")->getAnswers($user['id']); $editable = auditEditable($login_user['role']); $survey_user = D("Users")->getById($user['bg_survey_user']); if($status == 30){ $status_name = "背景调查记录"; } else if ($status == 70) { $status_name = "考察访谈记录"; } ?>
 
 <div class="print_content">
 <div class="background_survey" id="background_survey_<?php echo ($status); ?>">
@@ -232,25 +232,54 @@
 	          <?php echo ($survey_user['username']); ?>
 	      </a>
 	  	</p>
-	  	<input type="button" class="btn btn-danger save_bg_survey" value="保存">
-	  	<input type="button" class="btn btn-primary pirnt_bg_survey" value="打印">
+	  	<input type="button" class="btn btn-danger" id="save_bg_survey_<?php echo ($status); ?>" value="保存">
+	  	<input type="button" class="btn btn-primary" id="pirnt_bg_survey_<?php echo ($status); ?>" value="打印">
 	<?php else: ?>
-		<input type="button" class="btn btn-danger save_bg_survey" value="保存">
-		<input type="button" class="btn btn-primary pirnt_bg_survey" value="打印">
-		<textarea id="email_msg" placeholder="如果调查完毕，请写句话告诉管理员吧"><?php echo ($user['name']); ?>的背景调查已经填写完毕，请审核。</textarea>
-		<input type="button" class="btn btn-primary send_email_to_amdin" value="发送邮件给管理员"><?php endif; ?>
+		<input type="button" class="btn btn-dangerid" id="save_bg_survey_<?php echo ($status); ?>" value="保存">
+		<input type="button" class="btn btn-primary" id="pirnt_bg_survey_<?php echo ($status); ?>" value="打印">
+		<textarea id="email_msg_<?php echo ($status); ?>" placeholder="如果调查完毕，请写句话告诉管理员吧"><?php echo ($user['name']); ?>的背景调查已经填写完毕，请审核。</textarea>
+		<input type="button" class="btn btn-primary" id="send_email_to_amdin_<?php echo ($status); ?>" value="发送邮件给管理员"><?php endif; ?>
 </div>
 </div>
-
+<div id="survey_print_<?php echo ($status); ?>" style="display:none">
+	<div class="container survey-print">
+		<div class="survey-personal-info">
+			<?php echo ($user["name"]); echo ($status_name); ?>表
+		</div>
+		<?php if(is_array($bg_survey_questions)): foreach($bg_survey_questions as $key=>$one): ?><div class="qa-item" id="qa-item-<?php echo ($one['id']); ?>">
+				<div class="question">
+					<p style="background: #f4f4f4;padding:4px 0;font-weight: bold;">
+			        	<span class="label label-info">问</span>
+			        	<?php echo ($one['question']); ?>
+			    	</p>
+			    </div>
+			    <div class="answer">
+			    	<p>
+			        	<span class="label label-important pull-left">答</span>
+			        </p>
+			        <div style="padding-top: 25px;" class="answer-content"><?php echo ($bg_survey_answers[$one['id']]); ?></div>
+			    </div>
+			</div><?php endforeach; endif; ?>
+	</div>
+</div>
 
 <script type="text/javascript">
 
-$(".pirnt_bg_survey").on("click", function() {
-	$("#background_survey_<?php echo ($status); ?> textarea").removeClass("editor");
-	document.body.innerHTML = $("#background_survey_<?php echo ($status); ?>").parent().html();
-	window.print();
+$("#pirnt_bg_survey_<?php echo ($status); ?>").on("click", function() {
+	$("#save_bg_survey_<?php echo ($status); ?>").trigger("click");
+	$.post("/user/ajax_get_bg_survey_answers",{
+    	"id":<?php echo ($user[id]); ?>,
+    },function(data) {
+    	data = JSON.parse(data);
+    	$.each(data, function(key, value) {
+    		$("#qa-item-"+key+" .answer-content").html(value);
+    	});
+    	document.body.innerHTML = $("#survey_print_<?php echo ($status); ?>").html();
+		setTimeout("window.print()",1000);
+    });
+	
 });
-
+setInterval("save_all_<?php echo ($status); ?>()", 15000);
 
 function saveContent(question_id, editor_id){
 	$.post("/user/ajax_save_bg_survey",{
@@ -281,10 +310,10 @@ function saveContent(question_id, editor_id){
     	}	
     })
   });
-  $(".send_email_to_amdin").on("click", function() {
+  $("#send_email_to_amdin_<?php echo ($status); ?>").on("click", function() {
   	if (confirm("确定要发送邮件吗？")) {
   		$.post("/user/ajax_send_mail_to_admin",{
-	    	"msg":$("#email_msg").val(),
+	    	"msg":$("#email_msg_<?php echo ($status); ?>").val(),
 	    	"name":"<?php echo ($user['name']); ?>",
 	    	"id":"<?php echo ($user['id']); ?>"
 	    }, function(data) {
@@ -294,10 +323,18 @@ function saveContent(question_id, editor_id){
 	    });
   	}
   });
-  $(".save_bg_survey").on("click", function() {
+  $("#save_bg_survey_<?php echo ($status); ?>").on("click", function() {
   	<?php foreach($bg_survey_questions as $key => $val) { ?>
 		saveContent(<?php echo ($val['id']); ?>,"editor_<?php echo ($val['id']); ?>");
 	<?php } ?>
+	$.post("/user/ajax_get_bg_survey_answers",{
+    	"id":<?php echo ($user[id]); ?>,
+    },function(data) {
+    	data = JSON.parse(data);
+    	$.each(data, function(key, value) {
+    		$("#qa-item-"+key+" .answer-content").html(value);
+    	})
+    });
   });
 
 function show_alert_tip(msg) {
@@ -305,8 +342,10 @@ function show_alert_tip(msg) {
     setTimeout("$('#alert-tip').slideUp('slow', function(){ $('#alert-tip').hide(); })", 5000);
 }
 
-function save_all() {
-	$(".background_survey .answer").trigger("blur");
+function save_all_<?php echo ($status); ?>() {
+	if($("#save_bg_survey_<?php echo ($status); ?>").is(":visible")) {
+		$("#save_bg_survey_<?php echo ($status); ?>").trigger("click");
+	}
 }
 
 <?php foreach($bg_survey_questions as $key => $val) { ?>
@@ -321,11 +360,11 @@ function save_all() {
 		<select class="chosen-select span2" multiple name="emails[]" data-placeholder="邮件列表"><?php echo Utility::Option($names,null);?></select>
 	</div>
 	<textarea class="msg" id="email_msg_<?php echo ($status); ?>" placeholder="请告诉大家您要说的话"><?php echo ($user['name']); ?>已经进入<?php echo ($status_name); ?>阶段，请大家共同讨论意见。</textarea>
-	<input type="button" class="btn btn-primary send_email_to_audits" value="发送邮件给通知大家">
+	<input type="button" class="btn btn-primary" id="send_email_to_audits_<?php echo ($status); ?>" value="发送邮件给通知大家">
 </div>
 <script type="text/javascript">
 
-$('.send_email_to_audits').on("click", function() {
+$('#send_email_to_audits_<?php echo ($status); ?>').on("click", function() {
 	var size = $(".email_select li.search-choice").size();
 	var arr = new Array();
 	$(".email_select li.search-choice span").each(function(){
@@ -355,11 +394,11 @@ $('.send_email_to_audits').on("click", function() {
 		<select class="chosen-select span2" multiple name="emails[]" data-placeholder="邮件列表"><?php echo Utility::Option($names,null);?></select>
 	</div>
 	<textarea class="msg" id="email_msg_<?php echo ($status); ?>" placeholder="请告诉大家您要说的话"><?php echo ($user['name']); ?>已经进入<?php echo ($status_name); ?>阶段，请大家共同讨论意见。</textarea>
-	<input type="button" class="btn btn-primary send_email_to_audits" value="发送邮件给通知大家">
+	<input type="button" class="btn btn-primary" id="send_email_to_audits_<?php echo ($status); ?>" value="发送邮件给通知大家">
 </div>
 <script type="text/javascript">
 
-$('.send_email_to_audits').on("click", function() {
+$('#send_email_to_audits_<?php echo ($status); ?>').on("click", function() {
 	var size = $(".email_select li.search-choice").size();
 	var arr = new Array();
 	$(".email_select li.search-choice span").each(function(){
@@ -384,7 +423,7 @@ $('.send_email_to_audits').on("click", function() {
 </script>
                 <?php elseif($status == 70): ?>
                     <?php
- if ($status == 30) { $bg_survey_questions = D("UserTypeQuestions")->getsByTypeId(4); } else if ($status == 70) { $bg_survey_questions = D("UserTypeQuestions")->getsByTypeId(5); } $bg_survey_answers = D("BackgroundSurvey")->getAnswers($user['id']); $editable = auditEditable($login_user['role']); $survey_user = D("Users")->getById($user['bg_survey_user']); ?>
+ if ($status == 30) { $bg_survey_questions = D("UserTypeQuestions")->getsByTypeId(4); } else if ($status == 70) { $bg_survey_questions = D("UserTypeQuestions")->getsByTypeId(5); } $bg_survey_answers = D("BackgroundSurvey")->getAnswers($user['id']); $editable = auditEditable($login_user['role']); $survey_user = D("Users")->getById($user['bg_survey_user']); if($status == 30){ $status_name = "背景调查记录"; } else if ($status == 70) { $status_name = "考察访谈记录"; } ?>
 
 <div class="print_content">
 <div class="background_survey" id="background_survey_<?php echo ($status); ?>">
@@ -402,25 +441,54 @@ $('.send_email_to_audits').on("click", function() {
 	          <?php echo ($survey_user['username']); ?>
 	      </a>
 	  	</p>
-	  	<input type="button" class="btn btn-danger save_bg_survey" value="保存">
-	  	<input type="button" class="btn btn-primary pirnt_bg_survey" value="打印">
+	  	<input type="button" class="btn btn-danger" id="save_bg_survey_<?php echo ($status); ?>" value="保存">
+	  	<input type="button" class="btn btn-primary" id="pirnt_bg_survey_<?php echo ($status); ?>" value="打印">
 	<?php else: ?>
-		<input type="button" class="btn btn-danger save_bg_survey" value="保存">
-		<input type="button" class="btn btn-primary pirnt_bg_survey" value="打印">
-		<textarea id="email_msg" placeholder="如果调查完毕，请写句话告诉管理员吧"><?php echo ($user['name']); ?>的背景调查已经填写完毕，请审核。</textarea>
-		<input type="button" class="btn btn-primary send_email_to_amdin" value="发送邮件给管理员"><?php endif; ?>
+		<input type="button" class="btn btn-dangerid" id="save_bg_survey_<?php echo ($status); ?>" value="保存">
+		<input type="button" class="btn btn-primary" id="pirnt_bg_survey_<?php echo ($status); ?>" value="打印">
+		<textarea id="email_msg_<?php echo ($status); ?>" placeholder="如果调查完毕，请写句话告诉管理员吧"><?php echo ($user['name']); ?>的背景调查已经填写完毕，请审核。</textarea>
+		<input type="button" class="btn btn-primary" id="send_email_to_amdin_<?php echo ($status); ?>" value="发送邮件给管理员"><?php endif; ?>
 </div>
 </div>
-
+<div id="survey_print_<?php echo ($status); ?>" style="display:none">
+	<div class="container survey-print">
+		<div class="survey-personal-info">
+			<?php echo ($user["name"]); echo ($status_name); ?>表
+		</div>
+		<?php if(is_array($bg_survey_questions)): foreach($bg_survey_questions as $key=>$one): ?><div class="qa-item" id="qa-item-<?php echo ($one['id']); ?>">
+				<div class="question">
+					<p style="background: #f4f4f4;padding:4px 0;font-weight: bold;">
+			        	<span class="label label-info">问</span>
+			        	<?php echo ($one['question']); ?>
+			    	</p>
+			    </div>
+			    <div class="answer">
+			    	<p>
+			        	<span class="label label-important pull-left">答</span>
+			        </p>
+			        <div style="padding-top: 25px;" class="answer-content"><?php echo ($bg_survey_answers[$one['id']]); ?></div>
+			    </div>
+			</div><?php endforeach; endif; ?>
+	</div>
+</div>
 
 <script type="text/javascript">
 
-$(".pirnt_bg_survey").on("click", function() {
-	$("#background_survey_<?php echo ($status); ?> textarea").removeClass("editor");
-	document.body.innerHTML = $("#background_survey_<?php echo ($status); ?>").parent().html();
-	window.print();
+$("#pirnt_bg_survey_<?php echo ($status); ?>").on("click", function() {
+	$("#save_bg_survey_<?php echo ($status); ?>").trigger("click");
+	$.post("/user/ajax_get_bg_survey_answers",{
+    	"id":<?php echo ($user[id]); ?>,
+    },function(data) {
+    	data = JSON.parse(data);
+    	$.each(data, function(key, value) {
+    		$("#qa-item-"+key+" .answer-content").html(value);
+    	});
+    	document.body.innerHTML = $("#survey_print_<?php echo ($status); ?>").html();
+		setTimeout("window.print()",1000);
+    });
+	
 });
-
+setInterval("save_all_<?php echo ($status); ?>()", 15000);
 
 function saveContent(question_id, editor_id){
 	$.post("/user/ajax_save_bg_survey",{
@@ -451,10 +519,10 @@ function saveContent(question_id, editor_id){
     	}	
     })
   });
-  $(".send_email_to_amdin").on("click", function() {
+  $("#send_email_to_amdin_<?php echo ($status); ?>").on("click", function() {
   	if (confirm("确定要发送邮件吗？")) {
   		$.post("/user/ajax_send_mail_to_admin",{
-	    	"msg":$("#email_msg").val(),
+	    	"msg":$("#email_msg_<?php echo ($status); ?>").val(),
 	    	"name":"<?php echo ($user['name']); ?>",
 	    	"id":"<?php echo ($user['id']); ?>"
 	    }, function(data) {
@@ -464,10 +532,18 @@ function saveContent(question_id, editor_id){
 	    });
   	}
   });
-  $(".save_bg_survey").on("click", function() {
+  $("#save_bg_survey_<?php echo ($status); ?>").on("click", function() {
   	<?php foreach($bg_survey_questions as $key => $val) { ?>
 		saveContent(<?php echo ($val['id']); ?>,"editor_<?php echo ($val['id']); ?>");
 	<?php } ?>
+	$.post("/user/ajax_get_bg_survey_answers",{
+    	"id":<?php echo ($user[id]); ?>,
+    },function(data) {
+    	data = JSON.parse(data);
+    	$.each(data, function(key, value) {
+    		$("#qa-item-"+key+" .answer-content").html(value);
+    	})
+    });
   });
 
 function show_alert_tip(msg) {
@@ -475,8 +551,10 @@ function show_alert_tip(msg) {
     setTimeout("$('#alert-tip').slideUp('slow', function(){ $('#alert-tip').hide(); })", 5000);
 }
 
-function save_all() {
-	$(".background_survey .answer").trigger("blur");
+function save_all_<?php echo ($status); ?>() {
+	if($("#save_bg_survey_<?php echo ($status); ?>").is(":visible")) {
+		$("#save_bg_survey_<?php echo ($status); ?>").trigger("click");
+	}
 }
 
 <?php foreach($bg_survey_questions as $key => $val) { ?>
@@ -491,11 +569,11 @@ function save_all() {
 		<select class="chosen-select span2" multiple name="emails[]" data-placeholder="邮件列表"><?php echo Utility::Option($names,null);?></select>
 	</div>
 	<textarea class="msg" id="email_msg_<?php echo ($status); ?>" placeholder="请告诉大家您要说的话"><?php echo ($user['name']); ?>已经进入<?php echo ($status_name); ?>阶段，请大家共同讨论意见。</textarea>
-	<input type="button" class="btn btn-primary send_email_to_audits" value="发送邮件给通知大家">
+	<input type="button" class="btn btn-primary" id="send_email_to_audits_<?php echo ($status); ?>" value="发送邮件给通知大家">
 </div>
 <script type="text/javascript">
 
-$('.send_email_to_audits').on("click", function() {
+$('#send_email_to_audits_<?php echo ($status); ?>').on("click", function() {
 	var size = $(".email_select li.search-choice").size();
 	var arr = new Array();
 	$(".email_select li.search-choice span").each(function(){

@@ -84,7 +84,7 @@ $("#pirnt_bg_survey_{$status}").on("click", function() {
     });
 	
 });
-setInterval("save_all_{$status}()", 15000);
+setInterval("save_all()", 15000);
 
 function saveContent(question_id, editor_id){
 	$.post("/user/ajax_save_bg_survey",{
@@ -147,10 +147,8 @@ function show_alert_tip(msg) {
     setTimeout("$('#alert-tip').slideUp('slow', function(){ $('#alert-tip').hide(); })", 5000);
 }
 
-function save_all_{$status}() {
-	if($("#save_bg_survey_{$status}").is(":visible")) {
-		$("#save_bg_survey_{$status}").trigger("click");
-	}
+function save_all() {
+	$("#save_bg_survey_{$status}").trigger("click");
 }
 
 <?php foreach($bg_survey_questions as $key => $val) { ?>

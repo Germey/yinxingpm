@@ -100,10 +100,6 @@ class UserAction extends BaseAction {
         $count = D('UserRecommends')->getRecommedCount($filter);
         list($pagesize, $page_num, $this->pagestring) = pagestring($count, 10);
         $this->users = D('UserRecommends')->getRecommendInfos($filter, $page_num, $pagesize, $order);
-        foreach ($this->users as $key => $value) {
-            $recommend_count[$value['id']] = D('UserRecommends')->where("recommend_user_id=".$value['id'])->count();
-        }
-        $this->recommend_count = $recommend_count;
         $this->list_columns = $this->_getListColumns();
         $this->display("recomlist");
     }
@@ -117,7 +113,6 @@ class UserAction extends BaseAction {
             "work_from" => array("display_name" => "工作时间", ),
             "mobile" => array("display_name" => "电话", ),
             "email" => array("display_name" => "邮箱", ),
-            "recommend_count" => array("display_name" => "推荐人数", ),
         );
 
         return $columns;
