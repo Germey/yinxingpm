@@ -196,7 +196,7 @@
 
     <!-- 审核信息 -->
   <?php
- $display_status = D("UserStatuses")->getAuditStatusIdNameMap(); $max_audit_status = max(array_keys($display_status)); $tmps = Utility::AssColumn(D("UserAudits")->where('user_id=%d',$user['id'])->order('id desc')->select()); foreach($tmps as $k=>$v) { $audits[$v['status']][] = $v; } $auditing_status = 0; foreach ($display_status as $status => $name) { if($status>$user['status']) { unset($display_status[$status]); } if($status==$user['status']) { $auditing_status = $active_status = $status; } } if($user['status']>$max_audit_status) { foreach ($audits as $k => $v) { if(!$v || !$v[0]['audit_time']) { unset($display_status[$k]); } } $active_status = max(array_keys($display_status)); } if(in_array($user['status'], array(20,60))) { $audit_opinions[4] = '驳回修改'; } ?>
+ $display_status = D("UserStatuses")->getAuditStatusIdNameMap(); $isAdmin = auditEditable($login_user['role']); $max_audit_status = max(array_keys($display_status)); $tmps = Utility::AssColumn(D("UserAudits")->where('user_id=%d',$user['id'])->order('id desc')->select()); foreach($tmps as $k=>$v) { $audits[$v['status']][] = $v; } $auditing_status = 0; foreach ($display_status as $status => $name) { if($status>$user['status']) { unset($display_status[$status]); } if($status==$user['status']) { $auditing_status = $active_status = $status; } } if($user['status']>$max_audit_status) { foreach ($audits as $k => $v) { if(!$v || !$v[0]['audit_time']) { unset($display_status[$k]); } } $active_status = max(array_keys($display_status)); } if(in_array($user['status'], array(20,60))) { $audit_opinions[4] = '驳回修改'; } ?>
 <div class="label label-warning alert-tip" id="alert-tip"><p>警告框</p></div>
 <h5 class="clear bg colortip" title="点击展开/合并" style="cursor: pointer;" onclick="toggle_content_block('_audit_content');">
   # 考核过程 #<i class="icon-fullscreen"></i>
@@ -216,11 +216,11 @@
     <div id="audit_tab_content" class="tab-content" style="padding: 0 10px;">
         <?php if(is_array($display_status)): foreach($display_status as $status=>$one): ?><div class="tab-pane fade <?php echo ($status==$active_status?'in active':''); ?>" id="audit_<?php echo ($status); ?>">
                 <p class="alert alert-success audit_view_all_title"><?php echo str_replace('待','',$one);?></span></p>
-                <?php if($status == 30): if ($status == 30) { $bg_survey_questions = D("UserTypeQuestions")->getsByTypeId(4); } else if ($status == 70) { $bg_survey_questions = D("UserTypeQuestions")->getsByTypeId(5); } $bg_survey_answers = D("BackgroundSurvey")->getAnswers($user['id']); $editable = auditEditable($login_user['role']); $survey_user = D("Users")->getById($user['bg_survey_user']); if($status == 30){ $status_name = "背景调查记录"; } else if ($status == 70) { $status_name = "考察访谈记录"; } ?>
+                <?php if($status == 30): if ($status == 30) { $bg_survey_questions = D("UserTypeQuestions")->getsByTypeId(4); } else if ($status == 70) { $bg_survey_questions = D("UserTypeQuestions")->getsByTypeId(5); } $bg_survey_answers = D("BackgroundSurvey")->getAnswers($user['id']); $isAdmin = auditEditable($login_user['role']); $survey_user = D("Users")->getById($user['bg_survey_user']); if($status == 30){ $status_name = "背景调查记录"; } else if ($status == 70) { $status_name = "考察访谈记录"; } ?>
 
 <div class="print_content">
 <div class="background_survey" id="background_survey_<?php echo ($status); ?>">
-	<?php if(!$editable): if(is_array($bg_survey_questions)): foreach($bg_survey_questions as $key=>$one): ?><div class="question">
+	<?php if(!$isAdmin): if(is_array($bg_survey_questions)): foreach($bg_survey_questions as $key=>$one): ?><div class="question">
 				<p style="background: #f4f4f4;padding:4px 0;font-weight: bold;">
 		        <span class="label label-info">问</span>
 		        <?php echo ($one['question']); ?>
@@ -256,7 +256,7 @@
 		<textarea id="email_msg_<?php echo ($status); ?>" placeholder="如果调查完毕，请写句话告诉管理员吧"><?php echo ($user['name']); ?>的背景调查已经填写完毕，请审核。</textarea>
 		<input type="button" class="btn btn-primary" id="send_email_to_amdin_<?php echo ($status); ?>" value="发送邮件给项目负责人">
 		<script>
-			setInterval("save_all_<?php echo ($status); ?>()", 5000);
+			setInterval("save_all_<?php echo ($status); ?>()", 50000);
 		</script><?php endif; ?>
 </div>
 </div>
@@ -449,11 +449,11 @@ $('#send_email_to_audits_<?php echo ($status); ?>').on("click", function() {
 </script>
                 <?php elseif($status == 70): ?>
                     <?php
- if ($status == 30) { $bg_survey_questions = D("UserTypeQuestions")->getsByTypeId(4); } else if ($status == 70) { $bg_survey_questions = D("UserTypeQuestions")->getsByTypeId(5); } $bg_survey_answers = D("BackgroundSurvey")->getAnswers($user['id']); $editable = auditEditable($login_user['role']); $survey_user = D("Users")->getById($user['bg_survey_user']); if($status == 30){ $status_name = "背景调查记录"; } else if ($status == 70) { $status_name = "考察访谈记录"; } ?>
+ if ($status == 30) { $bg_survey_questions = D("UserTypeQuestions")->getsByTypeId(4); } else if ($status == 70) { $bg_survey_questions = D("UserTypeQuestions")->getsByTypeId(5); } $bg_survey_answers = D("BackgroundSurvey")->getAnswers($user['id']); $isAdmin = auditEditable($login_user['role']); $survey_user = D("Users")->getById($user['bg_survey_user']); if($status == 30){ $status_name = "背景调查记录"; } else if ($status == 70) { $status_name = "考察访谈记录"; } ?>
 
 <div class="print_content">
 <div class="background_survey" id="background_survey_<?php echo ($status); ?>">
-	<?php if(!$editable): if(is_array($bg_survey_questions)): foreach($bg_survey_questions as $key=>$one): ?><div class="question">
+	<?php if(!$isAdmin): if(is_array($bg_survey_questions)): foreach($bg_survey_questions as $key=>$one): ?><div class="question">
 				<p style="background: #f4f4f4;padding:4px 0;font-weight: bold;">
 		        <span class="label label-info">问</span>
 		        <?php echo ($one['question']); ?>
@@ -489,7 +489,7 @@ $('#send_email_to_audits_<?php echo ($status); ?>').on("click", function() {
 		<textarea id="email_msg_<?php echo ($status); ?>" placeholder="如果调查完毕，请写句话告诉管理员吧"><?php echo ($user['name']); ?>的背景调查已经填写完毕，请审核。</textarea>
 		<input type="button" class="btn btn-primary" id="send_email_to_amdin_<?php echo ($status); ?>" value="发送邮件给项目负责人">
 		<script>
-			setInterval("save_all_<?php echo ($status); ?>()", 5000);
+			setInterval("save_all_<?php echo ($status); ?>()", 50000);
 		</script><?php endif; ?>
 </div>
 </div>
@@ -659,44 +659,43 @@ $('#send_email_to_audits_<?php echo ($status); ?>').on("click", function() {
                             <p><i class="icon-envelope"></i> <?php echo ($one['audit_email']['to']); ?> 【邮件题目：<?php echo ($one['audit_email']['subject']); ?>】</p><?php endif; ?>
                         </blockquote>
                     </div><?php endforeach; endif; ?>
+                <?php if(!$isAdmin): if($auditing_status == $status): ?><input type="hidden" name="user_id" value="<?php echo ($user['id']); ?>" />
+                      <!--             <input type="hidden" name="id" value="<?php echo ($audits[$status]['id']); ?>" /> -->
+                      <input type="hidden" name="status" value="<?php echo ($auditing_status); ?>" />
+                      <input type="hidden" name="create_user_id" value="<?php echo ($audits[$status]['create_user_id']?$audits[$status]['create_user_id']:$login_user['id']); ?>" />
+                      <input type="hidden" name="create_time" value="<?php echo ($audits[$status]['create_time']?$audits[$status]['create_time']:date('Y-m-d H:i:s')); ?>" />
+                      <input type="hidden" name="audit_user_id" value="<?php echo ($audits[$status]['audit_user_id']?$audits[$status]['audit_user_id']:$login_user['id']); ?>" />
+                      <input type="hidden" name="audit_user_name" value="<?php echo ($audits[$status]['audit_user_name']?$audits[$status]['audit_user_name']:$login_user['realname']); ?>" />
 
-                <?php if($auditing_status == $status): ?><input type="hidden" name="user_id" value="<?php echo ($user['id']); ?>" />
-                    <!--             <input type="hidden" name="id" value="<?php echo ($audits[$status]['id']); ?>" /> -->
-                    <input type="hidden" name="status" value="<?php echo ($auditing_status); ?>" />
-                    <input type="hidden" name="create_user_id" value="<?php echo ($audits[$status]['create_user_id']?$audits[$status]['create_user_id']:$login_user['id']); ?>" />
-                    <input type="hidden" name="create_time" value="<?php echo ($audits[$status]['create_time']?$audits[$status]['create_time']:date('Y-m-d H:i:s')); ?>" />
-                    <input type="hidden" name="audit_user_id" value="<?php echo ($audits[$status]['audit_user_id']?$audits[$status]['audit_user_id']:$login_user['id']); ?>" />
-                    <input type="hidden" name="audit_user_name" value="<?php echo ($audits[$status]['audit_user_name']?$audits[$status]['audit_user_name']:$login_user['realname']); ?>" />
+                      <?php if($audits[$status]['audit_user_id'] AND ($audits[$status]['audit_user_id'] != $login_user['user_id'])): ?><input type="hidden" name="actual_audit_user_id" value="<?php echo ($login_user['id']); ?>" />
+                        <input type="hidden" name="actual_audit_user_name" value="<?php echo ($login_user['realname']); ?>" /><?php endif; ?>
 
-                    <?php if($audits[$status]['audit_user_id'] AND ($audits[$status]['audit_user_id'] != $login_user['user_id'])): ?><input type="hidden" name="actual_audit_user_id" value="<?php echo ($login_user['id']); ?>" />
-                      <input type="hidden" name="actual_audit_user_name" value="<?php echo ($login_user['realname']); ?>" /><?php endif; ?>
-
-                    <table class="table table-noborder">
-                        <tr>
-                            <td style="vertical-align: top"><b>考核意见</b></td>
-                            <td><textarea name="audit_content" id="audit_content" class="span12" style="height: 100px"><?php echo ($audits[$status]['audit_content']); ?></textarea></td>
-                        </tr>
-                        <tr>
-                            <td><b>通过否？</b></td>
-                            <td>
-                              <select name="audit_result"><?php echo Utility::Option($audit_opinions, $audits[$status]['audit_result']);?></select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><b>考核人</b></td>
-                            <td><?php echo ($audits[$status]['audit_user_name']?$audits[$status]['audit_user_name']:$login_user['realname']); ?></td>
-                        </tr>
-                        <?php if($audits[$status]['audit_user_id'] AND ($audits[$status]['audit_user_id'] != $login_user['id'])): ?><tr>
-                                <td><b>实际考核人</b></td><td><?php echo ($login_user['realname']); ?></td>
-                            </tr><?php endif; ?>
-                        <tr>
-                            <td></td>
-                            <td>
-                              <input type="submit" class="btn btn-danger" value="提 交" />
-                              <span class="muted"><?php echo M("UserStatuses")->where("id=%d",$user['status'])->getField('audit_tip');?></span>
-                            </td>
-                        </tr>
-                    </table><?php endif; ?>
+                      <table class="table table-noborder">
+                          <tr>
+                              <td style="vertical-align: top"><b>考核意见</b></td>
+                              <td><textarea name="audit_content" id="audit_content" class="span12" style="height: 100px"><?php echo ($audits[$status]['audit_content']); ?></textarea></td>
+                          </tr>
+                          <tr>
+                              <td><b>通过否？</b></td>
+                              <td>
+                                <select name="audit_result"><?php echo Utility::Option($audit_opinions, $audits[$status]['audit_result']);?></select>
+                              </td>
+                          </tr>
+                          <tr>
+                              <td><b>考核人</b></td>
+                              <td><?php echo ($audits[$status]['audit_user_name']?$audits[$status]['audit_user_name']:$login_user['realname']); ?></td>
+                          </tr>
+                          <?php if($audits[$status]['audit_user_id'] AND ($audits[$status]['audit_user_id'] != $login_user['id'])): ?><tr>
+                                  <td><b>实际考核人</b></td><td><?php echo ($login_user['realname']); ?></td>
+                              </tr><?php endif; ?>
+                          <tr>
+                              <td></td>
+                              <td>
+                                <input type="submit" class="btn btn-danger" value="提 交" />
+                                <span class="muted"><?php echo M("UserStatuses")->where("id=%d",$user['status'])->getField('audit_tip');?></span>
+                              </td>
+                          </tr>
+                      </table><?php endif; endif; ?>
             </div><?php endforeach; endif; ?>
     </div>
   </div>

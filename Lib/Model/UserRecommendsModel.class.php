@@ -36,8 +36,11 @@ class UserRecommendsModel extends BaseModel {
         return $filter;
     }
 
-    public function getCount($filter) {
+    public function getCount($filter,  $user=null) {
         $filter = $this->_buildFilter($filter);
+        if ($user['id']&&auditEditable($user['role'])) {
+            $filter['bg_survey_user'] = $user['id'];
+        }
         $count = $this->where($filter)->count();
 
         return $count;

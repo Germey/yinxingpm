@@ -61,7 +61,7 @@ class UserAction extends BaseAction {
             }
 
         }
-        $count = D('UserRecommends')->getCount($filter);
+        $count = D('UserRecommends')->getCount($filter, $this->login_user);
         list($pagesize, $page_num, $this->pagestring) = pagestring($count, 20);
         $this->users = D('UserRecommends')->gets($filter, $page_num, $pagesize, $order, $this->login_user);
         $this->list_columns = $this->data['recommend_columns'];
