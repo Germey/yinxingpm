@@ -61,7 +61,7 @@ class UserAction extends BaseAction {
             }
 
         }
-        $count = D('UserRecommends')->getCount($filter, $this->login_user);
+        $count = D('UserRecommends')->getCount($filter);
         list($pagesize, $page_num, $this->pagestring) = pagestring($count, 20);
         $this->users = D('UserRecommends')->gets($filter, $page_num, $pagesize, $order, $this->login_user);
         $this->list_columns = $this->data['recommend_columns'];
@@ -271,6 +271,17 @@ class UserAction extends BaseAction {
 
         
         return;
+    }
+
+    function ajax_change_classify() {
+        $id = I("post.pk");
+        $new_classify = I("post.value");
+        var_dump(I("post."));
+        if(!$id || !$new_classify) return;
+        $data['id'] = $id;
+        $data['classify'] = $new_classify;
+        var_dump($data);
+        D("UserRecommends")->saveOrUpdate($data);
     }
 
     function ajax_save_status_note() {

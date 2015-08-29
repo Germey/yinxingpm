@@ -105,6 +105,7 @@
             <td>
                 <a href="/attachment/download?id=<?php echo ($one['id']); ?>&module=<?php echo ($type); ?>"><i class="icon icon-download-alt"></i></a>
                 <a class="ajaxlink" ask="确认要删除？" href="/attachment/ajax_delete?id=<?php echo ($one['id']); ?>&module=<?php echo ($type); ?>"><i class="icon icon-remove"></i></a>
+                <?php if(file_enable_preview($one['path'])): ?><a href="/uploads<?php echo ($one['path']); ?>" target="_blank" title="可以预览pdf或者图片文件"><i class="icon-zoom-in"></i></a><?php endif; ?> 
             </td>
           </tr><?php endforeach; endif; ?>
         <tr><td colspan=<?php echo count($list_views)+2;?>><?php echo ($pagestring); ?></td><tr>

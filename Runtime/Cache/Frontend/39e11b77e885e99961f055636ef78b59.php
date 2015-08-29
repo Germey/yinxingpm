@@ -114,15 +114,14 @@
                     <textarea name="audit_email_success_body_<?php echo ($one['id']); ?>" class="editor" id="audit_email_success_<?php echo ($one['id']); ?>">
                         <?php echo ($success_bodys[$one['id']]); ?>
                     </textarea>
-                    <hr />
-                    <h5>评审失败后给通知邮件</h5>
-                    <p>
-                        邮件题目：<input type="text" class="span7" name="audit_email_fail_subject_<?php echo ($one['id']); ?>" value="<?php echo ($fail_subjects[$one['id']]); ?>" />
-                        发送给：<select type="text" class="span2" name="audit_email_fail_to_<?php echo ($one['id']); ?>"><?php echo Utility::Option($email_tos,$fail_tos[$one['id']]);?></select>
-                    </p>
-                    <textarea name="audit_email_fail_body_<?php echo ($one['id']); ?>" class="editor" id="audit_email_fail_body_<?php echo ($one['id']); ?>"><?php echo ($fail_bodys[$one['id']]); ?></textarea>
-
-                    <?php if(($one['id'] == 20) OR ($one['id'] == 60)): ?><hr />
+                    <?php if($one['id'] > 20): ?><hr />
+                        <h5>评审失败后给通知邮件</h5>
+                        <p>
+                            邮件题目：<input type="text" class="span7" name="audit_email_fail_subject_<?php echo ($one['id']); ?>" value="<?php echo ($fail_subjects[$one['id']]); ?>" />
+                            发送给：<select type="text" class="span2" name="audit_email_fail_to_<?php echo ($one['id']); ?>"><?php echo Utility::Option($email_tos,$fail_tos[$one['id']]);?></select>
+                        </p>
+                        <textarea name="audit_email_fail_body_<?php echo ($one['id']); ?>" class="editor" id="audit_email_fail_body_<?php echo ($one['id']); ?>"><?php echo ($fail_bodys[$one['id']]); ?></textarea><?php endif; ?>
+                    <?php if($one['id'] == 60): ?><hr />
                         <h5>驳回修改的通知邮件</h5>
                         <p>
                             邮件题目：<input type="text" class="span7" name="audit_email_neededit_subject_<?php echo ($one['id']); ?>" value="<?php echo ($neededit_subjects[$one['id']]); ?>" />

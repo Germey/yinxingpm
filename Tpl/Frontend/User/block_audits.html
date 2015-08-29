@@ -1,7 +1,7 @@
 <?php
 
     $display_status = D("UserStatuses")->getAuditStatusIdNameMap();
-    $isAdmin = auditEditable($login_user['role']);
+
     $max_audit_status = max(array_keys($display_status));
 
     $tmps = Utility::AssColumn(D("UserAudits")->where('user_id=%d',$user['id'])->order('id desc')->select());
@@ -86,50 +86,49 @@
                         </blockquote>
                     </div>
                 </foreach>
-                <if condition="!$isAdmin">
-                  <if condition="$auditing_status eq $status">
-                      <input type="hidden" name="user_id" value="{$user['id']}" />
-                      <!--             <input type="hidden" name="id" value="{$audits[$status]['id']}" /> -->
-                      <input type="hidden" name="status" value="{$auditing_status}" />
-                      <input type="hidden" name="create_user_id" value="{$audits[$status]['create_user_id']?$audits[$status]['create_user_id']:$login_user['id']}" />
-                      <input type="hidden" name="create_time" value="{$audits[$status]['create_time']?$audits[$status]['create_time']:date('Y-m-d H:i:s')}" />
-                      <input type="hidden" name="audit_user_id" value="{$audits[$status]['audit_user_id']?$audits[$status]['audit_user_id']:$login_user['id']}" />
-                      <input type="hidden" name="audit_user_name" value="{$audits[$status]['audit_user_name']?$audits[$status]['audit_user_name']:$login_user['realname']}" />
 
-                      <if condition="$audits[$status]['audit_user_id'] AND ($audits[$status]['audit_user_id'] neq $login_user['user_id'])">
-                        <input type="hidden" name="actual_audit_user_id" value="{$login_user['id']}" />
-                        <input type="hidden" name="actual_audit_user_name" value="{$login_user['realname']}" />
-                      </if>
+                <if condition="$auditing_status eq $status">
+                    <input type="hidden" name="user_id" value="{$user['id']}" />
+                    <!--             <input type="hidden" name="id" value="{$audits[$status]['id']}" /> -->
+                    <input type="hidden" name="status" value="{$auditing_status}" />
+                    <input type="hidden" name="create_user_id" value="{$audits[$status]['create_user_id']?$audits[$status]['create_user_id']:$login_user['id']}" />
+                    <input type="hidden" name="create_time" value="{$audits[$status]['create_time']?$audits[$status]['create_time']:date('Y-m-d H:i:s')}" />
+                    <input type="hidden" name="audit_user_id" value="{$audits[$status]['audit_user_id']?$audits[$status]['audit_user_id']:$login_user['id']}" />
+                    <input type="hidden" name="audit_user_name" value="{$audits[$status]['audit_user_name']?$audits[$status]['audit_user_name']:$login_user['realname']}" />
 
-                      <table class="table table-noborder">
-                          <tr>
-                              <td style="vertical-align: top"><b>考核意见</b></td>
-                              <td><textarea name="audit_content" id="audit_content" class="span12" style="height: 100px">{$audits[$status]['audit_content']}</textarea></td>
-                          </tr>
-                          <tr>
-                              <td><b>通过否？</b></td>
-                              <td>
-                                <select name="audit_result">{:Utility::Option($audit_opinions, $audits[$status]['audit_result'])}</select>
-                              </td>
-                          </tr>
-                          <tr>
-                              <td><b>考核人</b></td>
-                              <td>{$audits[$status]['audit_user_name']?$audits[$status]['audit_user_name']:$login_user['realname']}</td>
-                          </tr>
-                          <if condition="$audits[$status]['audit_user_id'] AND ($audits[$status]['audit_user_id'] neq $login_user['id'])">
-                              <tr>
-                                  <td><b>实际考核人</b></td><td>{$login_user['realname']}</td>
-                              </tr>
-                          </if>
-                          <tr>
-                              <td></td>
-                              <td>
-                                <input type="submit" class="btn btn-danger" value="提 交" />
-                                <span class="muted">{:M("UserStatuses")->where("id=%d",$user['status'])->getField('audit_tip')}</span>
-                              </td>
-                          </tr>
-                      </table>
-                  </if>
+                    <if condition="$audits[$status]['audit_user_id'] AND ($audits[$status]['audit_user_id'] neq $login_user['user_id'])">
+                      <input type="hidden" name="actual_audit_user_id" value="{$login_user['id']}" />
+                      <input type="hidden" name="actual_audit_user_name" value="{$login_user['realname']}" />
+                    </if>
+
+                    <table class="table table-noborder">
+                        <tr>
+                            <td style="vertical-align: top"><b>考核意见</b></td>
+                            <td><textarea name="audit_content" id="audit_content" class="span12" style="height: 100px">{$audits[$status]['audit_content']}</textarea></td>
+                        </tr>
+                        <tr>
+                            <td><b>通过否？</b></td>
+                            <td>
+                              <select name="audit_result">{:Utility::Option($audit_opinions, $audits[$status]['audit_result'])}</select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><b>考核人</b></td>
+                            <td>{$audits[$status]['audit_user_name']?$audits[$status]['audit_user_name']:$login_user['realname']}</td>
+                        </tr>
+                        <if condition="$audits[$status]['audit_user_id'] AND ($audits[$status]['audit_user_id'] neq $login_user['id'])">
+                            <tr>
+                                <td><b>实际考核人</b></td><td>{$login_user['realname']}</td>
+                            </tr>
+                        </if>
+                        <tr>
+                            <td></td>
+                            <td>
+                              <input type="submit" class="btn btn-danger" value="提 交" />
+                              <span class="muted">{:M("UserStatuses")->where("id=%d",$user['status'])->getField('audit_tip')}</span>
+                            </td>
+                        </tr>
+                    </table>
                 </if>
             </div>
         </foreach>

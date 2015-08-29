@@ -198,6 +198,16 @@
             $("#icon-edit-holder-"+id).show();
         });
 
+        $(".tab-content table tr").each(function() {
+            if ($(this).children('td').eq(4).text()=="") {
+                $(this).children('td').eq(4).text("未分类");
+            }
+            $(this).children('td').eq(4).wrapInner("<a></a>").children().attr({
+                "data-type": "text",
+                "data-pk": $(this).attr("value"),
+                "data-url": "/user/ajax_change_classify"
+            }).editable();
+        });
         showTabs();
 
     });

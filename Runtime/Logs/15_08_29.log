@@ -1,0 +1,397 @@
+[ 2015-08-29T13:57:18+08:00 ] ERR: (ThinkException) 无法加载模块:Uploads
+[ 2015-08-29T13:57:18+08:00 ] ERR: (ThinkException) 无法加载模块:Favicon
+[ 2015-08-29T14:00:07+08:00 ] 127.0.0.1 /attachment/ajax_delete?id=37&module=user
+INFO: [ app_begin ] --START--
+INFO: Run ReadHtmlCache Behavior [ RunTime:0.000780s ]
+INFO: Run CheckLang Behavior [ RunTime:0.002357s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.003345s ]
+NOTIC: [8192] mysql_connect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead D:\wamp\www\thinkphp\Lib\Driver\Db\DbMysql.class.php 第 56 行.
+SQL: SHOW COLUMNS FROM `options` [ RunTime:0.004473s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT * FROM `options` WHERE autoload="Y"  [ RunTime:0.000585s ]
+SQL: SHOW COLUMNS FROM `attachments_dir` [ RunTime:0.003915s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT `id`,`dir_name` FROM `attachments_dir` WHERE type="user"  [ RunTime:0.000344s ]
+NOTIC: [2048] Declaration of UserAttachmentsModel::save() should be compatible with Model::save($data = '', $options = Array) D:\wamp\www\yinxing_pm\Lib\Model\UserAttachmentsModel.class.php 第 4 行.
+SQL: SHOW COLUMNS FROM `user_attachments` [ RunTime:0.003775s ]
+SQL: DELETE FROM `user_attachments` WHERE ( `id` = 37 ) [ RunTime:0.000811s ]
+SQL: SHOW COLUMNS FROM `admin_logs` [ RunTime:0.154281s ]
+NOTIC: [2] Missing argument 5 for AdminLogsModel::saveLog(), called in D:\wamp\www\yinxing_pm\Lib\Action\Frontend\AttachmentAction.class.php on line 111 and defined D:\wamp\www\yinxing_pm\Lib\Model\AdminLogsModel.class.php 第 5 行.
+NOTIC: [8] Undefined variable: module_name D:\wamp\www\yinxing_pm\Lib\Model\AdminLogsModel.class.php 第 11 行.
+SQL: INSERT INTO `admin_logs` (`user_id`,`module`,`operation`,`module_id`,`module_name`,`timestamp`,`data`,`user_group_id`) VALUES ('1','user_attachment','delete',37,null,1440828007,'a:3:{s:2:\"id\";s:2:\"37\";s:6:\"module\";s:4:\"user\";s:5:\"_URL_\";a:2:{i:0;s:10:\"attachment\";i:1;s:11:\"ajax_delete\";}}',1) [ RunTime:0.013665s ]
+
+[ 2015-08-29T14:00:11+08:00 ] ERR: (ThinkException) 无法加载模块:Uploads
+[ 2015-08-29T14:00:11+08:00 ] ERR: (ThinkException) 无法加载模块:Favicon
+[ 2015-08-29T14:02:06+08:00 ] ERR: (ThinkException) 模板不存在[D:/wamp/www/yinxing_pm/Tpl/Frontend/Account/index.html]
+[ 2015-08-29T14:02:06+08:00 ] ERR: (ThinkException) 无法加载模块:Favicon
+[ 2015-08-29T14:11:00+08:00 ] ERR: (ThinkException) 无法加载模块:Uploads
+[ 2015-08-29T14:11:00+08:00 ] ERR: (ThinkException) 无法加载模块:Uploads
+[ 2015-08-29T14:11:00+08:00 ] ERR: (ThinkException) 无法加载模块:Uploads
+[ 2015-08-29T14:11:00+08:00 ] ERR: (ThinkException) 无法加载模块:Uploads
+[ 2015-08-29T14:11:00+08:00 ] ERR: (ThinkException) 无法加载模块:Uploads
+[ 2015-08-29T14:14:41+08:00 ] 127.0.0.1 /attachment/ajax_change_file_name
+INFO: [ app_begin ] --START--
+INFO: Run ReadHtmlCache Behavior [ RunTime:0.000776s ]
+INFO: Run CheckLang Behavior [ RunTime:0.002622s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.003604s ]
+NOTIC: [8192] mysql_connect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead D:\wamp\www\thinkphp\Lib\Driver\Db\DbMysql.class.php 第 56 行.
+SQL: SHOW COLUMNS FROM `options` [ RunTime:0.003569s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT * FROM `options` WHERE autoload="Y"  [ RunTime:0.000529s ]
+SQL: SHOW COLUMNS FROM `attachments_dir` [ RunTime:0.003472s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT `id`,`dir_name` FROM `attachments_dir` WHERE type="user"  [ RunTime:0.000468s ]
+NOTIC: [2048] Declaration of UserAttachmentsModel::save() should be compatible with Model::save($data = '', $options = Array) D:\wamp\www\yinxing_pm\Lib\Model\UserAttachmentsModel.class.php 第 4 行.
+SQL: SHOW COLUMNS FROM `user_attachments` [ RunTime:0.003171s ]
+SQL: update user_attachments set title ='14333995009d1d1.xlsx' where id=46 [ RunTime:0.000448s ]
+
+[ 2015-08-29T14:18:36+08:00 ] 127.0.0.1 /user/ajax_get_bg_survey_answers
+INFO: [ app_begin ] --START--
+INFO: Run ReadHtmlCache Behavior [ RunTime:0.001556s ]
+INFO: Run CheckLang Behavior [ RunTime:0.003986s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.005924s ]
+NOTIC: [2048] Declaration of UserAction::success() should be compatible with Action::success($message, $jumpUrl = '', $ajax = false) D:\wamp\www\yinxing_pm\Lib\Action\Frontend\UserAction.class.php 第 2 行.
+NOTIC: [8192] mysql_connect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead D:\wamp\www\thinkphp\Lib\Driver\Db\DbMysql.class.php 第 56 行.
+SQL: SHOW COLUMNS FROM `options` [ RunTime:0.005024s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT * FROM `options` WHERE autoload="Y"  [ RunTime:0.000842s ]
+SQL: SHOW COLUMNS FROM `custom_columns` [ RunTime:0.004717s ]
+NOTIC: [2] Missing argument 1 for CustomColumnsModel::getUserInfoModuleColumns(), called in D:\wamp\www\yinxing_pm\Lib\Action\Frontend\UserAction.class.php on line 10 and defined D:\wamp\www\yinxing_pm\Lib\Model\CustomColumnsModel.class.php 第 64 行.
+SQL: SHOW COLUMNS FROM `custom_list_views` [ RunTime:0.003554s ]
+SQL: SHOW COLUMNS FROM `user_recommends` [ RunTime:0.004538s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT `status`,count(*) count FROM `user_recommends` WHERE ( `status` > 1 ) GROUP BY status  [ RunTime:0.000820s ]
+SQL: SHOW COLUMNS FROM `user_statuses` [ RunTime:0.003644s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT `id`,`name` FROM `user_statuses` WHERE ( `id` > 21 )  [ RunTime:0.000535s ]
+SQL: SHOW COLUMNS FROM `background_survey` [ RunTime:0.005118s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT * FROM `background_survey` WHERE ( `recommend_id` = 3 )  [ RunTime:0.000533s ]
+
+[ 2015-08-29T14:18:36+08:00 ] 127.0.0.1 /user/ajax_save_bg_survey
+INFO: [ app_begin ] --START--
+INFO: Run ReadHtmlCache Behavior [ RunTime:0.001636s ]
+INFO: Run CheckLang Behavior [ RunTime:0.003988s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.006007s ]
+NOTIC: [2048] Declaration of UserAction::success() should be compatible with Action::success($message, $jumpUrl = '', $ajax = false) D:\wamp\www\yinxing_pm\Lib\Action\Frontend\UserAction.class.php 第 2 行.
+NOTIC: [8192] mysql_connect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead D:\wamp\www\thinkphp\Lib\Driver\Db\DbMysql.class.php 第 56 行.
+SQL: SHOW COLUMNS FROM `options` [ RunTime:0.004385s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT * FROM `options` WHERE autoload="Y"  [ RunTime:0.000542s ]
+SQL: SHOW COLUMNS FROM `custom_columns` [ RunTime:0.004652s ]
+NOTIC: [2] Missing argument 1 for CustomColumnsModel::getUserInfoModuleColumns(), called in D:\wamp\www\yinxing_pm\Lib\Action\Frontend\UserAction.class.php on line 10 and defined D:\wamp\www\yinxing_pm\Lib\Model\CustomColumnsModel.class.php 第 64 行.
+SQL: SHOW COLUMNS FROM `custom_list_views` [ RunTime:0.006967s ]
+SQL: SHOW COLUMNS FROM `user_recommends` [ RunTime:0.006056s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT `status`,count(*) count FROM `user_recommends` WHERE ( `status` > 1 ) GROUP BY status  [ RunTime:0.001125s ]
+SQL: SHOW COLUMNS FROM `user_statuses` [ RunTime:0.003006s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT `id`,`name` FROM `user_statuses` WHERE ( `id` > 21 )  [ RunTime:0.000376s ]
+SQL: SHOW COLUMNS FROM `background_survey` [ RunTime:0.004758s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT * FROM `background_survey` WHERE ( `recommend_id` = 3 ) AND ( `question_id` = 24 )  [ RunTime:0.000802s ]
+SQL: UPDATE `background_survey` SET `question_id`=24,`recommend_id`=3,`survey_id`=106,`answer`='',`date`='2015-08-29' WHERE ( `id` = 49 ) [ RunTime:0.106547s ]
+
+[ 2015-08-29T14:18:36+08:00 ] 127.0.0.1 /user/ajax_get_bg_survey_answers
+INFO: [ app_begin ] --START--
+INFO: Run ReadHtmlCache Behavior [ RunTime:0.001594s ]
+INFO: Run CheckLang Behavior [ RunTime:0.008955s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.010967s ]
+NOTIC: [2048] Declaration of UserAction::success() should be compatible with Action::success($message, $jumpUrl = '', $ajax = false) D:\wamp\www\yinxing_pm\Lib\Action\Frontend\UserAction.class.php 第 2 行.
+NOTIC: [8192] mysql_connect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead D:\wamp\www\thinkphp\Lib\Driver\Db\DbMysql.class.php 第 56 行.
+SQL: SHOW COLUMNS FROM `options` [ RunTime:0.003165s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT * FROM `options` WHERE autoload="Y"  [ RunTime:0.000558s ]
+SQL: SHOW COLUMNS FROM `custom_columns` [ RunTime:0.003346s ]
+NOTIC: [2] Missing argument 1 for CustomColumnsModel::getUserInfoModuleColumns(), called in D:\wamp\www\yinxing_pm\Lib\Action\Frontend\UserAction.class.php on line 10 and defined D:\wamp\www\yinxing_pm\Lib\Model\CustomColumnsModel.class.php 第 64 行.
+SQL: SHOW COLUMNS FROM `custom_list_views` [ RunTime:0.003271s ]
+SQL: SHOW COLUMNS FROM `user_recommends` [ RunTime:0.003218s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT `status`,count(*) count FROM `user_recommends` WHERE ( `status` > 1 ) GROUP BY status  [ RunTime:0.000592s ]
+SQL: SHOW COLUMNS FROM `user_statuses` [ RunTime:0.003827s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT `id`,`name` FROM `user_statuses` WHERE ( `id` > 21 )  [ RunTime:0.000388s ]
+SQL: SHOW COLUMNS FROM `background_survey` [ RunTime:0.003049s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT * FROM `background_survey` WHERE ( `recommend_id` = 3 )  [ RunTime:0.000539s ]
+
+[ 2015-08-29T14:18:37+08:00 ] 127.0.0.1 /user/ajax_save_bg_survey
+INFO: [ app_begin ] --START--
+INFO: Run ReadHtmlCache Behavior [ RunTime:0.003058s ]
+INFO: Run CheckLang Behavior [ RunTime:0.004206s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.007668s ]
+NOTIC: [2048] Declaration of UserAction::success() should be compatible with Action::success($message, $jumpUrl = '', $ajax = false) D:\wamp\www\yinxing_pm\Lib\Action\Frontend\UserAction.class.php 第 2 行.
+NOTIC: [8192] mysql_connect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead D:\wamp\www\thinkphp\Lib\Driver\Db\DbMysql.class.php 第 56 行.
+SQL: SHOW COLUMNS FROM `options` [ RunTime:0.003531s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT * FROM `options` WHERE autoload="Y"  [ RunTime:0.000558s ]
+SQL: SHOW COLUMNS FROM `custom_columns` [ RunTime:0.002970s ]
+NOTIC: [2] Missing argument 1 for CustomColumnsModel::getUserInfoModuleColumns(), called in D:\wamp\www\yinxing_pm\Lib\Action\Frontend\UserAction.class.php on line 10 and defined D:\wamp\www\yinxing_pm\Lib\Model\CustomColumnsModel.class.php 第 64 行.
+SQL: SHOW COLUMNS FROM `custom_list_views` [ RunTime:0.004025s ]
+SQL: SHOW COLUMNS FROM `user_recommends` [ RunTime:0.003411s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT `status`,count(*) count FROM `user_recommends` WHERE ( `status` > 1 ) GROUP BY status  [ RunTime:0.000679s ]
+SQL: SHOW COLUMNS FROM `user_statuses` [ RunTime:0.003071s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT `id`,`name` FROM `user_statuses` WHERE ( `id` > 21 )  [ RunTime:0.000457s ]
+SQL: SHOW COLUMNS FROM `background_survey` [ RunTime:0.003771s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT * FROM `background_survey` WHERE ( `recommend_id` = 3 ) AND ( `question_id` = 23 )  [ RunTime:0.000534s ]
+SQL: UPDATE `background_survey` SET `question_id`=23,`recommend_id`=3,`survey_id`=106,`answer`='',`date`='2015-08-29' WHERE ( `id` = 50 ) [ RunTime:0.036319s ]
+
+[ 2015-08-29T14:18:37+08:00 ] 127.0.0.1 /user/ajax_save_bg_survey
+INFO: [ app_begin ] --START--
+INFO: Run ReadHtmlCache Behavior [ RunTime:0.001310s ]
+INFO: Run CheckLang Behavior [ RunTime:0.004321s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.005963s ]
+NOTIC: [2048] Declaration of UserAction::success() should be compatible with Action::success($message, $jumpUrl = '', $ajax = false) D:\wamp\www\yinxing_pm\Lib\Action\Frontend\UserAction.class.php 第 2 行.
+NOTIC: [8192] mysql_connect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead D:\wamp\www\thinkphp\Lib\Driver\Db\DbMysql.class.php 第 56 行.
+SQL: SHOW COLUMNS FROM `options` [ RunTime:0.003784s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT * FROM `options` WHERE autoload="Y"  [ RunTime:0.000497s ]
+SQL: SHOW COLUMNS FROM `custom_columns` [ RunTime:0.003574s ]
+NOTIC: [2] Missing argument 1 for CustomColumnsModel::getUserInfoModuleColumns(), called in D:\wamp\www\yinxing_pm\Lib\Action\Frontend\UserAction.class.php on line 10 and defined D:\wamp\www\yinxing_pm\Lib\Model\CustomColumnsModel.class.php 第 64 行.
+SQL: SHOW COLUMNS FROM `custom_list_views` [ RunTime:0.003007s ]
+SQL: SHOW COLUMNS FROM `user_recommends` [ RunTime:0.004084s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT `status`,count(*) count FROM `user_recommends` WHERE ( `status` > 1 ) GROUP BY status  [ RunTime:0.000650s ]
+SQL: SHOW COLUMNS FROM `user_statuses` [ RunTime:0.003420s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT `id`,`name` FROM `user_statuses` WHERE ( `id` > 21 )  [ RunTime:0.000404s ]
+SQL: SHOW COLUMNS FROM `background_survey` [ RunTime:0.003203s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT * FROM `background_survey` WHERE ( `recommend_id` = 3 ) AND ( `question_id` = 25 )  [ RunTime:0.000543s ]
+SQL: UPDATE `background_survey` SET `question_id`=25,`recommend_id`=3,`survey_id`=106,`answer`='',`date`='2015-08-29' WHERE ( `id` = 51 ) [ RunTime:0.023592s ]
+
+[ 2015-08-29T14:21:08+08:00 ] ERR: (ThinkException) 无法加载模块:Uploads
+[ 2015-08-29T14:21:08+08:00 ] ERR: (ThinkException) 无法加载模块:Favicon
+[ 2015-08-29T14:22:13+08:00 ] ERR: (ThinkException) 无法加载模块:Uploads
+[ 2015-08-29T14:22:14+08:00 ] ERR: (ThinkException) 无法加载模块:Favicon
+[ 2015-08-29T15:30:02+08:00 ] ERR: (ThinkException) 无法加载模块:Uploads
+[ 2015-08-29T15:30:02+08:00 ] ERR: (ThinkException) 无法加载模块:Favicon
+[ 2015-08-29T15:31:18+08:00 ] 127.0.0.1 /attachment/check_attachment_exist
+INFO: [ app_begin ] --START--
+INFO: Run ReadHtmlCache Behavior [ RunTime:0.001412s ]
+INFO: Run CheckLang Behavior [ RunTime:0.005432s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.007415s ]
+NOTIC: [8192] mysql_connect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead D:\wamp\www\thinkphp\Lib\Driver\Db\DbMysql.class.php 第 56 行.
+SQL: SHOW COLUMNS FROM `options` [ RunTime:0.004992s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT * FROM `options` WHERE autoload="Y"  [ RunTime:0.001684s ]
+SQL: SHOW COLUMNS FROM `attachments_dir` [ RunTime:0.006825s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT `id`,`dir_name` FROM `attachments_dir` WHERE type="user"  [ RunTime:0.000804s ]
+SQL: SHOW COLUMNS FROM `user_attachments` [ RunTime:0.006150s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT * FROM `user_attachments` WHERE ( `user_id` = 2 ) AND ( `title` = '1_140328165358_1.jpg' ) LIMIT 1   [ RunTime:0.001523s ]
+
+[ 2015-08-29T15:31:29+08:00 ] 127.0.0.1 /attachment/ajax_save?module=user&object_id=2&path=%2Fattachment%2F2015%2F0829%2Fa4cd808b6e3d04ab03aced4755b95746.jpg&title=1_140328165358_1.jpg&size=36953&content=&mapid=ECVTKX&dir_id=
+INFO: [ app_begin ] --START--
+INFO: Run ReadHtmlCache Behavior [ RunTime:0.001317s ]
+INFO: Run CheckLang Behavior [ RunTime:0.003223s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.004861s ]
+NOTIC: [8192] mysql_connect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead D:\wamp\www\thinkphp\Lib\Driver\Db\DbMysql.class.php 第 56 行.
+SQL: SHOW COLUMNS FROM `options` [ RunTime:0.005383s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT * FROM `options` WHERE autoload="Y"  [ RunTime:0.000736s ]
+SQL: SHOW COLUMNS FROM `attachments_dir` [ RunTime:0.006270s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT `id`,`dir_name` FROM `attachments_dir` WHERE type="user"  [ RunTime:0.000594s ]
+NOTIC: [2048] Declaration of UserAttachmentsModel::save() should be compatible with Model::save($data = '', $options = Array) D:\wamp\www\yinxing_pm\Lib\Model\UserAttachmentsModel.class.php 第 4 行.
+SQL: SHOW COLUMNS FROM `user_attachments` [ RunTime:0.003999s ]
+NOTIC: [2] Missing argument 3 for UserAttachmentsModel::save(), called in D:\wamp\www\yinxing_pm\Lib\Action\Frontend\AttachmentAction.class.php on line 87 and defined D:\wamp\www\yinxing_pm\Lib\Model\UserAttachmentsModel.class.php 第 10 行.
+NOTIC: [8] Undefined variable: content D:\wamp\www\yinxing_pm\Lib\Model\UserAttachmentsModel.class.php 第 11 行.
+SQL: INSERT INTO `user_attachments` (`path`,`size`,`title`,`content`,`dir_id`,`user_id`,`type`,`create_time`,`update_time`,`create_user_id`,`update_user_id`) VALUES ('/attachment/2015/0829/a4cd808b6e3d04ab03aced4755b95746.jpg',36953,'1_140328165358_1.jpg','',0,2,'user','2015-08-29 15:31:29','2015-08-29 15:31:29',1,1) [ RunTime:0.000895s ]
+SQL: SHOW COLUMNS FROM `admin_logs` [ RunTime:0.004079s ]
+NOTIC: [2] Missing argument 5 for AdminLogsModel::saveLog(), called in D:\wamp\www\yinxing_pm\Lib\Action\Frontend\AttachmentAction.class.php on line 91 and defined D:\wamp\www\yinxing_pm\Lib\Model\AdminLogsModel.class.php 第 5 行.
+NOTIC: [8] Undefined variable: module_name D:\wamp\www\yinxing_pm\Lib\Model\AdminLogsModel.class.php 第 11 行.
+NOTIC: [8] Undefined index: name D:\wamp\www\yinxing_pm\Lib\Model\AdminLogsModel.class.php 第 16 行.
+SQL: INSERT INTO `admin_logs` (`user_id`,`module`,`operation`,`module_id`,`module_name`,`timestamp`,`data`,`user_group_id`) VALUES ('1','user_attachment','insert',56,'1_140328165358_1.jpg',1440833489,'a:9:{s:6:\"module\";s:4:\"user\";s:9:\"object_id\";s:1:\"2\";s:4:\"path\";s:58:\"/attachment/2015/0829/a4cd808b6e3d04ab03aced4755b95746.jpg\";s:5:\"title\";s:20:\"1_140328165358_1.jpg\";s:4:\"size\";s:5:\"36953\";s:7:\"content\";s:0:\"\";s:5:\"mapid\";s:6:\"ECVTKX\";s:6:\"dir_id\";s:0:\"\";s:5:\"_URL_\";a:2:{i:0;s:10:\"attachment\";i:1;s:9:\"ajax_save\";}}',1) [ RunTime:0.000544s ]
+
+[ 2015-08-29T15:31:36+08:00 ] ERR: (ThinkException) 无法加载模块:Favicon
+[ 2015-08-29T15:33:19+08:00 ] 127.0.0.1 /attachment/ajax_update_dir
+INFO: [ app_begin ] --START--
+INFO: Run ReadHtmlCache Behavior [ RunTime:0.000954s ]
+INFO: Run CheckLang Behavior [ RunTime:0.002836s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.004011s ]
+NOTIC: [8192] mysql_connect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead D:\wamp\www\thinkphp\Lib\Driver\Db\DbMysql.class.php 第 56 行.
+SQL: SHOW COLUMNS FROM `options` [ RunTime:0.003625s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT * FROM `options` WHERE autoload="Y"  [ RunTime:0.000680s ]
+SQL: SHOW COLUMNS FROM `attachments_dir` [ RunTime:0.003751s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT `id`,`dir_name` FROM `attachments_dir` WHERE type="user"  [ RunTime:0.000462s ]
+SQL: SHOW COLUMNS FROM `user_attachments` [ RunTime:0.003832s ]
+SQL: UPDATE `user_attachments` SET `dir_id`=4,`type`='user',`id`=56 WHERE ( `id` = 56 ) [ RunTime:0.000400s ]
+
+[ 2015-08-29T15:33:28+08:00 ] 127.0.0.1 /attachment/ajax_update_dir
+INFO: [ app_begin ] --START--
+INFO: Run ReadHtmlCache Behavior [ RunTime:0.000813s ]
+INFO: Run CheckLang Behavior [ RunTime:0.002222s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.003224s ]
+NOTIC: [8192] mysql_connect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead D:\wamp\www\thinkphp\Lib\Driver\Db\DbMysql.class.php 第 56 行.
+SQL: SHOW COLUMNS FROM `options` [ RunTime:0.003353s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT * FROM `options` WHERE autoload="Y"  [ RunTime:0.000516s ]
+SQL: SHOW COLUMNS FROM `attachments_dir` [ RunTime:0.003077s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT `id`,`dir_name` FROM `attachments_dir` WHERE type="user"  [ RunTime:0.000413s ]
+SQL: SHOW COLUMNS FROM `user_attachments` [ RunTime:0.003013s ]
+SQL: UPDATE `user_attachments` SET `dir_id`=3,`type`='user',`id`=35 WHERE ( `id` = 35 ) [ RunTime:0.000405s ]
+
+[ 2015-08-29T15:57:27+08:00 ] 127.0.0.1 /user/ajax_change_classify
+INFO: [ app_begin ] --START--
+INFO: Run ReadHtmlCache Behavior [ RunTime:0.000875s ]
+INFO: Run CheckLang Behavior [ RunTime:0.002148s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.003213s ]
+NOTIC: [2048] Declaration of UserAction::success() should be compatible with Action::success($message, $jumpUrl = '', $ajax = false) D:\wamp\www\yinxing_pm\Lib\Action\Frontend\UserAction.class.php 第 2 行.
+NOTIC: [8192] mysql_connect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead D:\wamp\www\thinkphp\Lib\Driver\Db\DbMysql.class.php 第 56 行.
+SQL: SHOW COLUMNS FROM `options` [ RunTime:0.003382s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT * FROM `options` WHERE autoload="Y"  [ RunTime:0.000691s ]
+SQL: SHOW COLUMNS FROM `custom_columns` [ RunTime:0.003495s ]
+NOTIC: [2] Missing argument 1 for CustomColumnsModel::getUserInfoModuleColumns(), called in D:\wamp\www\yinxing_pm\Lib\Action\Frontend\UserAction.class.php on line 10 and defined D:\wamp\www\yinxing_pm\Lib\Model\CustomColumnsModel.class.php 第 64 行.
+SQL: SHOW COLUMNS FROM `custom_list_views` [ RunTime:0.003377s ]
+SQL: SHOW COLUMNS FROM `user_recommends` [ RunTime:0.004142s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT `status`,count(*) count FROM `user_recommends` WHERE ( `status` > 1 ) GROUP BY status  [ RunTime:0.000648s ]
+SQL: SHOW COLUMNS FROM `user_statuses` [ RunTime:0.003293s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT `id`,`name` FROM `user_statuses` WHERE ( `id` > 21 )  [ RunTime:0.000538s ]
+NOTIC: [8] Undefined offset: 90 D:\wamp\www\yinxing_pm\Lib\Action\Frontend\UserAction.class.php 第 19 行.
+
+[ 2015-08-29T15:57:34+08:00 ] 127.0.0.1 /user/ajax_change_classify
+INFO: [ app_begin ] --START--
+INFO: Run ReadHtmlCache Behavior [ RunTime:0.002298s ]
+INFO: Run CheckLang Behavior [ RunTime:0.004241s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.007177s ]
+NOTIC: [2048] Declaration of UserAction::success() should be compatible with Action::success($message, $jumpUrl = '', $ajax = false) D:\wamp\www\yinxing_pm\Lib\Action\Frontend\UserAction.class.php 第 2 行.
+NOTIC: [8192] mysql_connect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead D:\wamp\www\thinkphp\Lib\Driver\Db\DbMysql.class.php 第 56 行.
+SQL: SHOW COLUMNS FROM `options` [ RunTime:0.003993s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT * FROM `options` WHERE autoload="Y"  [ RunTime:0.000532s ]
+SQL: SHOW COLUMNS FROM `custom_columns` [ RunTime:0.003574s ]
+NOTIC: [2] Missing argument 1 for CustomColumnsModel::getUserInfoModuleColumns(), called in D:\wamp\www\yinxing_pm\Lib\Action\Frontend\UserAction.class.php on line 10 and defined D:\wamp\www\yinxing_pm\Lib\Model\CustomColumnsModel.class.php 第 64 行.
+SQL: SHOW COLUMNS FROM `custom_list_views` [ RunTime:0.004401s ]
+SQL: SHOW COLUMNS FROM `user_recommends` [ RunTime:0.003873s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT `status`,count(*) count FROM `user_recommends` WHERE ( `status` > 1 ) GROUP BY status  [ RunTime:0.000901s ]
+SQL: SHOW COLUMNS FROM `user_statuses` [ RunTime:0.005805s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT `id`,`name` FROM `user_statuses` WHERE ( `id` > 21 )  [ RunTime:0.001510s ]
+NOTIC: [8] Undefined offset: 90 D:\wamp\www\yinxing_pm\Lib\Action\Frontend\UserAction.class.php 第 19 行.
+
+[ 2015-08-29T16:00:33+08:00 ] 127.0.0.1 /user/ajax_change_classify
+INFO: [ app_begin ] --START--
+INFO: Run ReadHtmlCache Behavior [ RunTime:0.002161s ]
+INFO: Run CheckLang Behavior [ RunTime:0.005133s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.007701s ]
+NOTIC: [2048] Declaration of UserAction::success() should be compatible with Action::success($message, $jumpUrl = '', $ajax = false) D:\wamp\www\yinxing_pm\Lib\Action\Frontend\UserAction.class.php 第 2 行.
+NOTIC: [8192] mysql_connect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead D:\wamp\www\thinkphp\Lib\Driver\Db\DbMysql.class.php 第 56 行.
+SQL: SHOW COLUMNS FROM `options` [ RunTime:0.003370s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT * FROM `options` WHERE autoload="Y"  [ RunTime:0.000654s ]
+SQL: SHOW COLUMNS FROM `custom_columns` [ RunTime:0.004498s ]
+NOTIC: [2] Missing argument 1 for CustomColumnsModel::getUserInfoModuleColumns(), called in D:\wamp\www\yinxing_pm\Lib\Action\Frontend\UserAction.class.php on line 10 and defined D:\wamp\www\yinxing_pm\Lib\Model\CustomColumnsModel.class.php 第 64 行.
+SQL: SHOW COLUMNS FROM `custom_list_views` [ RunTime:0.010658s ]
+SQL: SHOW COLUMNS FROM `user_recommends` [ RunTime:0.005257s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT `status`,count(*) count FROM `user_recommends` WHERE ( `status` > 1 ) GROUP BY status  [ RunTime:0.000686s ]
+SQL: SHOW COLUMNS FROM `user_statuses` [ RunTime:0.005981s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT `id`,`name` FROM `user_statuses` WHERE ( `id` > 21 )  [ RunTime:0.000844s ]
+NOTIC: [8] Undefined offset: 90 D:\wamp\www\yinxing_pm\Lib\Action\Frontend\UserAction.class.php 第 19 行.
+NOTIC: [8] Undefined variable: classify D:\wamp\www\yinxing_pm\Lib\Action\Frontend\UserAction.class.php 第 281 行.
+SQL: UPDATE `user_recommends` SET `classify`=null WHERE ( `id` = 14 ) [ RunTime:0.001231s ]
+
+[ 2015-08-29T16:00:46+08:00 ] 127.0.0.1 /user/ajax_change_classify
+INFO: [ app_begin ] --START--
+INFO: Run ReadHtmlCache Behavior [ RunTime:0.001067s ]
+INFO: Run CheckLang Behavior [ RunTime:0.002636s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.004116s ]
+NOTIC: [2048] Declaration of UserAction::success() should be compatible with Action::success($message, $jumpUrl = '', $ajax = false) D:\wamp\www\yinxing_pm\Lib\Action\Frontend\UserAction.class.php 第 2 行.
+NOTIC: [8192] mysql_connect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead D:\wamp\www\thinkphp\Lib\Driver\Db\DbMysql.class.php 第 56 行.
+SQL: SHOW COLUMNS FROM `options` [ RunTime:0.004350s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT * FROM `options` WHERE autoload="Y"  [ RunTime:0.000640s ]
+SQL: SHOW COLUMNS FROM `custom_columns` [ RunTime:0.003516s ]
+NOTIC: [2] Missing argument 1 for CustomColumnsModel::getUserInfoModuleColumns(), called in D:\wamp\www\yinxing_pm\Lib\Action\Frontend\UserAction.class.php on line 10 and defined D:\wamp\www\yinxing_pm\Lib\Model\CustomColumnsModel.class.php 第 64 行.
+SQL: SHOW COLUMNS FROM `custom_list_views` [ RunTime:0.005290s ]
+SQL: SHOW COLUMNS FROM `user_recommends` [ RunTime:0.010305s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT `status`,count(*) count FROM `user_recommends` WHERE ( `status` > 1 ) GROUP BY status  [ RunTime:0.001100s ]
+SQL: SHOW COLUMNS FROM `user_statuses` [ RunTime:0.005685s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT `id`,`name` FROM `user_statuses` WHERE ( `id` > 21 )  [ RunTime:0.000963s ]
+NOTIC: [8] Undefined offset: 90 D:\wamp\www\yinxing_pm\Lib\Action\Frontend\UserAction.class.php 第 19 行.
+NOTIC: [8] Undefined variable: classify D:\wamp\www\yinxing_pm\Lib\Action\Frontend\UserAction.class.php 第 281 行.
+SQL: UPDATE `user_recommends` SET `classify`=null WHERE ( `id` = 14 ) [ RunTime:0.001575s ]
+
+[ 2015-08-29T16:01:11+08:00 ] 127.0.0.1 /user/ajax_change_classify
+INFO: [ app_begin ] --START--
+INFO: Run ReadHtmlCache Behavior [ RunTime:0.001800s ]
+INFO: Run CheckLang Behavior [ RunTime:0.004170s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.006316s ]
+NOTIC: [2048] Declaration of UserAction::success() should be compatible with Action::success($message, $jumpUrl = '', $ajax = false) D:\wamp\www\yinxing_pm\Lib\Action\Frontend\UserAction.class.php 第 2 行.
+NOTIC: [8192] mysql_connect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead D:\wamp\www\thinkphp\Lib\Driver\Db\DbMysql.class.php 第 56 行.
+SQL: SHOW COLUMNS FROM `options` [ RunTime:0.007706s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT * FROM `options` WHERE autoload="Y"  [ RunTime:0.001008s ]
+SQL: SHOW COLUMNS FROM `custom_columns` [ RunTime:0.009613s ]
+NOTIC: [2] Missing argument 1 for CustomColumnsModel::getUserInfoModuleColumns(), called in D:\wamp\www\yinxing_pm\Lib\Action\Frontend\UserAction.class.php on line 10 and defined D:\wamp\www\yinxing_pm\Lib\Model\CustomColumnsModel.class.php 第 64 行.
+SQL: SHOW COLUMNS FROM `custom_list_views` [ RunTime:0.005629s ]
+SQL: SHOW COLUMNS FROM `user_recommends` [ RunTime:0.009051s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT `status`,count(*) count FROM `user_recommends` WHERE ( `status` > 1 ) GROUP BY status  [ RunTime:0.001473s ]
+SQL: SHOW COLUMNS FROM `user_statuses` [ RunTime:0.007711s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT `id`,`name` FROM `user_statuses` WHERE ( `id` > 21 )  [ RunTime:0.001119s ]
+NOTIC: [8] Undefined offset: 90 D:\wamp\www\yinxing_pm\Lib\Action\Frontend\UserAction.class.php 第 19 行.
+NOTIC: [8] Undefined variable: classify D:\wamp\www\yinxing_pm\Lib\Action\Frontend\UserAction.class.php 第 281 行.
+SQL: UPDATE `user_recommends` SET `classify`=null WHERE ( `id` = 14 ) [ RunTime:0.001759s ]
+
+[ 2015-08-29T16:02:07+08:00 ] 127.0.0.1 /user/ajax_change_classify
+INFO: [ app_begin ] --START--
+INFO: Run ReadHtmlCache Behavior [ RunTime:0.001261s ]
+INFO: Run CheckLang Behavior [ RunTime:0.004727s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.006395s ]
+NOTIC: [2048] Declaration of UserAction::success() should be compatible with Action::success($message, $jumpUrl = '', $ajax = false) D:\wamp\www\yinxing_pm\Lib\Action\Frontend\UserAction.class.php 第 2 行.
+NOTIC: [8192] mysql_connect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead D:\wamp\www\thinkphp\Lib\Driver\Db\DbMysql.class.php 第 56 行.
+SQL: SHOW COLUMNS FROM `options` [ RunTime:0.007334s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT * FROM `options` WHERE autoload="Y"  [ RunTime:0.002048s ]
+SQL: SHOW COLUMNS FROM `custom_columns` [ RunTime:0.006529s ]
+NOTIC: [2] Missing argument 1 for CustomColumnsModel::getUserInfoModuleColumns(), called in D:\wamp\www\yinxing_pm\Lib\Action\Frontend\UserAction.class.php on line 10 and defined D:\wamp\www\yinxing_pm\Lib\Model\CustomColumnsModel.class.php 第 64 行.
+SQL: SHOW COLUMNS FROM `custom_list_views` [ RunTime:0.007914s ]
+SQL: SHOW COLUMNS FROM `user_recommends` [ RunTime:0.008943s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT `status`,count(*) count FROM `user_recommends` WHERE ( `status` > 1 ) GROUP BY status  [ RunTime:0.001257s ]
+SQL: SHOW COLUMNS FROM `user_statuses` [ RunTime:0.006391s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT `id`,`name` FROM `user_statuses` WHERE ( `id` > 21 )  [ RunTime:0.001152s ]
+NOTIC: [8] Undefined offset: 90 D:\wamp\www\yinxing_pm\Lib\Action\Frontend\UserAction.class.php 第 19 行.
+NOTIC: [8] Undefined variable: classify D:\wamp\www\yinxing_pm\Lib\Action\Frontend\UserAction.class.php 第 282 行.
+SQL: UPDATE `user_recommends` SET `classify`=null WHERE ( `id` = 14 ) [ RunTime:0.000608s ]
+
+[ 2015-08-29T16:02:29+08:00 ] 127.0.0.1 /user/ajax_change_classify
+INFO: [ app_begin ] --START--
+INFO: Run ReadHtmlCache Behavior [ RunTime:0.002795s ]
+INFO: Run CheckLang Behavior [ RunTime:0.006541s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.009925s ]
+NOTIC: [2048] Declaration of UserAction::success() should be compatible with Action::success($message, $jumpUrl = '', $ajax = false) D:\wamp\www\yinxing_pm\Lib\Action\Frontend\UserAction.class.php 第 2 行.
+NOTIC: [8192] mysql_connect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead D:\wamp\www\thinkphp\Lib\Driver\Db\DbMysql.class.php 第 56 行.
+SQL: SHOW COLUMNS FROM `options` [ RunTime:0.005482s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT * FROM `options` WHERE autoload="Y"  [ RunTime:0.000579s ]
+SQL: SHOW COLUMNS FROM `custom_columns` [ RunTime:0.004645s ]
+NOTIC: [2] Missing argument 1 for CustomColumnsModel::getUserInfoModuleColumns(), called in D:\wamp\www\yinxing_pm\Lib\Action\Frontend\UserAction.class.php on line 10 and defined D:\wamp\www\yinxing_pm\Lib\Model\CustomColumnsModel.class.php 第 64 行.
+SQL: SHOW COLUMNS FROM `custom_list_views` [ RunTime:0.003935s ]
+SQL: SHOW COLUMNS FROM `user_recommends` [ RunTime:0.004522s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT `status`,count(*) count FROM `user_recommends` WHERE ( `status` > 1 ) GROUP BY status  [ RunTime:0.000593s ]
+SQL: SHOW COLUMNS FROM `user_statuses` [ RunTime:0.003230s ]
+NOTIC: [8192] preg_replace(): The /e modifier is deprecated, use preg_replace_callback instead D:\wamp\www\thinkphp\Lib\Core\Db.class.php 第 569 行.
+SQL: SELECT `id`,`name` FROM `user_statuses` WHERE ( `id` > 21 )  [ RunTime:0.000443s ]
+NOTIC: [8] Undefined offset: 90 D:\wamp\www\yinxing_pm\Lib\Action\Frontend\UserAction.class.php 第 19 行.
+SQL: UPDATE `user_recommends` SET `classify`='IT' WHERE ( `id` = 14 ) [ RunTime:0.000394s ]
+
