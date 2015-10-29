@@ -92,9 +92,10 @@
     </ul>
     <h5>推荐人相关信息，包含了推荐人数量，推荐的候选人数量，推荐数量的TOP排名</h5>
      <form class="filter" action="/stat/recommend" method="get" style="margin: 20px 0">
-        <?php if(is_array($filter_columns)): foreach($filter_columns as $key=>$one): ?><input type="text" name="<?php echo ($key); ?>" placeholder="<?php echo ($one['display_name']); ?>"><?php endforeach; endif; ?>
-        <input type="submit" class="btn btn-small" value="筛选">
-        <a type="button" href="/stat/recommend" class="btn btn-small" >重置</a>
+        <select class="chosen-select span2" multiple name="gender[]" data-placeholder=" - 推荐人性别 -"><?php echo getSelectOptions("gender");?></select>
+        <select class="chosen-select span2" multiple name="name[]" data-placeholder=" - 推荐人姓名 -"><?php echo getSelectOptions("user_info.name");?></select>
+        <input type="submit" class="btn btn-stat" value="筛选">
+        <a type="button" href="/stat/recommend" class="btn btn-stat" >重置</a>
     </form>
     <table class="table table-striped table-hover home-tb">
       <tr>
@@ -108,6 +109,7 @@
     <table class="stat">
       <?php
  $column = array("推荐人性别","推荐人数"); $stat_type_name = '推荐人性别比例'; $key_stat_type_key = 'recommend-gender-rank'; $table_value = $recommend_gender_rank; ?>
+      <!--
       <tr>
   <td class="out">
     <table class="table table-striped table-hover">
@@ -141,7 +143,7 @@
 <tr>
 
 
-
+      -->
       <?php
  $column = array("推荐人","推荐人数"); $stat_type_name='推荐人数排名'; $key_stat_type_key = 'recommend-num-rank'; $table_value = $recommend_num_rank; ?>
       <tr>
@@ -177,17 +179,14 @@
 <tr>
 
 
-
     </table>
-
-
 </div>
 
 
 <script type="text/javascript">
 
 $(function () {
-
+    /*
     $('#recommend-gender-rank-chart').highcharts({
         credits: {text: ''},
         chart: {
@@ -216,7 +215,7 @@ $(function () {
             data: <?php echo array_to_pie_chart_json($recommend_gender_rank);?>
         }]
     });
-
+    */
     $('#recommend-num-rank-chart').highcharts({
         credits: {text: ''},
         chart: {

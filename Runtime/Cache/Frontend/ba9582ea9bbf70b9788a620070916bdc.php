@@ -92,9 +92,10 @@
     </ul>
     <h5>银杏伙伴相关信息，包含了银杏伙伴数量，地区排名，性别比例</h5>
     <form class="filter" action="/stat/partner" method="get" style="margin: 20px 0">
-        <?php if(is_array($filter_columns)): foreach($filter_columns as $key=>$one): ?><input type="text" name="<?php echo ($key); ?>" placeholder="<?php echo ($one['display_name']); ?>"><?php endforeach; endif; ?>
-        <input type="submit" class="btn btn-small" value="筛选">
-        <a type="button" href="/stat/partner" class="btn btn-small" >重置</a>
+        <select class="chosen-select span2" multiple name="address_province[]" data-placeholder=" - 银杏伙伴省份 -"><?php echo getSelectOptions("user_recommends.address_province","partner");?></select>
+        <select class="chosen-select span2" multiple name="gender[]" data-placeholder=" - 银杏伙伴性别 -"><?php echo getSelectOptions("user_info.gender");?></select>
+        <input type="submit" class="btn btn-stat" value="筛选">
+        <a type="button" href="/stat/partner" class="btn btn-stat" >重置</a>
     </form>
 
     <table class="table table-striped table-hover home-tb">

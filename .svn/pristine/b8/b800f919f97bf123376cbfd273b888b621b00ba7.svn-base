@@ -1,0 +1,90 @@
+<div class="pull-right">
+    <a href="#attachments" class="btn btn-small btn-link">{$Think.lang.attachment} ({:count($attachments)})</a>
+    <a href="#notes" class="btn btn-small btn-link">{$Think.lang.note} ({:count($notes)})</a>
+    <a class="btn btn-small btn-link" target="_blank" href="{:D('Options')->getOption('webroot_apply')}/userinfo/preview_recommend?id={$user['id']}&token={:Crypt::en($user['recommend_user_id'])}">打印预览推荐表</a>
+    <if condition="$user['status'] gt 50">
+     <a class="btn btn-small btn-link" target="_blank" href="{:D('Options')->getOption('webroot_apply')}/userinfo/preview?token={:Crypt::en($user['userinfo']['id'])}">打印预览申请表</a>
+      <if condition="$user['editable']">
+        <a href="/user/ajax_enable_edit?id={$user['id']}&to=0" class="btn btn-small btn-link ajaxlink">禁止编辑申请表</a>
+      <else />
+        <a href="/user/ajax_enable_edit?id={$user['id']}&to=1" class="btn btn-small btn-link ajaxlink">允许编辑申请表</a>
+      </if>
+    </if>
+  </div>
+<input type="hidden" id="recommend_id" value="{$user['id']}"/>
+  <div> 
+    <?php $avatar = $user['avatar']?$user['avatar']:'default_avatar.jpg'; ?>
+    <a href="/user/render_edit_avatar?id={$user['id']}" class="ajaxlink">
+      <img src="{:image_path($avatar)}" style="max-width: 100px;" />
+    </a>
+
+    <span style="font-size:32px;">
+      {$user.name}<if condition="$user['identifier']"><span class="detail_iden">[{$user.identifier}]</span></if>
+    </span> 
+    <span style="padding:0 10px;">
+      状态：
+      <a href="#" id="change_status" data-type="select" data-pk="{$user['id']}" data-url="/user/ajax_save_status" data-title="修改状态">
+          {$user['status_name']}
+      </a>
+    </span>
+    <span style="padding:0 10px;">
+      行业:
+      <a href="#" class="change_classify" data-type="select" data-pk="{$user['id']}" data-url="/user/ajax_change_classify" data-title="请选择领域">
+            {$user['classify']?$user['classify']:'请选择'}
+      </a>
+    </span>
+
+    <span style="padding:0 10px;">
+      备注：<a href="#" id="change_status_note" data-type="text" data-pk="{$user['id']}" data-url="/user/ajax_save_status_note" data-title="备注">
+        <span class="muted">{$user['status_note']?$user['status_note']:'备注'}</span>
+      </a>
+    </span>
+
+    <if condition="$user['status']==100">
+      <span style="padding:0 10px;">
+          评级：<a href="#" id="change_fail_rank" data-type="select" data-pk="{$user['id']}" data-url="/user/ajax_save_fail_rank" data-title="备选评级">
+            {$user['fail_rank']?$user['fail_rank']:'编辑'}</span>
+          </a>
+      </span>
+    </if>
+</div>
+
+<!-- 可能相通的候选人，归并去 -->
+
+<if condition="$user['same_as_id']">
+  <?php
+    $same = D("UserRecommends")->getById($user['same_as_id']);
+  ?>
+  <p class="alert alert-danger justcenter">
+    当前推荐为重复推荐，更多信息请查看：
+    <a href="/user/detail/{$same['id']}" target="_blank">
+      {$same['name']}（推荐人：{$same['recommender_name']} @ {$same['recommend_submit_time']}）
+    </a>
+  <p>
+<else />
+  <?php
+    $f['name'] = $user['name'];
+    $f['id'] = array('neq', $user['id']);
+    $f['same_as_id'] = 0;
+    $same = D("UserRecommends")->where($f)->order('id')->find();
+  ?>
+
+  <if condition="$same">
+    <p class="alert justcenter">
+      监测到相同姓名的候选人：<a href="/user/detail/{$same['id']}" target="_blank">{$same['name']}（推荐人：{$same['recommender_name']}）</a>&nbsp;&nbsp;
+      <a href="/user/ajax_set_same_recommend?current_rid={$user['id']}&same_rid={$same['id']}" class="btn btn-small btn-danger ajaxlink">标记为重复推荐</a>
+      <!-- &nbsp;<a href="/" class="btn btn-small btn-link ajaxlink" ask="确认要忽略提示么">忽略该提示</a> -->
+    </p>
+  </if>
+</if>
+
+<script type="text/javascript">
+  $('#change_status').editable({
+      source: {$user_status_xedit_str}
+  });
+  $('#change_status_note').editable();
+
+  $('#change_fail_rank').editable({
+    source: {:createJSONRank(4)}
+  });
+</script>

@@ -1,0 +1,162 @@
+<?php
+
+    $display_status = D("UserStatuses")->getAuditStatusIdNameMap();
+    $isAdmin = auditEditable($login_user['role']);
+    $max_audit_status = max(array_keys($display_status));
+
+    $tmps = Utility::AssColumn(D("UserAudits")->where('user_id=%d',$user['id'])->order('id desc')->select());
+    foreach($tmps as $k=>$v) {
+        $audits[$v['status']][] = $v;
+    }
+    // $dimensions = D("UserAuditDimensions")->gets($apply_type_id);
+
+    $auditing_status = 0;
+    foreach ($display_status as $status => $name) {
+      if($status>$user['status']) {
+        unset($display_status[$status]);
+      }
+      if($status==$user['status']) {
+        $auditing_status = $active_status = $status;
+      }
+    }
+
+
+    if($user['status']>$max_audit_status) {
+      foreach ($audits as $k => $v) {
+        if(!$v || !$v[0]['audit_time']) {
+          unset($display_status[$k]);
+        }
+      }
+      $active_status = max(array_keys($display_status));
+    }
+
+    if(in_array($user['status'], array(20,60))) {
+        $audit_opinions[4] = '驳回修改';
+    }
+?>
+<div class="label label-warning alert-tip" id="alert-tip"><p>警告框</p></div>
+<h5 class="clear bg colortip" title="点击展开/合并" style="cursor: pointer;" onclick="toggle_content_block('_audit_content');">
+  # 考核过程 #<i class="icon-fullscreen"></i>
+</h5>
+
+<form method="post" action="/user/submit_audit" enctype="multipart/form-data" class="validator form-horizontal" style="padding:0 20px" onsubmit="return confirmit()">
+  <div id="_audit_content" {$user['pm_display_toggle']['_audit_content']?'style="display:none"':''}>
+    <ul id="audit_tab" class="nav nav-tabs">
+      <foreach name="display_status" item="one">
+        <li class="{$key==$active_status?'active common':'common'}">
+          <a href="#audit_{$key}" data-toggle="tab">
+            {:str_replace('待','',$one)}&nbsp;&nbsp;{$audits[$key]['audit_result']==1?'√':''} {$audits[$key]['audit_result']==2?'<span class="text-error">x</span>':''}
+          </a>
+        </li>
+      </foreach>
+      <li class="pull-right"><a title="展开所有评审" onclick="expand_all_audit()"><i class="icon-chevron-down"></i></a></li>
+    </ul>
+    
+    <div id="audit_tab_content" class="tab-content" style="padding: 0 10px;">
+        <foreach name="display_status" key="status" item="one">
+            <div class="tab-pane fade {$status==$active_status?'in active':''}" id="audit_{$status}">
+                <p class="alert alert-success audit_view_all_title">{:str_replace('待','',$one)}</span></p>
+                <if condition="$status eq 30">
+                    <include file="background_survey" />
+                <elseif condition="$status eq 40" />
+                    <include file="send_email_to_audits" />
+                <elseif condition="$status eq 60" />
+                    <include file="send_email_to_audits" />
+                <elseif condition="$status eq 70" />
+                    <include file="background_survey" />
+                <elseif condition="$status eq 80" />
+                    <include file="send_email_to_audits" />
+                </if>
+                <foreach name="audits[$status]" item="one">
+                    <div id="audit_list_{$one['id']}">            
+                        <div style="margin: 10px 0 5px 0;">
+                            <i class="icon-comment"></i>&nbsp;&nbsp;
+                            <span class=""><b>{$one['audit_user_name_display']}@{:substr($one['audit_time'],0,16)}</b></span>&nbsp;&nbsp;
+                            <span class="label label-{$all_audit_opinions[$one['audit_result']]['label-class']}">{$all_audit_opinions[$one['audit_result']]['name']}</span>
+                            <if condition="$one['audit_user_id'] eq $login_user['id']">
+                                <a href="/user/ajax_delete_audit?id={$one['id']}" ask="确认删除该评审记录？" class="muted ajaxlink pull-right">x</a>
+                            </if>
+                        </div>
+                        <blockquote>
+                            {:nl2br($one['audit_content'])}
+                            <if condition="$one['audit_email']">
+                            <hr />
+                            <p><i class="icon-envelope"></i> {$one['audit_email']['to']} 【邮件题目：{$one['audit_email']['subject']}】</p>
+                            </if>
+                        </blockquote>
+                    </div>
+                </foreach>
+                <if condition="!$isAdmin">
+                  <if condition="$auditing_status eq $status">
+                      <input type="hidden" name="user_id" value="{$user['id']}" />
+                      <!--             <input type="hidden" name="id" value="{$audits[$status]['id']}" /> -->
+                      <input type="hidden" name="status" value="{$auditing_status}" />
+                      <input type="hidden" name="create_user_id" value="{$audits[$status]['create_user_id']?$audits[$status]['create_user_id']:$login_user['id']}" />
+                      <input type="hidden" name="create_time" value="{$audits[$status]['create_time']?$audits[$status]['create_time']:date('Y-m-d H:i:s')}" />
+                      <input type="hidden" name="audit_user_id" value="{$audits[$status]['audit_user_id']?$audits[$status]['audit_user_id']:$login_user['id']}" />
+                      <input type="hidden" name="audit_user_name" value="{$audits[$status]['audit_user_name']?$audits[$status]['audit_user_name']:$login_user['realname']}" />
+
+                      <if condition="$audits[$status]['audit_user_id'] AND ($audits[$status]['audit_user_id'] neq $login_user['user_id'])">
+                        <input type="hidden" name="actual_audit_user_id" value="{$login_user['id']}" />
+                        <input type="hidden" name="actual_audit_user_name" value="{$login_user['realname']}" />
+                      </if>
+
+                      <table class="table table-noborder">
+                          <tr>
+                              <td style="vertical-align: top"><b>考核意见</b></td>
+                              <td><textarea name="audit_content" id="audit_content" class="span12" style="height: 100px">{$audits[$status]['audit_content']}</textarea></td>
+                          </tr>
+                          <tr>
+                              <td><b>通过否？</b></td>
+                              <td>
+                                <select name="audit_result">{:Utility::Option($audit_opinions, $audits[$status]['audit_result'])}</select>
+                              </td>
+                          </tr>
+                          <tr>
+                              <td><b>考核人</b></td>
+                              <td>{$audits[$status]['audit_user_name']?$audits[$status]['audit_user_name']:$login_user['realname']}</td>
+                          </tr>
+                          <if condition="$audits[$status]['audit_user_id'] AND ($audits[$status]['audit_user_id'] neq $login_user['id'])">
+                              <tr>
+                                  <td><b>实际考核人</b></td><td>{$login_user['realname']}</td>
+                              </tr>
+                          </if>
+                          <tr>
+                              <td></td>
+                              <td>
+                                <input type="submit" class="btn btn-danger" value="提 交" />
+                                <span class="muted">{:M("UserStatuses")->where("id=%d",$user['status'])->getField('audit_tip')}</span>
+                              </td>
+                          </tr>
+                      </table>
+                  </if>
+                </if>
+            </div>
+        </foreach>
+    </div>
+  </div>
+</form>
+
+<script type="text/javascript">
+  function expand_all_audit() {
+    $(".audit_view_all_title").show();
+    $("#audit_tab_content .tab-pane").addClass('in active');
+  }
+
+  $(document).ready(function() {
+    $("#audit_tab li.common").click(function(){
+      $(".audit_view_all_title").hide();
+    });
+  });
+
+  function confirmit() {
+    if(window.confirm('确认提交么？')) {
+        return true;
+    }
+    return false;
+  }
+
+  function delete_audit_callback(id) {
+    $("#audit_list_"+id).remove();
+  }
+</script>

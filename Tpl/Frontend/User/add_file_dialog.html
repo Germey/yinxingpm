@@ -1,0 +1,7 @@
+<layout name="../Common/Public/dialog_with_confirm"/>
+
+<form method="post" action="/user/save_status_file" enctype="multipart/form-data">
+    <input type="hidden" name="id" value="{$id}" />
+    <input type="hidden" name="status" value="{$status}" />
+    <input type="file" name="file" />
+</form>

@@ -92,9 +92,10 @@
     </ul>
     <h5>候选人相关信息，包含了候选人数量，地区排名，年龄排名，性别比例</h5>
     <form class="filter" action="/stat/candidate" method="get" style="margin: 20px 0">
-        <?php if(is_array($filter_columns)): foreach($filter_columns as $key=>$one): ?><input type="text" name="<?php echo ($key); ?>" placeholder="<?php echo ($one['display_name']); ?>"><?php endforeach; endif; ?>
-        <input type="submit" class="btn btn-small" value="筛选">
-        <a type="button" href="/stat/candidate" class="btn btn-small" >重置</a>
+        <select class="chosen-select span2" multiple name="address_province[]" data-placeholder=" - 候选人省份 -"><?php echo getSelectOptions("user_recommends.address_province");?></select>
+        <select class="chosen-select span2" multiple name="gender[]" data-placeholder=" - 候选人性别 -"><?php echo getSelectOptions("user_info.gender");?></select>
+        <input type="submit" class="btn btn-stat" value="筛选">
+        <a type="button" href="/stat/candidate" class="btn btn-stat" >重置</a>
     </form>
     <!-- <h5>您可输入如上字段进行模糊查询筛选</h5> -->
     <table class="table table-striped table-hover home-tb">

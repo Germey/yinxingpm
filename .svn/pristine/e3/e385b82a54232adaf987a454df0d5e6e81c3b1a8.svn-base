@@ -1,0 +1,134 @@
+<?php
+    if ($status == 30) {
+        $bg_survey_questions = D("UserTypeQuestions")->getsByTypeId(4);
+    } else if ($status == 70) {
+        $bg_survey_questions = D("UserTypeQuestions")->getsByTypeId(5);
+    }
+    if($status == 30){
+        $status_name = "背景调查记录";
+    } else if ($status == 70) {
+        $status_name = "考察访谈记录";
+    }
+
+    //只有秘书或志愿者可以填写调查表
+    $isAdmin = auditEditable($login_user['role']);
+    $survey_user = D("Users")->getById($user['bg_survey_user']);
+?>
+
+<div class="print_content">
+<div class="background_survey" id="background_survey_{$status}">
+
+    <if condition="$status neq $user['status']">
+        <p>{$status_name}人员：{$survey_user['username']}</p>
+    <else />
+        <p>
+            <span>请选择负责{$status_name}人员：</span>
+            <a href="#" class="assert_bg_survey" data-type="select" data-pk="{$user['id']}" data-url="/user/ajax_assert_servey_user" data-title="指派背景调查人员">
+              {$survey_user['username']?$survey_user['username']:'请选择'}
+            </a>
+        </p>
+    </if>
+
+    <h5>{$status_name}附件</h5>
+    <blockquote>
+        <?php
+            $file_name_key = 'status_'.$status.'_files';
+            $files =  unserialize($user[$file_name_key]);
+        ?>
+        <foreach name="files" item="one">
+            <p>
+                {:substr($one['create_time'],0,16)}&nbsp;&nbsp;
+                <a target="_blank" href="/uploads/{$one['path']}">{$one['title']}</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <a href="/user/delete_status_file?id={$user['id']}&status={$status}&key={$key}" class="ajaxlink" style="color:red">x</a>
+            </p>
+        </foreach>
+        <p><a href="/user/render_add_status_file?id={$user['id']}&status={$status}" class="ajaxlink btn btn-small btn-primary">上传新附件</a></p>
+    </blockquote>
+
+    <h5>{$status_name}内容</h5>
+    <?php $content_name = 'status_'.$status.'_content'; ?>
+
+    <blockquote>    
+        <div class="content_view_part" id="unedit_{$one['id']}" question="{$one['id']}">
+            {$user[$content_name]}
+        </div>
+    </blockquote>
+
+    <if condition="$status eq $user['status']">
+        <p class="content_view_part">
+            <input type="button" class="btn btn-small btn-primary" onclick="$('#content_edit_part').show();$('.content_view_part').hide();" value="编辑">
+            <input type="button" class="btn btn-small btn-link" id="send_email_to_amdin_{$status}" value="√ 确认无误，通知负责人">
+        </p>
+
+        <div id="content_edit_part" style="display: none;">
+            <textarea class="answer editor" id="editor_{$status}" row="3" col="10">{$user[$content_name]}</textarea>
+            <a class="btn btn-small btn-primary ajaxlink" id="save_bg_survey" onclick="saveContent({$status})">保存</a>
+        </div>
+    </if>
+</div>
+</div>
+
+<script type="text/javascript">
+
+    function saveContent(status) {
+        var editor_id = 'editor_'+status;
+        $.post("/user/ajax_save_status_content",{
+            "id":{$user['id']},
+            "status":status,
+            "content":UE.getEditor(editor_id).getContent()
+        },function(data) {
+            location.reload();
+        });
+    }
+
+  $('.assert_bg_survey').editable({
+      source: {:getEditUsers()}
+  });
+
+
+//   $("#send_email_to_amdin_{$status}").on("click", function() {
+//       if (confirm("确定要发送邮件吗？")) {
+//         $(this).val('发送中，请稍后...');
+//           $.post("/user/ajax_send_mail_to_admin",{
+//             "msg":$("#email_msg_{$status}").val(),
+//             "name":"{$user['name']}",
+//             "id":"{$user['id']}"
+//         }, function(data) {
+//             if (data==1) {
+//                 show_alert_tip("邮件已发送给管理员");
+//                 $("#send_email_to_amdin_{$status}").val('邮件发送成功').addClass('disabled');
+//             }
+//         });
+//       }
+//   });
+
+//   $("#save_bg_survey_{$status}").on("click", function() {
+//       <?php foreach($bg_survey_questions as $key => $val) { ?>
+//         saveContent({$val['id']},"editor_{$val['id']}");
+//     <?php } ?>
+//     $.post("/user/ajax_get_bg_survey_answers",{
+//         "id":{$user[id]},
+//     },function(data) {
+//         data = JSON.parse(data);
+//         $.each(data, function(key, value) {
+//             $("#qa-item-"+key+" .answer-content").html(value);
+//         })
+//     });
+//   });
+
+// function show_alert_tip(msg) {
+//     $("#alert-tip").html("<p>"+msg+"</p>").show();
+//     setTimeout("$('#alert-tip').slideUp('slow', function(){ $('#alert-tip').hide(); })", 5000);
+// }
+
+// function save_all_{$status}() {
+//     if($("#save_bg_survey_{$status}").is(":visible")) {
+//         $("#save_bg_survey_{$status}").trigger("click");
+//     }
+// }
+
+// <?php foreach($bg_survey_questions as $key => $val) { ?>
+//     //UE.getEditor("editor_{$val['id']}").setContent('{$bg_survey_answers[$val["id"]]}');
+// <?php } ?>
+
+</script>

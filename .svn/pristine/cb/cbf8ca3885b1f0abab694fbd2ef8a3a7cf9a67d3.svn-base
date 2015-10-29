@@ -1,0 +1,13 @@
+<layout name="../Common/Public/dialog_without_confirm"/>
+<table class="table table-bordered">
+    <thead><td></td><th>操作人</th><th>时间</th><th>到状态</th><th>描述</th></thead>
+    <foreach name="audits" item="one">
+        <tr>
+            <td>#{++$idx}</td>
+            <td>{$one['audit_user_name']}</a></td>
+            <td nowrap title="{$one['create_time']}">{:substr($one['create_time'],0,10)}</td>
+            <td>{$user_statuses[$one['status']]}</td>
+            <td>{$one['audit_content']}</td>
+        </tr>
+    </foreach>
+</table>

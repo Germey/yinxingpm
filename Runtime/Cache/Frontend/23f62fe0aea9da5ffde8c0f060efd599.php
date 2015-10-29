@@ -81,61 +81,7 @@
         <div style="height:5px"></div><?php endif; ?>
     
 <div id="content" class="wide">
-    <?php if($is_todo == 'Y'): ?><h4>
-  申请处理列表&nbsp;
-  <span class="simple">（展示签约前状态的所有申请人）</span>
-  <?php if(can_audit($login_user)): ?><label class="checkbox pull-right">
-        <input type="checkbox" class="ajaxlink" onclick="only_me(this)" <?php echo ($login_user['show_only_related_me']?'checked':''); ?>> 只显示和我有关的
-    </label><?php endif; ?>
-</h4>
-<table class="table table-bordered">
-  <thead>
-    <tr>
-      <th>申请人</th>
-      <th>推荐人</th>
-      <th>申请类型</th>
-      <th>更新时间</th>
-      <?php if(is_array($display_status)): foreach($display_status as $key=>$one): ?><th><?php echo str_replace('待','',$one);?></th><?php endforeach; endif; ?>
-    </tr>
-  </thead>
-  <?php if(is_array($users)): foreach($users as $key=>$one): ?><tr>
-      <td>
-        <a target="_blank" href="/user/detail/<?php echo ($one['id']); ?>"><?php echo ($one['name']); ?></a>
-      </td>
-      <td><?php echo ($one['apply_type_name']); ?></td>
-      <td><?php echo substr($one['update_time'],0,16);?></td>
-      <?php if(is_array($display_status)): foreach($display_status as $key=>$status): ?><td <?php echo ($key==$one['status']?'style="background:#dff0d8"':''); ?>>
-          <!-- 如果已经完成，就不能再编辑，没有完成的就可以再编辑 -->
-          <?php if($audits[$one['id']][$key]['audit_time']): ?><span class="text-success"><?php echo ($audits[$one['id']][$key]['audit_user_name_display']); ?> √</span>
-          <?php elseif(can_admin($login_user)): ?>
-            <a href="#" class="username" id="<?php echo ($one['id']); ?>-<?php echo ($key); ?>" data-type="select" data-pk="<?php echo ($one['id']); ?>" data-url="/user/ajax_change_audit_user" data-title="选择评审人">
-              <span <?php echo ($login_user['id']==$audits[$one['id']][$key]['audit_user_id']?'class="text-error"':''); ?>>
-                <?php echo ($audits[$one['id']][$key]?$audits[$one['id']][$key]['audit_user_name_display']:'未分配'); ?>
-              </span>
-            </a>
-          <?php else: ?>
-            <span <?php echo ($login_user['id']==$audits[$one['id']][$key]['audit_user_id']?'class="text-error"':''); ?>>
-              <?php echo ($audits[$one['id']][$key]?$audits[$one['id']][$key]['audit_user_name_display']:'-'); ?>  
-            </span><?php endif; ?>
-        </td><?php endforeach; endif; ?>      
-    </tr><?php endforeach; endif; ?>
-</table>
-
-<script type="text/javascript">
-  $('.username').editable({
-      source: <?php echo ($audit_user_json_string); ?>
-  });  
-
-
-  function only_me(item) {
-      var to = 0;
-      if($(item).attr('checked')==='checked') {
-        to = 1;
-      }
-      X.get('/user/ajax_only_me?to='+to);    
-  }
-</script>
-    <?php else: ?>
+    <?php if($is_todo == 'Y'): else: ?>
         <div class="tabbable tabs-left">
           <ul class="nav nav-tabs">    
             <?php if(is_array($sub_types)): foreach($sub_types as $key=>$one): ?><li class="<?php if($key == $status): ?>active<?php endif; ?>"><a href="/user/<?php echo ($action_name); ?>?status=<?php echo ($key); ?>"><?php echo ($one); ?></a></li><?php endforeach; endif; ?>
@@ -157,35 +103,41 @@
 <form method="get" action="/user/<?php echo ($action_name); ?>" class="view-filter">
     <input type="hidden" name="status" value="<?php echo ($_GET['status']); ?>" />
     <input type="hidden" name="apply_type_id" value="<?php echo ($_GET['apply_type_id']); ?>" />
-    <?php echo display_filter_item('identifier',$_GET['identifier'],$all_columns);?>
     <?php echo display_filter_item('name',$_GET['name'],$all_columns);?>
-    <?php echo display_filter_item('classify',$_GET['classify'],$all_columns);?>
+    <?php echo display_filter_item('identifier',$_GET['identifier'],$all_columns);?>
     <?php echo display_filter_item('recommender_name',$_GET['mobile'],$all_columns);?>
-    <?php if($_GET['status']==100): echo display_filter_item('status_note',$_GET['status_note'],$all_columns); endif; ?>
+    <?php echo display_filter_item('classify',$_GET['classify'],$all_columns);?>
+    <?php echo display_filter_item('status_note',$_GET['status_note'],$all_columns);?>
+    <?php if($status == 100 OR $status == 'all'): echo display_filter_item('fail_rank',$_GET['fail_rank'],$all_columns); endif; ?>
     <button class="btn btn-small"><?php echo (L("search")); ?></button>
-    <!-- <button class="btn btn-small" onclick="resetURL()">重置</button> -->
+    <a class="btn btn-small btn-link" href="/user/<?php echo ($action_name); ?>?status=<?php echo ($_GET['status']); ?>">重置</a>
 </form>
 
 <table class="table table-striped table-hover">
 <tr>
     <th width="10"><input type="checkbox" onclick="checkall(this)"></th>
     <?php if(is_array($list_views)): foreach($list_views as $key=>$v): ?><th class="nowrap"><?php echo column_item_key($v,$all_columns, 'user/'.$action_name);?></th><?php endforeach; endif; ?>
+    <?php if($status == 99): ?><th><?php echo column_item_key('year_jie',$all_columns, 'user/'.$action_name);?></th><?php endif; ?>
 </tr>
 <?php if(is_array($users)): foreach($users as $key=>$one): ?><tr class="projectlist <?php if($one['id'] == $_GET['highlight_id']): ?>success<?php endif; ?>" value="<?php echo ($one['id']); ?>" id='tr<?php echo ($one['id']); ?>'>
     <td width="10"><input type="checkbox" id="<?php echo ($one['id']); ?>" value="<?php echo ($one['id']); ?>::<?php echo ($one['email']); ?>::<?php echo ($one['mobile']); ?>"></td>
     <?php if(is_array($list_views)): foreach($list_views as $key=>$v): $class=""; if(strlen($one[$v]) < 20) { $class = 'nowrap'; } ?>
       <td class="<?php echo ($class); ?>"><?php echo column_item_value($v, $one, $list_columns);?></td><?php endforeach; endif; ?>
+    <?php if($status == 99): ?><td>
+          <a href="#" class="change_year_jie" data-type="text" data-pk="<?php echo ($one['id']); ?>" data-url="/user/ajax_change_year_jie" data-title="哪一届">
+              <?php echo ($one['year_jie']?$one['year_jie']:'请选择'); ?>
+          </a>
+        </td><?php endif; ?>
   </tr><?php endforeach; endif; ?>
 </table>
 <div class="text-right"><?php echo ($pagestring); ?><div>
 
 <script type="text/javascript">
+
     //待改进
     $(document).ready(function() {
         $(".icon-edit-small").hide();
-    });
-    
-    $(document).ready(function() {
+
         $('.icon-edit-small').parent().parent().mouseover(function(){
             var id = $(this).parent().attr('value');
             $("#icon-edit-holder-"+id).hide();
@@ -198,18 +150,20 @@
             $("#icon-edit-holder-"+id).show();
         });
 
-        $(".tab-content table tr").each(function() {
-            if ($(this).children('td').eq(4).text()=="") {
-                $(this).children('td').eq(4).text("未分类");
-            }
-            $(this).children('td').eq(4).wrapInner("<a></a>").children().attr({
-                "data-type": "text",
-                "data-pk": $(this).attr("value"),
-                "data-url": "/user/ajax_change_classify"
-            }).editable();
-        });
+        // $('.change_classify').editable({
+        //     source: <?php echo ($user_classify_xedit_str); ?>
+        // });
+
+        $('.change_year_jie').editable();
+
         showTabs();
 
+        // 将领域列挪到机构后面
+        // $(function() {
+        //     jQuery.each($("table tr"), function() { 
+        //         $(this).children(":eq(3)").after($(this).children(":last-child"));
+        //     });
+        // });
     });
 
     //显示部分选项卡
@@ -217,7 +171,7 @@
         pathname = window.location.pathname;
         path = pathname.split('/')[2];
         switch(path) {
-            case "ever":
+            case "current":
                 $(".wide .nav-tabs li:lt(8)").css("display","block");
             break;
             case "fail":
@@ -227,7 +181,7 @@
                 //$(".wide .nav-tabs li:eq(8)").css("display","block");
             break;
             case "recommend":
-                $(".wide .nav-tabs li").css("display","block");
+                // $(".wide .nav-tabs li").css("display","block");
             break;
 
         }
@@ -337,7 +291,6 @@
         search = window.location.search;
         param = search.split('&');
         newURL = "http://" + window.location.host + window.location.pathname + param[0];
-        alert(newURL);
         document.URL = newURL;
     }
 

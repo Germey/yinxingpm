@@ -86,39 +86,81 @@
   <div class="pull-right">
     <a href="#attachments" class="btn btn-small btn-link"><?php echo (L("attachment")); ?> (<?php echo count($attachments);?>)</a>
     <a href="#notes" class="btn btn-small btn-link"><?php echo (L("note")); ?> (<?php echo count($notes);?>)</a>
-    <a class="btn btn-small btn-link" target="_blank" href="<?php echo D('Options')->getOption('webroot_apply');?>/userinfo/preview?id=<?php echo ($user['id']); ?>&token=<?php echo Crypt::en($user['id']);?>">打印预览推荐表</a>
-    <?php if($user['status'] > 50): ?><a class="btn btn-small btn-link" target="_blank" href="<?php echo D('Options')->getOption('webroot_apply');?>/userinfo/preview?id=<?php echo ($user['id']); ?>&token=<?php echo Crypt::en($user['id']);?>">打印预览申请表</a><?php endif; ?>
-
-    <?php if(can_edit($login_user) AND $user['status'] < 50): ?><a href="/user/ajax_delete_user?id=<?php echo ($user['id']); ?>" class="btn btn-small btn-link ajaxlink" ask="确定要删除这个候选人么？" onclick="">删除候选人</a><?php endif; ?>
-</div>
+    <a class="btn btn-small btn-link" target="_blank" href="<?php echo D('Options')->getOption('webroot_apply');?>/userinfo/preview_recommend?id=<?php echo ($user['id']); ?>&token=<?php echo Crypt::en($user['recommend_user_id']);?>">打印预览推荐表</a>
+    <?php if($user['status'] > 50): ?><a class="btn btn-small btn-link" target="_blank" href="<?php echo D('Options')->getOption('webroot_apply');?>/userinfo/preview?token=<?php echo Crypt::en($user['userinfo']['id']);?>">打印预览申请表</a>
+      <?php if($user['editable']): ?><a href="/user/ajax_enable_edit?id=<?php echo ($user['id']); ?>&to=0" class="btn btn-small btn-link ajaxlink">禁止编辑申请表</a>
+      <?php else: ?>
+        <a href="/user/ajax_enable_edit?id=<?php echo ($user['id']); ?>&to=1" class="btn btn-small btn-link ajaxlink">允许编辑申请表</a><?php endif; endif; ?>
+  </div>
 <input type="hidden" id="recommend_id" value="<?php echo ($user['id']); ?>"/>
-<div>
+  <div> 
+    <?php $avatar = $user['avatar']?$user['avatar']:'default_avatar.jpg'; ?>
+    <a href="/user/render_edit_avatar?id=<?php echo ($user['id']); ?>" class="ajaxlink">
+      <img src="<?php echo image_path($avatar);?>" style="max-width: 100px;" />
+    </a>
+
     <span style="font-size:32px;">
-      <?php echo ($user["name"]); if($user['identifier']): ?><span class="muted detail_iden">[<?php echo ($user["identifier"]); ?>]</span><?php endif; ?>
+      <?php echo ($user["name"]); if($user['identifier']): ?><span class="detail_iden">[<?php echo ($user["identifier"]); ?>]</span><?php endif; ?>
     </span> 
-    <span style="padding-left:20px;">
+    <span style="padding:0 10px;">
+      状态：
       <a href="#" id="change_status" data-type="select" data-pk="<?php echo ($user['id']); ?>" data-url="/user/ajax_save_status" data-title="修改状态">
           <?php echo ($user['status_name']); ?>
       </a>
-      <?php if($user['status']==100): ?><span class="muted">
-          「评级：<a href="#" id="change_status_note" data-type="select" data-pk="<?php echo ($user['id']); ?>" data-url="/user/ajax_save_status_note" data-title="备注">
-              <span class="muted"><?php echo ($user['status_note']?$user['status_note']:'评级'); ?></span>
-          </a>」
-        </span><?php endif; ?>
     </span>
+    <span style="padding:0 10px;">
+      行业:
+      <a href="#" class="change_classify" data-type="select" data-pk="<?php echo ($user['id']); ?>" data-url="/user/ajax_change_classify" data-title="请选择领域">
+            <?php echo ($user['classify']?$user['classify']:'请选择'); ?>
+      </a>
+    </span>
+
+    <span style="padding:0 10px;">
+      备注：<a href="#" id="change_status_note" data-type="text" data-pk="<?php echo ($user['id']); ?>" data-url="/user/ajax_save_status_note" data-title="备注">
+        <span class="muted"><?php echo ($user['status_note']?$user['status_note']:'备注'); ?></span>
+      </a>
+    </span>
+
+    <?php if($user['status']==100): ?><span style="padding:0 10px;">
+          评级：<a href="#" id="change_fail_rank" data-type="select" data-pk="<?php echo ($user['id']); ?>" data-url="/user/ajax_save_fail_rank" data-title="备选评级">
+            <?php echo ($user['fail_rank']?$user['fail_rank']:'编辑'); ?></span>
+          </a>
+      </span><?php endif; ?>
 </div>
+
+<!-- 可能相通的候选人，归并去 -->
+
+<?php if($user['same_as_id']): $same = D("UserRecommends")->getById($user['same_as_id']); ?>
+  <p class="alert alert-danger justcenter">
+    当前推荐为重复推荐，更多信息请查看：
+    <a href="/user/detail/<?php echo ($same['id']); ?>" target="_blank">
+      <?php echo ($same['name']); ?>（推荐人：<?php echo ($same['recommender_name']); ?> @ <?php echo ($same['recommend_submit_time']); ?>）
+    </a>
+  <p>
+<?php else: ?>
+  <?php
+ $f['name'] = $user['name']; $f['id'] = array('neq', $user['id']); $f['same_as_id'] = 0; $same = D("UserRecommends")->where($f)->order('id')->find(); ?>
+
+  <?php if($same): ?><p class="alert justcenter">
+      监测到相同姓名的候选人：<a href="/user/detail/<?php echo ($same['id']); ?>" target="_blank"><?php echo ($same['name']); ?>（推荐人：<?php echo ($same['recommender_name']); ?>）</a>&nbsp;&nbsp;
+      <a href="/user/ajax_set_same_recommend?current_rid=<?php echo ($user['id']); ?>&same_rid=<?php echo ($same['id']); ?>" class="btn btn-small btn-danger ajaxlink">标记为重复推荐</a>
+      <!-- &nbsp;<a href="/" class="btn btn-small btn-link ajaxlink" ask="确认要忽略提示么">忽略该提示</a> -->
+    </p><?php endif; endif; ?>
+
 <script type="text/javascript">
   $('#change_status').editable({
       source: <?php echo ($user_status_xedit_str); ?>
   });
-  $('#change_status_note').editable({
+  $('#change_status_note').editable();
+
+  $('#change_fail_rank').editable({
     source: <?php echo createJSONRank(4);?>
   });
 </script>
 
   <!-- 基本信息 -->
   <h5 class="clear bg colortip" title="点开展开/合并" style="cursor: pointer;" onclick="toggle_content_block('_summary_content');">
-    1. 个人简历信息<i class="icon-fullscreen"></i>
+    1. 个人简历信息<i class="icon-plus"></i>
   </h5>
   <div id="_summary_content" <?php echo ($user['pm_display_toggle']['_summary_content']?'style="display:none"':''); ?>>
     <ul class="list_display" style="margin-top:5px">
@@ -129,14 +171,13 @@
           <?php if($show): echo display_column_li($one['display_name'], nl2br($userinfo[$key]), $one['display_colspan']); endif; endif; endforeach; endif; ?>
     </ul>
   </div>
-
-
+  
   <!-- 问答题 -->
   <?php
  $question_map = array(2=>'2. 申请理由陈述', 3=>'3. 个人成长计划'); ?>
-  <?php if(is_array($question_map)): foreach($question_map as $key=>$display): $questions = D("UserQuestionAnswers")->getQuestionAnswers($userinfo['id'], $key); $block_key = '_detail_content_'.$key; ?>
+  <?php if(is_array($question_map)): foreach($question_map as $key=>$display): $questions = D("UserQuestionAnswers")->getQuestionAnswers($userinfo['id'], $key, true); $block_key = '_detail_content_'.$key; ?>
     <h5 class="clear bg colortip" style="cursor: pointer;" onclick="toggle_content_block('<?php echo ($block_key); ?>');" title="点击展开/合并">
-      <?php echo ($display); ?> <i id="open_icon<?php echo ($block_key); ?>" class="icon-fullscreen"></i>
+      <?php echo ($display); ?> <i id="open_icon<?php echo ($block_key); ?>" class="icon-plus"></i>
     </h5>
     <div id="<?php echo ($block_key); ?>" style="<?php echo ($user['pm_display_toggle'][$block_key]?'display:none;padding-left:20px':'padding-left:20px'); ?>">
         <?php if(is_array($questions)): foreach($questions as $key=>$answer): ?><div style="margin-bottom: 20px">
@@ -153,53 +194,98 @@
     </div><?php endforeach; endif; ?>
 
   <h5 class="clear bg colortip" title="点开展开/合并" style="cursor: pointer;" onclick="toggle_content_block('_recommend_content');">
-    4. 推荐人信息 - <?php echo ($user['recommender_name']); ?><i class="icon-fullscreen"></i>
+    4. 推荐人信息 - <?php echo ($user['recommender_name_full']); ?><i class="icon-plus"></i>
   </h5>
   <div id="_recommend_content" <?php echo ($user['pm_display_toggle']['_recommend_content']?'style="display:none"':''); ?>>
-    <div class="embed_recommend">
-        <!-- 基本信息 -->
-  <h5 class="clear bg colortip">1. 推荐人信息</h5>
-  <div>
-    <ul class="list_display" style="margin-top:5px">
-      <?php if(is_array($recommend_columns)): foreach($recommend_columns as $key=>$one): if($key=='name') break; if($key=='recommender_address') $user[$key] = $user[$key] . '（'. $user['recommender_address_zipcode'] .'）'; if($key=='recommender_address_zipcode') continue; ?>
-        <?php if($one['type'] == 'group'): echo display_group($user[$key], $one['options'], $one['display_name']);?>
-        <?php else: ?>
-          <?php echo display_column_li($one['display_name'], nl2br($user[$key]), $one['display_colspan']); endif; endforeach; endif; ?>
-    </ul>
-  </div>
+    <div class="embed_recommend <?php echo ($user['same_recommends']?'embed_recommend_multi':''); ?>">
+      <?php $r_user = $user; ?>
+      <?php if($r_user['same_recommends']): ?><p class="justright embed_hide">
+    <?php if(is_array($user['same_recommends'])): foreach($user['same_recommends'] as $key=>$re): ?><a class="label label-success" href="/user/detail/<?php echo ($re['id']); ?>?force=1" target="_blank">重复推荐：<?php echo ($re['recommender_name']); ?>@<?php echo ($re['recommend_submit_time']); ?></a>&nbsp;<?php endforeach; endif; ?>
+  </p><?php endif; ?>
+<!-- 基本信息 -->
+<h5 class="clear bg colortip embed_hide multi_show"><?php echo ++$recommender_idx;?>. 推荐人信息</h5>
+<div>
+  <ul class="list_display" style="margin-top:5px">
+    <?php if(is_array($recommend_columns)): foreach($recommend_columns as $key=>$one): if($key=='name') break; if($key=='recommender_address') $r_user[$key] = $r_user[$key] . '（'. $r_user['recommender_address_zipcode'] .'）'; if($key=='recommender_address_zipcode') continue; ?>
+      <?php if($one['type'] == 'group'): echo display_group($r_user[$key], $one['options'], $one['display_name']);?>
+      <?php else: ?>
+        <?php echo display_column_li($one['display_name'], nl2br($r_user[$key]), $one['display_colspan']); endif; endforeach; endif; ?>
+  </ul>
+</div>
 
-  <h5 class="clear bg colortip">2. 推荐理由（被推荐人信息）</h5>
-  <div>
-    <ul class="list_display" style="margin-top:5px">
-      <?php if(is_array($recommend_columns)): foreach($recommend_columns as $key=>$one): if(strpos($key,'recommender')===0) continue; ?>
-        <?php echo display_column_li($one['display_name'], nl2br($user[$key]), $one['display_colspan']); endforeach; endif; ?>
-    </ul>
-    <div class="clear"></div>
-    <?php
- $questions = D("UserQuestionAnswers")->getQuestionAnswers($user['id'], 1); ?>
-    <div style="padding:0 30px">    
-      <?php if(is_array($questions)): foreach($questions as $key=>$answer): ?><div style="margin-bottom: 20px" class="clear">
-          <p style="background: #f4f4f4;padding:4px 0;font-weight: bold;">
-            <span class="label label-info">问</span>
-            <?php echo ($key); ?>
-          </p>
-          <p>
-            <span class="label label-important pull-left">答</span>
-            <div style="padding-left: 25px;"><?php echo nl2br(trim($answer));?></div>
-          </p>
-        </div><?php endforeach; endif; ?>
-    </div>
-  </div>
-    </div>
-  </div>
-
-
-    <!-- 审核信息 -->
+<h5 class="clear bg colortip embed_hide">2. 推荐理由（被推荐人信息）</h5>
+<div>
+  <ul class="list_display embed_hide" style="margin-top:5px">
+    <?php if(is_array($recommend_columns)): foreach($recommend_columns as $key=>$one): if(strpos($key,'recommender')===0 || $one['hidden']=='detail') continue; ?>
+      <?php echo display_column_li($one['display_name'], nl2br($r_user[$key]), $one['display_colspan']); endforeach; endif; ?>
+  </ul>
+  <div class="clear"></div>
   <?php
- $display_status = D("UserStatuses")->getAuditStatusIdNameMap(); $max_audit_status = max(array_keys($display_status)); $tmps = Utility::AssColumn(D("UserAudits")->where('user_id=%d',$user['id'])->order('id desc')->select()); foreach($tmps as $k=>$v) { $audits[$v['status']][] = $v; } $auditing_status = 0; foreach ($display_status as $status => $name) { if($status>$user['status']) { unset($display_status[$status]); } if($status==$user['status']) { $auditing_status = $active_status = $status; } } if($user['status']>$max_audit_status) { foreach ($audits as $k => $v) { if(!$v || !$v[0]['audit_time']) { unset($display_status[$k]); } } $active_status = max(array_keys($display_status)); } if(in_array($user['status'], array(20,60))) { $audit_opinions[4] = '驳回修改'; } ?>
+ $questions = D("UserQuestionAnswers")->getQuestionAnswers($r_user['id'], 1); ?>
+  <div style="padding:0 30px">    
+    <?php if(is_array($questions)): foreach($questions as $key=>$answer): ?><div style="margin-bottom: 20px" class="clear">
+        <p style="background: #f4f4f4;padding:4px 0;font-weight: bold;">
+          <span class="label label-info">问</span>
+          <?php echo ($key); ?>
+        </p>
+        <p>
+          <span class="label label-important pull-left">答</span>
+          <div style="padding-left: 25px;"><?php echo nl2br(trim($answer));?></div>
+        </p>
+      </div><?php endforeach; endif; ?>
+  </div>
+</div>
+<br />
+
+      <?php if(is_array($user['same_recommends'])): foreach($user['same_recommends'] as $key=>$one): $r_user = $one; ?>
+        <?php if($r_user['same_recommends']): ?><p class="justright embed_hide">
+    <?php if(is_array($user['same_recommends'])): foreach($user['same_recommends'] as $key=>$re): ?><a class="label label-success" href="/user/detail/<?php echo ($re['id']); ?>?force=1" target="_blank">重复推荐：<?php echo ($re['recommender_name']); ?>@<?php echo ($re['recommend_submit_time']); ?></a>&nbsp;<?php endforeach; endif; ?>
+  </p><?php endif; ?>
+<!-- 基本信息 -->
+<h5 class="clear bg colortip embed_hide multi_show"><?php echo ++$recommender_idx;?>. 推荐人信息</h5>
+<div>
+  <ul class="list_display" style="margin-top:5px">
+    <?php if(is_array($recommend_columns)): foreach($recommend_columns as $key=>$one): if($key=='name') break; if($key=='recommender_address') $r_user[$key] = $r_user[$key] . '（'. $r_user['recommender_address_zipcode'] .'）'; if($key=='recommender_address_zipcode') continue; ?>
+      <?php if($one['type'] == 'group'): echo display_group($r_user[$key], $one['options'], $one['display_name']);?>
+      <?php else: ?>
+        <?php echo display_column_li($one['display_name'], nl2br($r_user[$key]), $one['display_colspan']); endif; endforeach; endif; ?>
+  </ul>
+</div>
+
+<h5 class="clear bg colortip embed_hide">2. 推荐理由（被推荐人信息）</h5>
+<div>
+  <ul class="list_display embed_hide" style="margin-top:5px">
+    <?php if(is_array($recommend_columns)): foreach($recommend_columns as $key=>$one): if(strpos($key,'recommender')===0 || $one['hidden']=='detail') continue; ?>
+      <?php echo display_column_li($one['display_name'], nl2br($r_user[$key]), $one['display_colspan']); endforeach; endif; ?>
+  </ul>
+  <div class="clear"></div>
+  <?php
+ $questions = D("UserQuestionAnswers")->getQuestionAnswers($r_user['id'], 1); ?>
+  <div style="padding:0 30px">    
+    <?php if(is_array($questions)): foreach($questions as $key=>$answer): ?><div style="margin-bottom: 20px" class="clear">
+        <p style="background: #f4f4f4;padding:4px 0;font-weight: bold;">
+          <span class="label label-info">问</span>
+          <?php echo ($key); ?>
+        </p>
+        <p>
+          <span class="label label-important pull-left">答</span>
+          <div style="padding-left: 25px;"><?php echo nl2br(trim($answer));?></div>
+        </p>
+      </div><?php endforeach; endif; ?>
+  </div>
+</div>
+<br /><?php endforeach; endif; ?>
+    </div>
+  </div>
+
+  <!-- 审核信息 -->
+
+<a name="audits"></a>
+<?php
+ $display_status = D("UserStatuses")->getAuditStatusIdNameMap(); $isAdmin = auditEditable($login_user['role']); $max_audit_status = max(array_keys($display_status)); $tmps = Utility::AssColumn(D("UserAudits")->where('user_id=%d',$user['id'])->order('id desc')->select()); foreach($tmps as $k=>$v) { $audits[$v['status']][] = $v; if($v['status']>$max_audit_status) { $max_audit_status = $v['status']; } } $auditing_status = 0; foreach ($display_status as $status => $name) { if($status>$max_audit_status) { unset($display_status[$status]); } if($status==$user['status']) { $auditing_status = $active_status = $status; } } if($user['status']>$max_audit_status) { foreach ($audits as $k => $v) { if(!$v || !$v[0]['audit_time']) { unset($display_status[$k]); } } $active_status = max(array_keys($display_status)); } if(in_array($user['status'], array(20,60))) { $audit_opinions[4] = '申请表驳回修改'; } ?>
 <div class="label label-warning alert-tip" id="alert-tip"><p>警告框</p></div>
 <h5 class="clear bg colortip" title="点击展开/合并" style="cursor: pointer;" onclick="toggle_content_block('_audit_content');">
-  # 考核过程 #<i class="icon-fullscreen"></i>
+  # 考核过程 #<i class="icon-plus"></i>
 </h5>
 
 <form method="post" action="/user/submit_audit" enctype="multipart/form-data" class="validator form-horizontal" style="padding:0 20px" onsubmit="return confirmit()">
@@ -210,186 +296,139 @@
             <?php echo str_replace('待','',$one);?>&nbsp;&nbsp;<?php echo ($audits[$key]['audit_result']==1?'√':''); ?> <?php echo ($audits[$key]['audit_result']==2?'<span class="text-error">x</span>':''); ?>
           </a>
         </li><?php endforeach; endif; ?>
-      <li class="pull-right"><a title="展开所有评审" onclick="expand_all_audit()"><i class="icon-chevron-down"></i></a></li>
+      <li class="pull-right">
+        <a title="审核历史" href="/user/render_audit_history?id=<?php echo ($user['id']); ?>" class="ajaxlink"><i class="icon-calendar"></i></a>
+      </li>
+      <li class="pull-right">
+        <a title="展开所有评审" onclick="expand_all_audit()"><i class="icon-chevron-down"></i></a>
+      </li>
     </ul>
     
     <div id="audit_tab_content" class="tab-content" style="padding: 0 10px;">
         <?php if(is_array($display_status)): foreach($display_status as $status=>$one): ?><div class="tab-pane fade <?php echo ($status==$active_status?'in active':''); ?>" id="audit_<?php echo ($status); ?>">
                 <p class="alert alert-success audit_view_all_title"><?php echo str_replace('待','',$one);?></span></p>
-                <?php if($status == 30): if ($status == 30) { $bg_survey_questions = D("UserTypeQuestions")->getsByTypeId(4); } else if ($status == 70) { $bg_survey_questions = D("UserTypeQuestions")->getsByTypeId(5); } $bg_survey_answers = D("BackgroundSurvey")->getAnswers($user['id']); $editable = auditEditable($login_user['role']); $survey_user = D("Users")->getById($user['bg_survey_user']); if($status == 30){ $status_name = "背景调查记录"; } else if ($status == 70) { $status_name = "考察访谈记录"; } ?>
+                <?php if($status == 30): if ($status == 30) { $bg_survey_questions = D("UserTypeQuestions")->getsByTypeId(4); } else if ($status == 70) { $bg_survey_questions = D("UserTypeQuestions")->getsByTypeId(5); } if($status == 30){ $status_name = "背景调查记录"; } else if ($status == 70) { $status_name = "考察访谈记录"; } $isAdmin = auditEditable($login_user['role']); $survey_user = D("Users")->getById($user['bg_survey_user']); ?>
 
 <div class="print_content">
 <div class="background_survey" id="background_survey_<?php echo ($status); ?>">
-	<?php if(!$editable): if(is_array($bg_survey_questions)): foreach($bg_survey_questions as $key=>$one): ?><div class="question">
-				<p style="background: #f4f4f4;padding:4px 0;font-weight: bold;">
-		        <span class="label label-info">问</span>
-		        <?php echo ($one['question']); ?>
-		    	</p>
-		    </div>
-		    <div class="ans-item">
-		    	<div class="answer" id="unedit_<?php echo ($one['id']); ?>" question="<?php echo ($one['id']); ?>"row="3" col="10"><?php echo ($bg_survey_answers[$one['id']]); ?></div>
-		    	<div id="editable_<?php echo ($one['id']); ?>" style="display:none">
-			    	<textarea class="answer editor" id="editor_<?php echo ($one['id']); ?>" question="<?php echo ($one['id']); ?>"row="3" col="10"><?php echo ($bg_survey_answers[$one['id']]); ?></textarea>
-			    </div>
-		    	<a target="<?php echo ($one['id']); ?>" class="edit">编辑</a>
-		    </div><?php endforeach; endif; ?>
-		<p><span>当前负责背景调查人员：</span>
-			<a href="#" class="assert_bg_survey" data-type="select" data-pk="<?php echo ($user['id']); ?>" data-url="/user/ajax_assert_servey_user" data-title="指派背景调查人员">
-	          <?php echo ($survey_user['username']); ?>
-	      </a>
-	  	</p>
-	  	<input type="button" class="btn btn-danger" id="save_bg_survey_<?php echo ($status); ?>" value="保存">
-	  	<input type="button" class="btn btn-primary" id="pirnt_bg_survey_<?php echo ($status); ?>" value="打印">
-	<?php else: ?>
-		<?php if(is_array($bg_survey_questions)): foreach($bg_survey_questions as $key=>$one): ?><div class="question">
-				<p style="background: #f4f4f4;padding:4px 0;font-weight: bold;">
-		        <span class="label label-info">问</span>
-		        <?php echo ($one['question']); ?>
-		    	</p>
-		    </div>
-		    <div class="ans-item">
-		    	<div id="editable_<?php echo ($one['id']); ?>">
-			    	<textarea class="answer editor" id="editor_<?php echo ($one['id']); ?>" question="<?php echo ($one['id']); ?>"row="3" col="10"><?php echo ($bg_survey_answers[$one['id']]); ?></textarea>
-			    </div>
-		    </div><?php endforeach; endif; ?>
-		<input type="button" class="btn btn-danger" id="save_bg_survey_<?php echo ($status); ?>" value="保存"><br><br>
-		<textarea id="email_msg_<?php echo ($status); ?>" placeholder="如果调查完毕，请写句话告诉管理员吧"><?php echo ($user['name']); ?>的背景调查已经填写完毕，请审核。</textarea>
-		<input type="button" class="btn btn-primary" id="send_email_to_amdin_<?php echo ($status); ?>" value="发送邮件给项目负责人">
-		<script>
-			setInterval("save_all_<?php echo ($status); ?>()", 5000);
-		</script><?php endif; ?>
+
+    <?php if($status != $user['status']): ?><p><?php echo ($status_name); ?>人员：<?php echo ($survey_user['username']); ?></p>
+    <?php else: ?>
+        <p>
+            <span>请选择负责<?php echo ($status_name); ?>人员：</span>
+            <a href="#" class="assert_bg_survey" data-type="select" data-pk="<?php echo ($user['id']); ?>" data-url="/user/ajax_assert_servey_user" data-title="指派背景调查人员">
+              <?php echo ($survey_user['username']?$survey_user['username']:'请选择'); ?>
+            </a>
+        </p><?php endif; ?>
+
+    <h5><?php echo ($status_name); ?>附件</h5>
+    <blockquote>
+        <?php
+ $file_name_key = 'status_'.$status.'_files'; $files = unserialize($user[$file_name_key]); ?>
+        <?php if(is_array($files)): foreach($files as $key=>$one): ?><p>
+                <?php echo substr($one['create_time'],0,16);?>&nbsp;&nbsp;
+                <a target="_blank" href="/uploads/<?php echo ($one['path']); ?>"><?php echo ($one['title']); ?></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <a href="/user/delete_status_file?id=<?php echo ($user['id']); ?>&status=<?php echo ($status); ?>&key=<?php echo ($key); ?>" class="ajaxlink" style="color:red">x</a>
+            </p><?php endforeach; endif; ?>
+        <p><a href="/user/render_add_status_file?id=<?php echo ($user['id']); ?>&status=<?php echo ($status); ?>" class="ajaxlink btn btn-small btn-primary">上传新附件</a></p>
+    </blockquote>
+
+    <h5><?php echo ($status_name); ?>内容</h5>
+    <?php $content_name = 'status_'.$status.'_content'; ?>
+
+    <blockquote>    
+        <div class="content_view_part" id="unedit_<?php echo ($one['id']); ?>" question="<?php echo ($one['id']); ?>">
+            <?php echo ($user[$content_name]); ?>
+        </div>
+    </blockquote>
+
+    <?php if($status == $user['status']): ?><p class="content_view_part">
+            <input type="button" class="btn btn-small btn-primary" onclick="$('#content_edit_part').show();$('.content_view_part').hide();" value="编辑">
+            <input type="button" class="btn btn-small btn-link" id="send_email_to_amdin_<?php echo ($status); ?>" value="√ 确认无误，通知负责人">
+        </p>
+
+        <div id="content_edit_part" style="display: none;">
+            <textarea class="answer editor" id="editor_<?php echo ($status); ?>" row="3" col="10"><?php echo ($user[$content_name]); ?></textarea>
+            <a class="btn btn-small btn-primary ajaxlink" id="save_bg_survey" onclick="saveContent(<?php echo ($status); ?>)">保存</a>
+        </div><?php endif; ?>
 </div>
-</div>
-<div id="survey_print_<?php echo ($status); ?>" style="display:none">
-	<div class="container survey-print">
-		<div class="survey-personal-info">
-			<?php echo ($user["name"]); echo ($status_name); ?>表
-		</div>
-		<?php if(is_array($bg_survey_questions)): foreach($bg_survey_questions as $key=>$one): ?><div class="qa-item" id="qa-item-<?php echo ($one['id']); ?>">
-				<div class="question">
-					<p style="background: #f4f4f4;padding:4px 0;font-weight: bold;">
-			        	<span class="label label-info">问</span>
-			        	<?php echo ($one['question']); ?>
-			    	</p>
-			    </div>
-			    <div class="answer">
-			    	<p>
-			        	<span class="label label-important pull-left">答</span>
-			        </p>
-			        <div style="padding-top: 25px;" class="answer-content"><?php echo ($bg_survey_answers[$one['id']]); ?></div>
-			    </div>
-			</div><?php endforeach; endif; ?>
-	</div>
 </div>
 
 <script type="text/javascript">
 
-$(function(){
-	$(".edit").on("click", function() {
-		$("#editable_"+$(this).attr("target")).css("display","block");
-		$("#unedit_"+$(this).attr("target")).css("display","none");
-		$(this).css("display","none");
-	});
-})
+    function saveContent(status) {
+        var editor_id = 'editor_'+status;
+        $.post("/user/ajax_save_status_content",{
+            "id":<?php echo ($user['id']); ?>,
+            "status":status,
+            "content":UE.getEditor(editor_id).getContent()
+        },function(data) {
+            location.reload();
+        });
+    }
 
-$("#pirnt_bg_survey_<?php echo ($status); ?>").on("click", function() {
-	$("#save_bg_survey_<?php echo ($status); ?>").trigger("click");
-	$.post("/user/ajax_get_bg_survey_answers",{
-    	"id":<?php echo ($user[id]); ?>,
-    },function(data) {
-    	data = JSON.parse(data);
-    	$.each(data, function(key, value) {
-    		$("#qa-item-"+key+" .answer-content").html(value);
-    	});
-    	document.body.innerHTML = $("#survey_print_<?php echo ($status); ?>").html();
-		setTimeout("window.print()",1000);
-    });
-	
-});
-
-function saveContent(question_id, editor_id){
-	$.post("/user/ajax_save_bg_survey",{
-    	"question_id":question_id,
-    	"recommend_id":<?php echo ($user['id']); ?>,
-    	"survey_id":<?php echo ($user['bg_survey_user']); ?>,
-    	"answer":UE.getEditor(editor_id).getContent()
-    },function(data) {
-    	if(data>0) {
-    		show_alert_tip("调查结果已保存");
-    	}	
-    })
-}
-
-  $('.assert_bg_survey').editable({ 
-  	source: <?php echo getEditUsers();?>
+  $('.assert_bg_survey').editable({
+      source: <?php echo getEditUsers();?>
   });
 
-  $(".background_survey .answer").on("blur", function() {
-    $.post("/user/ajax_save_bg_survey",{
-    	"question_id":$(this).attr("question"),
-    	"recommend_id":<?php echo ($user['id']); ?>,
-    	"survey_id":<?php echo ($user['bg_survey_user']); ?>,
-    	"answer":$(this).val()
-    },function(data) {
-    	if(data>0) {
-    		show_alert_tip("调查结果已保存");
-    	}	
-    })
-  });
-  $("#send_email_to_amdin_<?php echo ($status); ?>").on("click", function() {
-  	if (confirm("确定要发送邮件吗？")) {
-  		$.post("/user/ajax_send_mail_to_admin",{
-	    	"msg":$("#email_msg_<?php echo ($status); ?>").val(),
-	    	"name":"<?php echo ($user['name']); ?>",
-	    	"id":"<?php echo ($user['id']); ?>"
-	    }, function(data) {
-	    	if (data==1) {
-	    		show_alert_tip("邮件已发送给管理员");
-	    	}
-	    });
-  	}
-  });
-  $("#save_bg_survey_<?php echo ($status); ?>").on("click", function() {
-  	<?php foreach($bg_survey_questions as $key => $val) { ?>
-		saveContent(<?php echo ($val['id']); ?>,"editor_<?php echo ($val['id']); ?>");
-	<?php } ?>
-	$.post("/user/ajax_get_bg_survey_answers",{
-    	"id":<?php echo ($user[id]); ?>,
-    },function(data) {
-    	data = JSON.parse(data);
-    	$.each(data, function(key, value) {
-    		$("#qa-item-"+key+" .answer-content").html(value);
-    	})
-    });
-  });
 
-function show_alert_tip(msg) {
-    $("#alert-tip").html("<p>"+msg+"</p>").show();
-    setTimeout("$('#alert-tip').slideUp('slow', function(){ $('#alert-tip').hide(); })", 5000);
-}
+//   $("#send_email_to_amdin_<?php echo ($status); ?>").on("click", function() {
+//       if (confirm("确定要发送邮件吗？")) {
+//         $(this).val('发送中，请稍后...');
+//           $.post("/user/ajax_send_mail_to_admin",{
+//             "msg":$("#email_msg_<?php echo ($status); ?>").val(),
+//             "name":"<?php echo ($user['name']); ?>",
+//             "id":"<?php echo ($user['id']); ?>"
+//         }, function(data) {
+//             if (data==1) {
+//                 show_alert_tip("邮件已发送给管理员");
+//                 $("#send_email_to_amdin_<?php echo ($status); ?>").val('邮件发送成功').addClass('disabled');
+//             }
+//         });
+//       }
+//   });
 
-function save_all_<?php echo ($status); ?>() {
-	if($("#save_bg_survey_<?php echo ($status); ?>").is(":visible")) {
-		$("#save_bg_survey_<?php echo ($status); ?>").trigger("click");
-	}
-}
+//   $("#save_bg_survey_<?php echo ($status); ?>").on("click", function() {
+//       <?php foreach($bg_survey_questions as $key => $val) { ?>
+//         saveContent(<?php echo ($val['id']); ?>,"editor_<?php echo ($val['id']); ?>");
+//     <?php } ?>
+//     $.post("/user/ajax_get_bg_survey_answers",{
+//         "id":<?php echo ($user[id]); ?>,
+//     },function(data) {
+//         data = JSON.parse(data);
+//         $.each(data, function(key, value) {
+//             $("#qa-item-"+key+" .answer-content").html(value);
+//         })
+//     });
+//   });
 
-<?php foreach($bg_survey_questions as $key => $val) { ?>
-	//UE.getEditor("editor_<?php echo ($val['id']); ?>").setContent('<?php echo ($bg_survey_answers[$val["id"]]); ?>');
-<?php } ?>
+// function show_alert_tip(msg) {
+//     $("#alert-tip").html("<p>"+msg+"</p>").show();
+//     setTimeout("$('#alert-tip').slideUp('slow', function(){ $('#alert-tip').hide(); })", 5000);
+// }
+
+// function save_all_<?php echo ($status); ?>() {
+//     if($("#save_bg_survey_<?php echo ($status); ?>").is(":visible")) {
+//         $("#save_bg_survey_<?php echo ($status); ?>").trigger("click");
+//     }
+// }
+
+// <?php foreach($bg_survey_questions as $key => $val) { ?>
+//     //UE.getEditor("editor_<?php echo ($val['id']); ?>").setContent('<?php echo ($bg_survey_answers[$val["id"]]); ?>');
+// <?php } ?>
 
 </script>
                 <?php elseif($status == 40): ?>
                     <?php  $names = D("Users")->getField("id,username"); if($status == 40){ $status_name = "项目组初筛"; } else if ($status == 60) { $status_name = "秘书处二筛"; } else if ($status == 80) { $status_name = "秘书处终筛"; } ?>
-<div class="send_to_audits">
-	<div class="email_select" >
+<!-- <div class="send_to_audits">
+	<div class="email_select">
 		<select class="chosen-select span2" multiple name="emails[]" data-placeholder="邮件列表"><?php echo Utility::Option($names,null);?></select>
 	</div>
 	<textarea class="msg" id="email_msg_<?php echo ($status); ?>" placeholder="请告诉大家您要说的话"><?php echo ($user['name']); ?>已经进入<?php echo ($status_name); ?>阶段，请大家共同讨论意见。</textarea>
 	<input type="button" class="btn btn-primary" id="send_email_to_audits_<?php echo ($status); ?>" value="发送邮件给通知大家">
-</div>
-<script type="text/javascript">
+</div> -->
 
+<script type="text/javascript">
 $('#send_email_to_audits_<?php echo ($status); ?>').on("click", function() {
 	var size = $(".email_select li.search-choice").size();
 	var arr = new Array();
@@ -415,15 +454,15 @@ $('#send_email_to_audits_<?php echo ($status); ?>').on("click", function() {
 </script>
                 <?php elseif($status == 60): ?>
                     <?php  $names = D("Users")->getField("id,username"); if($status == 40){ $status_name = "项目组初筛"; } else if ($status == 60) { $status_name = "秘书处二筛"; } else if ($status == 80) { $status_name = "秘书处终筛"; } ?>
-<div class="send_to_audits">
-	<div class="email_select" >
+<!-- <div class="send_to_audits">
+	<div class="email_select">
 		<select class="chosen-select span2" multiple name="emails[]" data-placeholder="邮件列表"><?php echo Utility::Option($names,null);?></select>
 	</div>
 	<textarea class="msg" id="email_msg_<?php echo ($status); ?>" placeholder="请告诉大家您要说的话"><?php echo ($user['name']); ?>已经进入<?php echo ($status_name); ?>阶段，请大家共同讨论意见。</textarea>
 	<input type="button" class="btn btn-primary" id="send_email_to_audits_<?php echo ($status); ?>" value="发送邮件给通知大家">
-</div>
-<script type="text/javascript">
+</div> -->
 
+<script type="text/javascript">
 $('#send_email_to_audits_<?php echo ($status); ?>').on("click", function() {
 	var size = $(".email_select li.search-choice").size();
 	var arr = new Array();
@@ -449,180 +488,128 @@ $('#send_email_to_audits_<?php echo ($status); ?>').on("click", function() {
 </script>
                 <?php elseif($status == 70): ?>
                     <?php
- if ($status == 30) { $bg_survey_questions = D("UserTypeQuestions")->getsByTypeId(4); } else if ($status == 70) { $bg_survey_questions = D("UserTypeQuestions")->getsByTypeId(5); } $bg_survey_answers = D("BackgroundSurvey")->getAnswers($user['id']); $editable = auditEditable($login_user['role']); $survey_user = D("Users")->getById($user['bg_survey_user']); if($status == 30){ $status_name = "背景调查记录"; } else if ($status == 70) { $status_name = "考察访谈记录"; } ?>
+ if ($status == 30) { $bg_survey_questions = D("UserTypeQuestions")->getsByTypeId(4); } else if ($status == 70) { $bg_survey_questions = D("UserTypeQuestions")->getsByTypeId(5); } if($status == 30){ $status_name = "背景调查记录"; } else if ($status == 70) { $status_name = "考察访谈记录"; } $isAdmin = auditEditable($login_user['role']); $survey_user = D("Users")->getById($user['bg_survey_user']); ?>
 
 <div class="print_content">
 <div class="background_survey" id="background_survey_<?php echo ($status); ?>">
-	<?php if(!$editable): if(is_array($bg_survey_questions)): foreach($bg_survey_questions as $key=>$one): ?><div class="question">
-				<p style="background: #f4f4f4;padding:4px 0;font-weight: bold;">
-		        <span class="label label-info">问</span>
-		        <?php echo ($one['question']); ?>
-		    	</p>
-		    </div>
-		    <div class="ans-item">
-		    	<div class="answer" id="unedit_<?php echo ($one['id']); ?>" question="<?php echo ($one['id']); ?>"row="3" col="10"><?php echo ($bg_survey_answers[$one['id']]); ?></div>
-		    	<div id="editable_<?php echo ($one['id']); ?>" style="display:none">
-			    	<textarea class="answer editor" id="editor_<?php echo ($one['id']); ?>" question="<?php echo ($one['id']); ?>"row="3" col="10"><?php echo ($bg_survey_answers[$one['id']]); ?></textarea>
-			    </div>
-		    	<a target="<?php echo ($one['id']); ?>" class="edit">编辑</a>
-		    </div><?php endforeach; endif; ?>
-		<p><span>当前负责背景调查人员：</span>
-			<a href="#" class="assert_bg_survey" data-type="select" data-pk="<?php echo ($user['id']); ?>" data-url="/user/ajax_assert_servey_user" data-title="指派背景调查人员">
-	          <?php echo ($survey_user['username']); ?>
-	      </a>
-	  	</p>
-	  	<input type="button" class="btn btn-danger" id="save_bg_survey_<?php echo ($status); ?>" value="保存">
-	  	<input type="button" class="btn btn-primary" id="pirnt_bg_survey_<?php echo ($status); ?>" value="打印">
-	<?php else: ?>
-		<?php if(is_array($bg_survey_questions)): foreach($bg_survey_questions as $key=>$one): ?><div class="question">
-				<p style="background: #f4f4f4;padding:4px 0;font-weight: bold;">
-		        <span class="label label-info">问</span>
-		        <?php echo ($one['question']); ?>
-		    	</p>
-		    </div>
-		    <div class="ans-item">
-		    	<div id="editable_<?php echo ($one['id']); ?>">
-			    	<textarea class="answer editor" id="editor_<?php echo ($one['id']); ?>" question="<?php echo ($one['id']); ?>"row="3" col="10"><?php echo ($bg_survey_answers[$one['id']]); ?></textarea>
-			    </div>
-		    </div><?php endforeach; endif; ?>
-		<input type="button" class="btn btn-danger" id="save_bg_survey_<?php echo ($status); ?>" value="保存"><br><br>
-		<textarea id="email_msg_<?php echo ($status); ?>" placeholder="如果调查完毕，请写句话告诉管理员吧"><?php echo ($user['name']); ?>的背景调查已经填写完毕，请审核。</textarea>
-		<input type="button" class="btn btn-primary" id="send_email_to_amdin_<?php echo ($status); ?>" value="发送邮件给项目负责人">
-		<script>
-			setInterval("save_all_<?php echo ($status); ?>()", 5000);
-		</script><?php endif; ?>
+
+    <?php if($status != $user['status']): ?><p><?php echo ($status_name); ?>人员：<?php echo ($survey_user['username']); ?></p>
+    <?php else: ?>
+        <p>
+            <span>请选择负责<?php echo ($status_name); ?>人员：</span>
+            <a href="#" class="assert_bg_survey" data-type="select" data-pk="<?php echo ($user['id']); ?>" data-url="/user/ajax_assert_servey_user" data-title="指派背景调查人员">
+              <?php echo ($survey_user['username']?$survey_user['username']:'请选择'); ?>
+            </a>
+        </p><?php endif; ?>
+
+    <h5><?php echo ($status_name); ?>附件</h5>
+    <blockquote>
+        <?php
+ $file_name_key = 'status_'.$status.'_files'; $files = unserialize($user[$file_name_key]); ?>
+        <?php if(is_array($files)): foreach($files as $key=>$one): ?><p>
+                <?php echo substr($one['create_time'],0,16);?>&nbsp;&nbsp;
+                <a target="_blank" href="/uploads/<?php echo ($one['path']); ?>"><?php echo ($one['title']); ?></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <a href="/user/delete_status_file?id=<?php echo ($user['id']); ?>&status=<?php echo ($status); ?>&key=<?php echo ($key); ?>" class="ajaxlink" style="color:red">x</a>
+            </p><?php endforeach; endif; ?>
+        <p><a href="/user/render_add_status_file?id=<?php echo ($user['id']); ?>&status=<?php echo ($status); ?>" class="ajaxlink btn btn-small btn-primary">上传新附件</a></p>
+    </blockquote>
+
+    <h5><?php echo ($status_name); ?>内容</h5>
+    <?php $content_name = 'status_'.$status.'_content'; ?>
+
+    <blockquote>    
+        <div class="content_view_part" id="unedit_<?php echo ($one['id']); ?>" question="<?php echo ($one['id']); ?>">
+            <?php echo ($user[$content_name]); ?>
+        </div>
+    </blockquote>
+
+    <?php if($status == $user['status']): ?><p class="content_view_part">
+            <input type="button" class="btn btn-small btn-primary" onclick="$('#content_edit_part').show();$('.content_view_part').hide();" value="编辑">
+            <input type="button" class="btn btn-small btn-link" id="send_email_to_amdin_<?php echo ($status); ?>" value="√ 确认无误，通知负责人">
+        </p>
+
+        <div id="content_edit_part" style="display: none;">
+            <textarea class="answer editor" id="editor_<?php echo ($status); ?>" row="3" col="10"><?php echo ($user[$content_name]); ?></textarea>
+            <a class="btn btn-small btn-primary ajaxlink" id="save_bg_survey" onclick="saveContent(<?php echo ($status); ?>)">保存</a>
+        </div><?php endif; ?>
 </div>
-</div>
-<div id="survey_print_<?php echo ($status); ?>" style="display:none">
-	<div class="container survey-print">
-		<div class="survey-personal-info">
-			<?php echo ($user["name"]); echo ($status_name); ?>表
-		</div>
-		<?php if(is_array($bg_survey_questions)): foreach($bg_survey_questions as $key=>$one): ?><div class="qa-item" id="qa-item-<?php echo ($one['id']); ?>">
-				<div class="question">
-					<p style="background: #f4f4f4;padding:4px 0;font-weight: bold;">
-			        	<span class="label label-info">问</span>
-			        	<?php echo ($one['question']); ?>
-			    	</p>
-			    </div>
-			    <div class="answer">
-			    	<p>
-			        	<span class="label label-important pull-left">答</span>
-			        </p>
-			        <div style="padding-top: 25px;" class="answer-content"><?php echo ($bg_survey_answers[$one['id']]); ?></div>
-			    </div>
-			</div><?php endforeach; endif; ?>
-	</div>
 </div>
 
 <script type="text/javascript">
 
-$(function(){
-	$(".edit").on("click", function() {
-		$("#editable_"+$(this).attr("target")).css("display","block");
-		$("#unedit_"+$(this).attr("target")).css("display","none");
-		$(this).css("display","none");
-	});
-})
+    function saveContent(status) {
+        var editor_id = 'editor_'+status;
+        $.post("/user/ajax_save_status_content",{
+            "id":<?php echo ($user['id']); ?>,
+            "status":status,
+            "content":UE.getEditor(editor_id).getContent()
+        },function(data) {
+            location.reload();
+        });
+    }
 
-$("#pirnt_bg_survey_<?php echo ($status); ?>").on("click", function() {
-	$("#save_bg_survey_<?php echo ($status); ?>").trigger("click");
-	$.post("/user/ajax_get_bg_survey_answers",{
-    	"id":<?php echo ($user[id]); ?>,
-    },function(data) {
-    	data = JSON.parse(data);
-    	$.each(data, function(key, value) {
-    		$("#qa-item-"+key+" .answer-content").html(value);
-    	});
-    	document.body.innerHTML = $("#survey_print_<?php echo ($status); ?>").html();
-		setTimeout("window.print()",1000);
-    });
-	
-});
-
-function saveContent(question_id, editor_id){
-	$.post("/user/ajax_save_bg_survey",{
-    	"question_id":question_id,
-    	"recommend_id":<?php echo ($user['id']); ?>,
-    	"survey_id":<?php echo ($user['bg_survey_user']); ?>,
-    	"answer":UE.getEditor(editor_id).getContent()
-    },function(data) {
-    	if(data>0) {
-    		show_alert_tip("调查结果已保存");
-    	}	
-    })
-}
-
-  $('.assert_bg_survey').editable({ 
-  	source: <?php echo getEditUsers();?>
+  $('.assert_bg_survey').editable({
+      source: <?php echo getEditUsers();?>
   });
 
-  $(".background_survey .answer").on("blur", function() {
-    $.post("/user/ajax_save_bg_survey",{
-    	"question_id":$(this).attr("question"),
-    	"recommend_id":<?php echo ($user['id']); ?>,
-    	"survey_id":<?php echo ($user['bg_survey_user']); ?>,
-    	"answer":$(this).val()
-    },function(data) {
-    	if(data>0) {
-    		show_alert_tip("调查结果已保存");
-    	}	
-    })
-  });
-  $("#send_email_to_amdin_<?php echo ($status); ?>").on("click", function() {
-  	if (confirm("确定要发送邮件吗？")) {
-  		$.post("/user/ajax_send_mail_to_admin",{
-	    	"msg":$("#email_msg_<?php echo ($status); ?>").val(),
-	    	"name":"<?php echo ($user['name']); ?>",
-	    	"id":"<?php echo ($user['id']); ?>"
-	    }, function(data) {
-	    	if (data==1) {
-	    		show_alert_tip("邮件已发送给管理员");
-	    	}
-	    });
-  	}
-  });
-  $("#save_bg_survey_<?php echo ($status); ?>").on("click", function() {
-  	<?php foreach($bg_survey_questions as $key => $val) { ?>
-		saveContent(<?php echo ($val['id']); ?>,"editor_<?php echo ($val['id']); ?>");
-	<?php } ?>
-	$.post("/user/ajax_get_bg_survey_answers",{
-    	"id":<?php echo ($user[id]); ?>,
-    },function(data) {
-    	data = JSON.parse(data);
-    	$.each(data, function(key, value) {
-    		$("#qa-item-"+key+" .answer-content").html(value);
-    	})
-    });
-  });
 
-function show_alert_tip(msg) {
-    $("#alert-tip").html("<p>"+msg+"</p>").show();
-    setTimeout("$('#alert-tip').slideUp('slow', function(){ $('#alert-tip').hide(); })", 5000);
-}
+//   $("#send_email_to_amdin_<?php echo ($status); ?>").on("click", function() {
+//       if (confirm("确定要发送邮件吗？")) {
+//         $(this).val('发送中，请稍后...');
+//           $.post("/user/ajax_send_mail_to_admin",{
+//             "msg":$("#email_msg_<?php echo ($status); ?>").val(),
+//             "name":"<?php echo ($user['name']); ?>",
+//             "id":"<?php echo ($user['id']); ?>"
+//         }, function(data) {
+//             if (data==1) {
+//                 show_alert_tip("邮件已发送给管理员");
+//                 $("#send_email_to_amdin_<?php echo ($status); ?>").val('邮件发送成功').addClass('disabled');
+//             }
+//         });
+//       }
+//   });
 
-function save_all_<?php echo ($status); ?>() {
-	if($("#save_bg_survey_<?php echo ($status); ?>").is(":visible")) {
-		$("#save_bg_survey_<?php echo ($status); ?>").trigger("click");
-	}
-}
+//   $("#save_bg_survey_<?php echo ($status); ?>").on("click", function() {
+//       <?php foreach($bg_survey_questions as $key => $val) { ?>
+//         saveContent(<?php echo ($val['id']); ?>,"editor_<?php echo ($val['id']); ?>");
+//     <?php } ?>
+//     $.post("/user/ajax_get_bg_survey_answers",{
+//         "id":<?php echo ($user[id]); ?>,
+//     },function(data) {
+//         data = JSON.parse(data);
+//         $.each(data, function(key, value) {
+//             $("#qa-item-"+key+" .answer-content").html(value);
+//         })
+//     });
+//   });
 
-<?php foreach($bg_survey_questions as $key => $val) { ?>
-	//UE.getEditor("editor_<?php echo ($val['id']); ?>").setContent('<?php echo ($bg_survey_answers[$val["id"]]); ?>');
-<?php } ?>
+// function show_alert_tip(msg) {
+//     $("#alert-tip").html("<p>"+msg+"</p>").show();
+//     setTimeout("$('#alert-tip').slideUp('slow', function(){ $('#alert-tip').hide(); })", 5000);
+// }
+
+// function save_all_<?php echo ($status); ?>() {
+//     if($("#save_bg_survey_<?php echo ($status); ?>").is(":visible")) {
+//         $("#save_bg_survey_<?php echo ($status); ?>").trigger("click");
+//     }
+// }
+
+// <?php foreach($bg_survey_questions as $key => $val) { ?>
+//     //UE.getEditor("editor_<?php echo ($val['id']); ?>").setContent('<?php echo ($bg_survey_answers[$val["id"]]); ?>');
+// <?php } ?>
 
 </script>
                 <?php elseif($status == 80): ?>
                     <?php  $names = D("Users")->getField("id,username"); if($status == 40){ $status_name = "项目组初筛"; } else if ($status == 60) { $status_name = "秘书处二筛"; } else if ($status == 80) { $status_name = "秘书处终筛"; } ?>
-<div class="send_to_audits">
-	<div class="email_select" >
+<!-- <div class="send_to_audits">
+	<div class="email_select">
 		<select class="chosen-select span2" multiple name="emails[]" data-placeholder="邮件列表"><?php echo Utility::Option($names,null);?></select>
 	</div>
 	<textarea class="msg" id="email_msg_<?php echo ($status); ?>" placeholder="请告诉大家您要说的话"><?php echo ($user['name']); ?>已经进入<?php echo ($status_name); ?>阶段，请大家共同讨论意见。</textarea>
 	<input type="button" class="btn btn-primary" id="send_email_to_audits_<?php echo ($status); ?>" value="发送邮件给通知大家">
-</div>
-<script type="text/javascript">
+</div> -->
 
+<script type="text/javascript">
 $('#send_email_to_audits_<?php echo ($status); ?>').on("click", function() {
 	var size = $(".email_select li.search-choice").size();
 	var arr = new Array();
@@ -659,44 +646,40 @@ $('#send_email_to_audits_<?php echo ($status); ?>').on("click", function() {
                             <p><i class="icon-envelope"></i> <?php echo ($one['audit_email']['to']); ?> 【邮件题目：<?php echo ($one['audit_email']['subject']); ?>】</p><?php endif; ?>
                         </blockquote>
                     </div><?php endforeach; endif; ?>
+                <?php if(!$isAdmin): if($auditing_status == $status): ?><input type="hidden" name="user_id" value="<?php echo ($user['id']); ?>" />
+                      <!--             <input type="hidden" name="id" value="<?php echo ($audits[$status]['id']); ?>" /> -->
+                      <input type="hidden" name="status" value="<?php echo ($auditing_status); ?>" />
+                      <input type="hidden" name="create_user_id" value="<?php echo ($audits[$status]['create_user_id']?$audits[$status]['create_user_id']:$login_user['id']); ?>" />
+                      <input type="hidden" name="create_time" value="<?php echo ($audits[$status]['create_time']?$audits[$status]['create_time']:date('Y-m-d H:i:s')); ?>" />
+                      <input type="hidden" name="audit_user_id" value="<?php echo ($audits[$status]['audit_user_id']?$audits[$status]['audit_user_id']:$login_user['id']); ?>" />
+                      <input type="hidden" name="audit_user_name" value="<?php echo ($audits[$status]['audit_user_name']?$audits[$status]['audit_user_name']:$login_user['realname']); ?>" />
 
-                <?php if($auditing_status == $status): ?><input type="hidden" name="user_id" value="<?php echo ($user['id']); ?>" />
-                    <!--             <input type="hidden" name="id" value="<?php echo ($audits[$status]['id']); ?>" /> -->
-                    <input type="hidden" name="status" value="<?php echo ($auditing_status); ?>" />
-                    <input type="hidden" name="create_user_id" value="<?php echo ($audits[$status]['create_user_id']?$audits[$status]['create_user_id']:$login_user['id']); ?>" />
-                    <input type="hidden" name="create_time" value="<?php echo ($audits[$status]['create_time']?$audits[$status]['create_time']:date('Y-m-d H:i:s')); ?>" />
-                    <input type="hidden" name="audit_user_id" value="<?php echo ($audits[$status]['audit_user_id']?$audits[$status]['audit_user_id']:$login_user['id']); ?>" />
-                    <input type="hidden" name="audit_user_name" value="<?php echo ($audits[$status]['audit_user_name']?$audits[$status]['audit_user_name']:$login_user['realname']); ?>" />
-
-                    <?php if($audits[$status]['audit_user_id'] AND ($audits[$status]['audit_user_id'] != $login_user['user_id'])): ?><input type="hidden" name="actual_audit_user_id" value="<?php echo ($login_user['id']); ?>" />
-                      <input type="hidden" name="actual_audit_user_name" value="<?php echo ($login_user['realname']); ?>" /><?php endif; ?>
-
-                    <table class="table table-noborder">
-                        <tr>
-                            <td style="vertical-align: top"><b>考核意见</b></td>
-                            <td><textarea name="audit_content" id="audit_content" class="span12" style="height: 100px"><?php echo ($audits[$status]['audit_content']); ?></textarea></td>
-                        </tr>
-                        <tr>
-                            <td><b>通过否？</b></td>
-                            <td>
-                              <select name="audit_result"><?php echo Utility::Option($audit_opinions, $audits[$status]['audit_result']);?></select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><b>考核人</b></td>
-                            <td><?php echo ($audits[$status]['audit_user_name']?$audits[$status]['audit_user_name']:$login_user['realname']); ?></td>
-                        </tr>
-                        <?php if($audits[$status]['audit_user_id'] AND ($audits[$status]['audit_user_id'] != $login_user['id'])): ?><tr>
-                                <td><b>实际考核人</b></td><td><?php echo ($login_user['realname']); ?></td>
-                            </tr><?php endif; ?>
-                        <tr>
-                            <td></td>
-                            <td>
-                              <input type="submit" class="btn btn-danger" value="提 交" />
-                              <span class="muted"><?php echo M("UserStatuses")->where("id=%d",$user['status'])->getField('audit_tip');?></span>
-                            </td>
-                        </tr>
-                    </table><?php endif; ?>
+                      <table class="table table-noborder">
+                          <tr>
+                              <td style="vertical-align: top"><b>考核意见</b></td>
+                              <td><textarea name="audit_content" id="audit_content" class="span12" style="height: 100px"><?php echo ($audits[$status]['audit_content']); ?></textarea></td>
+                          </tr>
+                          <tr>
+                              <td><b>通过否？</b></td>
+                              <td>
+                                <select name="audit_result"><?php echo Utility::Option($audit_opinions, $audits[$status]['audit_result']);?></select>
+                              </td>
+                          </tr>
+                          <tr>
+                              <td><b>考核人</b></td>
+                              <td><?php echo ($audits[$status]['audit_user_name']?$audits[$status]['audit_user_name']:$login_user['realname']); ?></td>
+                          </tr>
+                          <?php if($audits[$status]['audit_user_id'] AND ($audits[$status]['audit_user_id'] != $login_user['id'])): ?><tr>
+                                  <td><b>实际考核人</b></td><td><?php echo ($login_user['realname']); ?></td>
+                              </tr><?php endif; ?>
+                          <tr>
+                              <td></td>
+                              <td>
+                                <input type="submit" class="btn btn-danger" value="提 交" />
+                                <span class="muted"><?php echo M("UserStatuses")->where("id=%d",$user['status'])->getField('audit_tip');?></span>
+                              </td>
+                          </tr>
+                      </table><?php endif; endif; ?>
             </div><?php endforeach; endif; ?>
     </div>
   </div>
@@ -727,10 +710,10 @@ $('#send_email_to_audits_<?php echo ($status); ?>').on("click", function() {
 </script>
 
 
-  <?php  $module_name = 'user'; $module_object_id = $user['id']; $attachment_type = "user"; $attachment_object_id = $user['id']; ?>
+<?php  $module_name = 'user'; $module_object_id = $user['id']; $attachment_type = "user"; $attachment_object_id = $user['id']; ?>
 
-  <!-- Notes -->
-  <a name="notes"></a><div class="clear"></div>
+<!-- Notes -->
+<a name="notes"></a><div class="clear"></div>
 <input type="hidden" id="module_name" value="<?php echo ($module_name); ?>">
 <input type="hidden" id="object_id" value="<?php echo ($module_object_id); ?>">
 <input type="hidden" id="login_user_name" value="<?php echo ($login_user['realname']); ?>">
@@ -809,9 +792,9 @@ $('#send_email_to_audits_<?php echo ($status); ?>').on("click", function() {
   }
 </script>
 
-  <!-- attachments -->
-  <a name="attachments"></a>
-  <div class="clear"></div>
+<!-- attachments -->
+<a name="attachments"></a>
+<div class="clear"></div>
 
 <script type="text/javascript" src="/styles/js/jquery.uploadify/jquery.uploadify.v2.1.4.min.js"></script>
 <script type="text/javascript" src="/styles/js/jquery.uploadify/swfobject.js"></script>
@@ -1163,13 +1146,20 @@ for(var i=0;i<aBottom.length;i++){
     }
 </script>
 
-  <div style="padding-left: 20px;">
-    <p>资源库外链：
-      <a href="#" id="change_extra_link" data-type="text" data-pk="<?php echo ($user['id']); ?>" data-url="/user/ajax_save_extra_link" data-title="资源库外链"><?php echo ($user['extra_file_link']?$user['extra_file_link']:'点击编辑链接(http://)'); ?></a> <span class="muted">（可以直接输入网盘中该会员的资料链接）</span>
-      <?php if($user['extra_file_link']): ?>&nbsp;&nbsp;&nbsp;<a href="<?php echo ($user['extra_file_link']); ?>" target="_blank">新窗口打开</a><?php endif; ?>  
-    </p>
-    <?php if($user['extra_file_link']): ?><iframe src="<?php echo ($user['extra_file_link']); ?>" width="100%" height="500px"></iframe><?php endif; ?>  
-  </div>
+<div style="padding-left: 20px;">
+  <p><i class="icon-share-alt"></i> 资源库外链：
+    <a href="#" id="change_extra_link" data-type="text" data-pk="<?php echo ($user['id']); ?>" data-url="/user/ajax_save_extra_link" data-title="资源库外链"><?php echo ($user['extra_file_link']?$user['extra_file_link']:'点击编辑链接(http://)'); ?></a> <span class="muted">（可以直接输入网盘中该会员的资料链接）</span>
+    <?php if($user['extra_file_link']): ?>&nbsp;&nbsp;&nbsp;<a href="<?php echo ($user['extra_file_link']); ?>" target="_blank">新窗口打开</a><?php endif; ?>  
+  </p>
+  <?php if($user['extra_file_link']): ?><iframe src="<?php echo ($user['extra_file_link']); ?>" width="100%" height="500px"></iframe><?php endif; ?>
+
+  <br />
+  <?php  $archives = D("UserInfoArchives")->where('user_id='.$user['id'])->order('id')->getField('id,create_time'); ?>
+  <?php if(count($archives) > 1): ?><div>
+      <i class="icon-briefcase"></i>申请表提交记录存档&nbsp;&nbsp;
+      <?php if(is_array($archives)): foreach($archives as $key=>$one): echo ++$idx;?>. <a href="<?php echo D('Options')->getOption('webroot_apply');?>/userinfo/preview?token=<?php echo Crypt::en($user['userinfo']['id']);?>&archive_id=<?php echo ($key); ?>" target="_blank"><?php echo substr($one, 0, 16);?></a>&nbsp;&nbsp;&nbsp;<?php endforeach; endif; ?>
+    </div><?php endif; ?>
+
 </div>
 
 <script type="text/javascript">
@@ -1182,6 +1172,7 @@ for(var i=0;i<aBottom.length;i++){
 </script>
 
 
+</div>
 </div>
 <div class="clear"></div>
 <div id="modaldialog"></div>

@@ -1,0 +1,7 @@
+<layout name="../Common/Public/dialog_with_confirm"/>
+
+<form method="post" action="/user/save_avatar" enctype="multipart/form-data">
+    <div class="text-error">图片宽度100px，尽量上传头像</div>
+    <input type="hidden" name="id" value="{$id}" />
+    <input type="file" name="avatar" />
+</form>
